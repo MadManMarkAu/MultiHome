@@ -244,9 +244,11 @@ public class MultiHome extends JavaPlugin {
 		} else if (cmd.getName().compareToIgnoreCase("sethome") == 0) {
 			if (args.length > 0) {
 				setPlayerHomeLocation(player, args[0], player.getLocation());
+				player.sendMessage(ChatColor.RED + "Home location [" + args[0] + "] set.");
 				log.info(player.getName() + " set home location [" + args[0] +"].");
 			} else {
 				setPlayerHomeLocation(player, "", player.getLocation());
+				player.sendMessage(ChatColor.RED + "Home location set.");
 				log.info(player.getName() + " set home location [].");
 			}
 			saveHomes();
