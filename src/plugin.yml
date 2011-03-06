@@ -1,0 +1,10 @@
+name: MultiHome
+version: 0.1
+main: net.madmanmarkau.MultiHome.MultiHome
+commands:
+  home:
+    description: Takes you back to your home location.
+    usage: /home [location_name]
+  sethome:
+    description: Sets your home location.
+    usage: /sethome [location_name]
