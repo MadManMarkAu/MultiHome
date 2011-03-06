@@ -1,10 +1,15 @@
 name: MultiHome
-version: 0.2
+version: 0.3
 main: net.madmanmarkau.MultiHome.MultiHome
+author: MadManMarkAu
+description: >
+             Multiple home locations.
 commands:
-  home:
+  multihome_home:
     description: Takes you back to your home location.
-    usage: /home [location_name]
-  sethome:
+    aliases: home
+    usage: /<command> [location_name]
+  multihome_sethome:
     description: Sets your home location.
-    usage: /sethome [location_name]
+    aliases: sethome
+    usage: /<command> [location_name]

@@ -226,7 +226,7 @@ public class MultiHome extends JavaPlugin {
 
 		Player player = (Player) sender;
 
-		if (cmd.getName().compareToIgnoreCase("home") == 0) {
+		if (cmd.getName().compareToIgnoreCase("multihome_home") == 0) {
 			Location loc = null;
 
 			if (args.length > 0) {
@@ -238,10 +238,19 @@ public class MultiHome extends JavaPlugin {
 			if (loc == null) {
 				player.sendMessage(ChatColor.RED + "Home not set.");
 			} else {
-				player.teleportTo(loc);
+				if (loc.getWorld().getName().equals(player.getWorld().getName())) {
+					// Direct teleport inside the current world.
+					player.teleportTo(loc);
+				} else {
+					// Indirect teleport between worlds.
+					Location playerLoc = player.getLocation();
+					
+					player.teleportTo(new Location(loc.getWorld(), playerLoc.getX(), playerLoc.getY(), playerLoc.getZ(), playerLoc.getPitch(), playerLoc.getYaw()));
+					player.teleportTo(loc);
+				}
 			}
 			return true;
-		} else if (cmd.getName().compareToIgnoreCase("sethome") == 0) {
+		} else if (cmd.getName().compareToIgnoreCase("multihome_sethome") == 0) {
 			if (args.length > 0) {
 				setPlayerHomeLocation(player, args[0], player.getLocation());
 				player.sendMessage(ChatColor.RED + "Home location [" + args[0] + "] set.");
