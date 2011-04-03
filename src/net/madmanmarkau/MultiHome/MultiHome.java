@@ -359,7 +359,11 @@ public class MultiHome extends JavaPlugin {
 					userResponse = userResponse + ", " + thisLocation.getHomeName();
 				}
 			}
-			player.sendMessage(ChatColor.RED + "Home location(s): " + userResponse.substring(2));
+			if (!userResponse.isEmpty() && userResponse.length() > 2) {
+				player.sendMessage(ChatColor.RED + "Home location(s): " + userResponse.substring(2));
+			} else {
+				player.sendMessage(ChatColor.RED + "No home locations defined.");
+			}
 
 			return true;
 		}
