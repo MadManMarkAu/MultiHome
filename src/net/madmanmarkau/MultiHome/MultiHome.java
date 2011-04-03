@@ -240,6 +240,44 @@ public class MultiHome extends JavaPlugin {
 		homeLocations.put(player.getName(), thisLocationList);
 	}
 
+	public boolean deletePlayerHomeLocation(Player player, String name) {
+		ArrayList<HomeLocation> thisLocationList;
+		HomeLocation thisLocation = null;
+
+		if (!homeLocations.containsKey(player.getName())) {
+			thisLocationList = new ArrayList<HomeLocation>();
+		} else {
+			thisLocationList = homeLocations.get(player.getName());
+		}
+
+		for (HomeLocation thisLoc : thisLocationList) {
+			if (thisLoc.getHomeName().compareToIgnoreCase(name) == 0) {
+				thisLocation = thisLoc;
+				break;
+			}
+		}
+
+		if (thisLocation != null) {
+			if (thisLocationList.remove(thisLocation)) {
+				homeLocations.put(player.getName(), thisLocationList);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public ArrayList<HomeLocation> listPlayerHomeLocations(String player) {
+		ArrayList<HomeLocation> thisLocationList;
+
+		if (!homeLocations.containsKey(player)) {
+			thisLocationList = new ArrayList<HomeLocation>();
+		} else {
+			thisLocationList = homeLocations.get(player);
+		}
+
+		return thisLocationList;
+	}
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{
@@ -288,6 +326,41 @@ public class MultiHome extends JavaPlugin {
 				log.info(player.getName() + " set home location [].");
 			}
 			saveHomes();
+			return true;
+		} else if (cmd.getName().compareToIgnoreCase("multihome_deletehome") == 0) {
+			if (args.length > 0) {
+				if (!this.Permissions.has(player, "multihome.deletehome")) return true;
+				if (deletePlayerHomeLocation(player, args[0])) {
+					player.sendMessage(ChatColor.RED + "Home location [" + args[0] + "] set.");
+					log.info(player.getName() + " deleted home location [" + args[0] +"].");
+				}
+			} else {
+				player.sendMessage(ChatColor.RED + "You cannot delete your default home location.");
+			}
+			saveHomes();
+			return true;
+		} else if (cmd.getName().compareToIgnoreCase("multihome_listhomes") == 0) {
+			ArrayList<HomeLocation> listHomeLocations;
+			
+			if (args.length > 0) {
+				if (!this.Permissions.has(player, "multihome.listhomes.others")) return true;
+				listHomeLocations = listPlayerHomeLocations(args[0]);
+				log.info(player.getName() + " listed home locations for player " + args[0] +".");
+			} else {
+				if (!this.Permissions.has(player, "multihome.listhomes.myself")) return true;
+				listHomeLocations = listPlayerHomeLocations(player.getName());
+			}
+
+			String userResponse = "";
+			for (HomeLocation thisLocation : listHomeLocations) {
+				if (thisLocation.getHomeName().length() == 0) {
+					userResponse = userResponse + ", [Default]";
+				} else {
+					userResponse = userResponse + ", " + thisLocation.getHomeName();
+				}
+			}
+			player.sendMessage(ChatColor.RED + "Home location(s): " + userResponse.substring(2));
+
 			return true;
 		}
 		return false;

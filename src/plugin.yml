@@ -1,5 +1,5 @@
 name: MultiHome
-version: 0.4
+version: 0.5
 main: net.madmanmarkau.MultiHome.MultiHome
 author: MadManMarkAu
 description: >
@@ -13,3 +13,11 @@ commands:
     description: Sets your home location.
     aliases: sethome
     usage: /<command> [location_name]
+  multihome_deletehome:
+    description: Deleted a named home location.
+    aliases: deletehome
+    usage: /<command> location_name
+  multihome_listhomes:
+    description: Lists all your home locations.
+    aliases: listhomes
+    usage: /<command>
