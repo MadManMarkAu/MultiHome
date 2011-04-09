@@ -10,9 +10,10 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import me.taylorkelly.help.Help;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,6 +28,7 @@ public class MultiHome extends JavaPlugin {
 	public final Logger log = Logger.getLogger("Minecraft");
     public PermissionHandler Permissions;
 	public PluginDescriptionFile pdfFile;
+	public PluginLogger pluginLogger; 
 
     private String homesPath;
 	private final String homesFile = "homes.txt";
@@ -40,13 +42,36 @@ public class MultiHome extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		this.pdfFile = this.getDescription();
-		this.homesPath = "plugins" + File.separator + pdfFile.getName() + File.separator;
+		this.homesPath = this.getDataFolder().getAbsolutePath() + File.separator;
 
+		setupHelp();
 		loadHomes();
 		setupPermissions();
 
 		log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " loaded");
 	}
+	
+    private void setupHelp() {
+        Plugin test = getServer().getPluginManager().getPlugin("Help");
+
+        
+        if (test != null) {
+    		if (!test.isEnabled()) {
+    			this.getServer().getPluginManager().enablePlugin(test);
+    		}
+
+    		if (test.isEnabled()) {
+    			Help helpPlugin = ((Help) test);
+	            helpPlugin.registerCommand("home", "Go to default home", this, true, "multihome.home");
+	            helpPlugin.registerCommand("home [name]", "Go to named home", this, "multihome.namedhome");
+	            helpPlugin.registerCommand("sethome", "Set default home", this, true, "multihome.home");
+	            helpPlugin.registerCommand("sethome [name]", "Set named home", this, "multihome.namedhome");
+	            helpPlugin.registerCommand("deletehome [name]", "Delete named home", this, "multihome.deletehome");
+	            helpPlugin.registerCommand("listhomes", "List your homes", this, "multihome.listhomes.myself");
+	            helpPlugin.registerCommand("listhomes [player]", "List [player]'d homes", this, "multihome.listhomes.others");
+    		}
+        }
+    }
 
 	public void setupPermissions() {
 		Plugin perm = this.getServer().getPluginManager().getPlugin("Permissions");
@@ -57,7 +82,7 @@ public class MultiHome extends JavaPlugin {
 				this.Permissions = ((Permissions) perm).getHandler();
 			}
 			else {
-				log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + "not enabled. Permissions not detected");
+				log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " not enabled. Permissions not detected");
 				this.getServer().getPluginManager().disablePlugin(this);
 			}
 		}
@@ -94,11 +119,10 @@ public class MultiHome extends JavaPlugin {
 
 			while (line != null) {
 				if (!line.startsWith("#")) {
-
 					String[] values = line.split(";");
 					double X = 0, Y = 0, Z = 0;
 					float pitch = 0, yaw = 0;
-					World world = null;
+					String world = "";
 					String name = "";
 
 					try {
@@ -110,7 +134,7 @@ public class MultiHome extends JavaPlugin {
 							pitch = Float.parseFloat(values[4]);
 							yaw = Float.parseFloat(values[5]);
 
-							world = getServer().getWorld(values[6]);
+							world = values[6];
 						} else if (values.length == 8) {
 							X = Double.parseDouble(values[1]);
 							Y = Double.parseDouble(values[2]);
@@ -118,7 +142,7 @@ public class MultiHome extends JavaPlugin {
 							pitch = Float.parseFloat(values[4]);
 							yaw = Float.parseFloat(values[5]);
 
-							world = getServer().getWorld(values[6]);
+							world = values[6];
 							name = values[7];
 						}
 
@@ -131,12 +155,15 @@ public class MultiHome extends JavaPlugin {
 								homeList = homeLocations.get(values[0]);
 							}
 
-							homeList.add(new HomeLocation(name, new Location(world, X, Y, Z, yaw, pitch)));
+							homeList.add(new HomeLocation(name, world, X, Y, Z, pitch, yaw));
 
 							homeLocations.put(values[0], homeList);
 						}
 					} catch (Exception e) {
 						// This entry failed. Ignore and continue.
+						if (line!=null) {
+							log.warning("Failed to load home location! Line: " + line);
+						}
 					}
 				}
 
@@ -168,18 +195,16 @@ public class MultiHome extends JavaPlugin {
 
 			for (Entry<String, ArrayList<HomeLocation>> entry : homeLocations.entrySet()) {
 				for (HomeLocation thisLocation : entry.getValue()) {
-					Location loc = thisLocation.getHomeLocation();
-
-					writer.write(entry.getKey() + ";" + loc.getX() + ";" + loc.getBlockY() + ";" + loc.getBlockZ() + ";"
-							+ loc.getPitch() + ";" + loc.getYaw() + ";"
-							+ loc.getWorld().getName() + ";" + thisLocation.getHomeName());
+					writer.write(entry.getKey() + ";" + thisLocation.getX() + ";" + thisLocation.getY() + ";" + thisLocation.getZ() + ";"
+							+ thisLocation.getPitch() + ";" + thisLocation.getYaw() + ";"
+							+ thisLocation.getWorld() + ";" + thisLocation.getHomeName());
 					writer.newLine();
 				}
 			}
 			writer.close();
 		} catch (Exception e) {
-			log.severe(pdfFile.getName() + " could not read the homes file.");
-			this.getServer().getPluginManager().disablePlugin(this);
+			log.severe(pdfFile.getName() + " could not write the homes file.");
+			e.printStackTrace();
 		}
 	}
 
@@ -192,7 +217,7 @@ public class MultiHome extends JavaPlugin {
 
 		for (HomeLocation thisLocation : thisLocationList) {
 			if (thisLocation.getHomeName().compareToIgnoreCase(name) == 0) {
-				return thisLocation.getHomeLocation();
+				return thisLocation.getHomeLocation(getServer());
 			}
 		}
 
@@ -331,8 +356,10 @@ public class MultiHome extends JavaPlugin {
 			if (args.length > 0) {
 				if (!this.Permissions.has(player, "multihome.deletehome")) return true;
 				if (deletePlayerHomeLocation(player, args[0])) {
-					player.sendMessage(ChatColor.RED + "Home location [" + args[0] + "] set.");
+					player.sendMessage(ChatColor.RED + "Home location [" + args[0] + "] deleted.");
 					log.info(player.getName() + " deleted home location [" + args[0] +"].");
+				} else {
+					player.sendMessage(ChatColor.RED + "Home not set.");
 				}
 			} else {
 				player.sendMessage(ChatColor.RED + "You cannot delete your default home location.");
