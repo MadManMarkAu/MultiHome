@@ -442,13 +442,13 @@ public class MultiHome extends JavaPlugin {
 						// No warmup needed. Immediately teleport.
 						if (loc.getWorld().getName().equals(player.getWorld().getName())) {
 							// Direct teleport inside the current world.
-							player.teleportTo(loc);
+							player.teleport(loc);
 						} else {
 							// Indirect teleport between worlds.
 							Location playerLoc = player.getLocation();
 							
-							player.teleportTo(new Location(loc.getWorld(), playerLoc.getX(), playerLoc.getY(), playerLoc.getZ(), playerLoc.getPitch(), playerLoc.getYaw()));
-							player.teleportTo(loc);
+							player.teleport(new Location(loc.getWorld(), playerLoc.getX(), playerLoc.getY(), playerLoc.getZ(), playerLoc.getPitch(), playerLoc.getYaw()));
+							player.teleport(loc);
 						}
 					}
 				}
