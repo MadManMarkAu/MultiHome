@@ -431,7 +431,7 @@ public class MultiHome extends JavaPlugin {
 					HomeCoolDown.addCooldown(player.getName(), getSetting(player, "cooldown", 0));
 					int warmup = getSetting(player, "warmup", 0);
 					
-					if (warmup >= 0) {
+					if (warmup > 0) {
 						// Warpup required.
 						if (getServer().getScheduler().scheduleSyncDelayedTask(this, new HomeWarmUp(player, loc), warmup * 20) != -1) {
 							player.sendMessage(ChatColor.RED + "Home initiated. Transfer in " + warmup + " seconds.");
@@ -496,7 +496,7 @@ public class MultiHome extends JavaPlugin {
 			if (args.length > 0) {
 				if (!this.Permissions.has(player, "multihome.listhomes.others")) return true;
 				listHomeLocations = listPlayerHomeLocations(args[0]);
-				log.info(player.getName() + " listed home locations for player " + args[0] +".");
+				log.info(player.getName() + " listed home locations for player " + args[0] + ".");
 			} else {
 				if (!this.Permissions.has(player, "multihome.listhomes.myself")) return true;
 				listHomeLocations = listPlayerHomeLocations(player.getName());
