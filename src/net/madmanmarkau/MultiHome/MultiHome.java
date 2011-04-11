@@ -17,11 +17,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
@@ -31,15 +33,17 @@ public class MultiHome extends JavaPlugin {
     public PermissionHandler Permissions;
 	public Configuration Config;
 	public PluginDescriptionFile pdfFile;
-	public PluginLogger pluginLogger; 
+	public PluginLogger pluginLogger;
 
+	private MultiHomePlayerListener playerListener = new MultiHomePlayerListener(this);
+	
     private String homesPath;
 	private final String homesFile = "homes.txt";
 	private HashMap<String, ArrayList<HomeLocation>> homeLocations = new HashMap<String, ArrayList<HomeLocation>>();
 
 	@Override
 	public void onDisable() {
-		log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " unloaded");
+		log.info("[" + pdfFile.getName() + "] version " + pdfFile.getVersion() + " unloaded");
 	}
 
 	@Override
@@ -51,8 +55,9 @@ public class MultiHome extends JavaPlugin {
 		setupPermissions();
 		loadSettings();
 		loadHomes();
-
-		log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " loaded");
+		registerEvents();
+		
+		log.info("[" + pdfFile.getName() + "] version " + pdfFile.getVersion() + " loaded");
 	}
 	
     private void setupHelp() {
@@ -104,6 +109,7 @@ public class MultiHome extends JavaPlugin {
 				out.write("#  for each of your defined Permissions groups." + newline);
 				out.write(newline);
 				out.write("MultiHome:" + newline);
+				out.write("    enableHomeOnDeath: false" + newline);
 				out.write("    default:" + newline);
 				out.write("        warmup: 0" + newline);
 				out.write("        cooldown: 0" + newline);
@@ -116,7 +122,7 @@ public class MultiHome extends JavaPlugin {
 
 				out.close();
 			} catch (Exception e) {
-				log.warning(pdfFile.getName() + " could not write the default config file.");
+				log.warning("[" + pdfFile.getName() + "] could not write the default config file.");
 				this.getServer().getPluginManager().disablePlugin(this);
 			}
 		}
@@ -135,10 +141,15 @@ public class MultiHome extends JavaPlugin {
 				this.Permissions = ((Permissions) perm).getHandler();
 			}
 			else {
-				log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " not enabled. Permissions not detected");
+				log.info("[" + pdfFile.getName() + "] version " + pdfFile.getVersion() + " not enabled. Permissions not detected");
 				this.getServer().getPluginManager().disablePlugin(this);
 			}
 		}
+	}
+
+    private void registerEvents() {
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvent(Event.Type.PLAYER_RESPAWN, this.playerListener, Event.Priority.Normal, this);
 	}
 
 	public void loadHomes() {
@@ -157,9 +168,12 @@ public class MultiHome extends JavaPlugin {
 				out.write("# Stores user home locations.\n");
 				out.write("# <username>;<x>;<y>;<z>;<pitch>;<yaw>;<world>[;<name>]\n");
 
+				importFromEssentials(out);
+				importFromMultipleHomes(out);
+				
 				out.close();
 			} catch (Exception e) {
-				log.warning(pdfFile.getName() + " could not write the default homes file.");
+				log.warning("[" + pdfFile.getName() + "] could not write the default homes file.");
 				this.getServer().getPluginManager().disablePlugin(this);
 			}
 		}
@@ -225,11 +239,114 @@ public class MultiHome extends JavaPlugin {
 
 			reader.close();
 		} catch (Exception e) {
-			log.severe(pdfFile.getName() + " could not read the homes file.");
+			log.severe("[" + pdfFile.getName() + "] could not read the homes file.");
 			this.getServer().getPluginManager().disablePlugin(this);
 		}
 	}
 
+	private void importFromEssentials(BufferedWriter out) {
+		File essentialsDir = new File("plugins" + File.separator + "Essentials" + File.separator + "userdata");
+		
+		if (essentialsDir.exists()) {
+			log.info("[" + pdfFile.getName() + "] Importing home locations from Essentials...");
+			File[] userFiles = essentialsDir.listFiles();
+			
+			for (File userFile : userFiles) {
+				log.info("[" + pdfFile.getName() + "] Importing from " + userFile.getName());
+				String user = userFile.getName().replaceAll("\\.yml", "");
+				Configuration userConfig = new Configuration(userFile);
+				userConfig.load();
+
+				List<Object> homeLocation = userConfig.getList("home");
+
+				if (homeLocation != null && !homeLocation.isEmpty()) {
+					double X = 0, Y = 0, Z = 0, pitch = 0, yaw = 0;
+					String world = "";
+		
+					try {
+						X = (Double) homeLocation.get(0);
+						Y = (Double)  homeLocation.get(1);
+						Z = (Double) homeLocation.get(2);
+						pitch = (Double) homeLocation.get(4);
+						yaw = (Double) homeLocation.get(3);
+						world = (String) homeLocation.get(5);
+						
+						out.write(user + ";" + X + ";" + Y + ";" + Z + ";" + pitch + ";" + yaw + ";" + world + ";");
+						out.newLine();
+					} catch (Exception e) {
+						// This entry failed. Ignore and continue.
+						log.warning("Failed to load home location!");
+						e.printStackTrace();	
+					}
+				}
+			}
+		}
+	}
+	
+	private void importFromMultipleHomes(BufferedWriter out) {
+		File essentialsDir = new File("plugins" + File.separator + "MultipleHomes" + File.separator + "Homes");
+		
+		if (essentialsDir.exists()) {
+			log.info("[" + pdfFile.getName() + "] Importing home locations from MultipleHomes...");
+			File[] userFiles = essentialsDir.listFiles();
+			
+			for (File userFile : userFiles) {
+				String name = userFile.getName().replaceAll("home\\_", "").replaceAll("\\.txt", "");
+				
+				try {
+					FileReader fstream = new FileReader(userFile);
+					BufferedReader reader = new BufferedReader(fstream);
+
+					String line = reader.readLine().trim();
+
+					while (line != null) {
+						if (line.startsWith("~")) {
+							String[] split = line.split(":");
+							
+							if (split.length == 2) {
+								String user = split[0].substring(1);
+								String[] values = split[1].split("_");
+								double X = 0, Y = 0, Z = 0;
+								float pitch = 0, yaw = 0;
+								String world = "";
+								int homeNumber;
+	
+								try {
+									X = Double.parseDouble(values[0]);
+									Y = Double.parseDouble(values[1]);
+									Z = Double.parseDouble(values[2]);
+									pitch = Float.parseFloat(values[4]);
+									yaw = Float.parseFloat(values[3]);
+									world = values[5];
+									homeNumber = Integer.parseInt(name);
+									
+									if (homeNumber == 0) {
+										out.write(user + ";" + X + ";" + Y + ";" + Z + ";" + pitch + ";" + yaw + ";" + world + ";");
+									} else {
+										out.write(user + ";" + X + ";" + Y + ";" + Z + ";" + pitch + ";" + yaw + ";" + world + ";" + homeNumber);
+									}
+								} catch (Exception e) {
+									// This entry failed. Ignore and continue.
+									if (line!=null) {
+										log.warning("[" + pdfFile.getName() + "] Failed to load home location! Line: " + line);
+									}
+								}
+							}
+						}
+
+						line = reader.readLine();
+					}
+
+					reader.close();
+				} catch (Exception e) {
+					log.severe("[" + pdfFile.getName() + "] Failed to import homes from MultipleHomes");
+					this.getServer().getPluginManager().disablePlugin(this);
+				}
+			}
+		}
+	}
+	
+	
 	public void saveHomes() {
 		File file = new File(homesPath);
 		if ( !(file.exists()) ) {
@@ -256,7 +373,7 @@ public class MultiHome extends JavaPlugin {
 			}
 			writer.close();
 		} catch (Exception e) {
-			log.severe(pdfFile.getName() + " could not write the homes file.");
+			log.severe("[" + pdfFile.getName() + "] could not write the homes file.");
 			e.printStackTrace();
 		}
 	}
