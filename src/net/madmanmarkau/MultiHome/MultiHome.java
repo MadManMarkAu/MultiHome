@@ -392,7 +392,7 @@ public class MultiHome extends JavaPlugin {
 		
 		if (playerGroup != null) {
 			// Player group found
-			List<String> keys = Config.getKeys("MultiHome." + playerGroup);
+			List<String> keys = Config.getKeys("MultiHome.groups." + playerGroup);
 			
 			if (keys != null && !keys.isEmpty()) {
 				// Settings for player group exists.
