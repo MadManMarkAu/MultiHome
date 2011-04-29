@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -20,7 +19,7 @@ public class HomeCoolDown {
 	 * @param player (Player) Player to query for cooldown.
 	 * @return (boolean) True indicating player cooldown has expired, otherwise false.
 	 */
-	public static boolean userMayTeleport(Player player) {
+	public static int getCooldownLeft(Player player) {
 		Date time = null;
 		
 		// Find player in the list
@@ -34,15 +33,14 @@ public class HomeCoolDown {
 			
 			if (now.compareTo(time) < 0) {
 				// Player needs more cool-down time.
-				player.sendMessage(ChatColor.RED + "You may not teleport yet. Please wait another " + Math.round((time.getTime() - now.getTime()) / 1000) + " seconds.");
-				return false;
+				return (int) Math.ceil((time.getTime() - now.getTime()) / 1000);
 			}
 			
 			// Player is allowed to teleport. Remove them from the cooldown list.
 			cooldownTime.remove(player.getName());
 		}
 		
-		return true;
+		return 0;
 	}
 	
 	/**

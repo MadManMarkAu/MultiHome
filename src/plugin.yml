@@ -1,5 +1,5 @@
 name: MultiHome
-version: 0.8
+version: 0.9
 main: net.madmanmarkau.MultiHome.MultiHome
 authors:
  - MadManMarkAu
@@ -10,16 +10,36 @@ commands:
   multihome_home:
     description: Takes you back to your home location.
     aliases: home
-    usage: /<command> [location_name]
+    usage: /<command> [[<user>:]location_name]
   multihome_sethome:
     description: Sets your home location.
     aliases: sethome
-    usage: /<command> [location_name]
+    usage: /<command> [[<user>:]location_name]
   multihome_deletehome:
     description: Deletes a named home location.
     aliases: deletehome
-    usage: /<command> location_name
+    usage: /<command> [<user>:]<location_name>
   multihome_listhomes:
     description: Lists all your home locations.
     aliases: listhomes
+    usage: /<command> [<user>]
+  multihome_invitehome:
+    description: Invites another player to your home. Make your home location public.
+    aliases: invitehome
+    usage: /<command> {<user>|*} [<time>] [<home>]
+  multihome_invitehometimed:
+    description: Invites another player to your home for a time. Make your home location public.
+    aliases: invitehometimed
+    usage: /<command> {<user>|*} <time> [<home>]
+  multihome_uninvitehome:
+    description: Uninvites another player to your home.
+    aliases: uninvitehome
+    usage: /<command> {<player>|*} [<home>]
+  multihome_listinvites:
+    description: List homes you may visit.
+    aliases: listinvites
+    usage: /<command>
+  multihome_listmyinvites:
+    description: List which of your homes others may visit.
+    aliases: listmyinvites
     usage: /<command>
