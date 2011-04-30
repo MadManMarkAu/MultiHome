@@ -28,6 +28,7 @@ public class HomeManager {
 		this.homesFile = homesFile;
 		this.plugin = plugin;
 	}
+
 	/**
 	 * Save homes list to file. Clears the saveRequired flag.
 	 */

@@ -1,6 +1,7 @@
 package net.madmanmarkau.MultiHome;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -16,10 +17,10 @@ public class CommandExecutor {
 	public void goDefaultHome(Player player) {
 		if (Permissions.has(player, "multihome.home")) {
 			// Get user cooldown timer.
-			int cooldownLeft = HomeCoolDown.getCooldownLeft(player);
+			Date cooldown = plugin.cooldowns.getCooldown(player.getName());
 
-			if (cooldownLeft > 0 && !Permissions.has(player, "multihome.ignorecooldown")) {
-				Settings.sendMessageCooldown(player, cooldownLeft);
+			if (cooldown != null && !Permissions.has(player, "multihome.ignorecooldown")) {
+				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getTime() - new Date().getTime()), 1000) / 1000);
 				return;
 			}
 
@@ -35,6 +36,9 @@ public class CommandExecutor {
 				} else {
 					// Can transfer instantly
 					Util.teleportPlayer(player, teleport);
+
+					int cooldownTime = Settings.getSettingCooldown(player);
+					if (cooldownTime > 0) plugin.cooldowns.addCooldown(player.getName(), Util.dateInFuture(cooldownTime));
 				}
 			} else {
 				Settings.sendMessageNoDefaultHome(player);
@@ -47,10 +51,10 @@ public class CommandExecutor {
 	public void goNamedHome(Player player, String home) {
 		if (Permissions.has(player, "multihome.namedhome")) {
 			// Get user cooldown timer.
-			int cooldownLeft = HomeCoolDown.getCooldownLeft(player);
+			Date cooldown = plugin.cooldowns.getCooldown(player.getName());
 
-			if (cooldownLeft > 0 && !Permissions.has(player, "multihome.ignorecooldown")) {
-				Settings.sendMessageCooldown(player, cooldownLeft);
+			if (cooldown != null && !Permissions.has(player, "multihome.ignorecooldown")) {
+				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getTime() - new Date().getTime()), 1000) / 1000);
 				return;
 			}
 
@@ -66,6 +70,9 @@ public class CommandExecutor {
 				} else {
 					// Can transfer instantly
 					Util.teleportPlayer(player, teleport);
+
+					int cooldownTime = Settings.getSettingCooldown(player);
+					if (cooldownTime > 0) plugin.cooldowns.addCooldown(player.getName(), Util.dateInFuture(cooldownTime));
 				}
 			} else {
 				Settings.sendMessageNoHome(player, home);
@@ -78,10 +85,10 @@ public class CommandExecutor {
 	public void goPlayerNamedHome(Player player, String owner, String home) {
 		if (Permissions.has(player, "multihome.othershome") || plugin.invites.getInvite(owner, home, player.getName()) != null) {
 			// Get user cooldown timer.
-			int cooldownLeft = HomeCoolDown.getCooldownLeft(player);
+			Date cooldown = plugin.cooldowns.getCooldown(player.getName());
 
-			if (cooldownLeft > 0 && !Permissions.has(player, "multihome.ignorecooldown")) {
-				Settings.sendMessageCooldown(player, cooldownLeft);
+			if (cooldown != null && !Permissions.has(player, "multihome.ignorecooldown")) {
+				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getTime() - new Date().getTime()), 1000) / 1000);
 				return;
 			}
 
@@ -100,6 +107,9 @@ public class CommandExecutor {
 					} else {
 						// Can transfer instantly
 						Util.teleportPlayer(player, teleport);
+
+						int cooldownTime = Settings.getSettingCooldown(player);
+						if (cooldownTime > 0) plugin.cooldowns.addCooldown(player.getName(), Util.dateInFuture(cooldownTime));
 					}
 				} else {
 					Settings.sendMessageNoHome(player, owner + ":" + home);
@@ -354,7 +364,7 @@ public class CommandExecutor {
 	}
 
 	public void listInvitesToOthers(Player player) {
-		if (Permissions.has(player, "multihome.listinvotes.toothers")) {
+		if (Permissions.has(player, "multihome.listinvites.toothers")) {
 			ArrayList<HomeInvite> invites = plugin.invites.getListPlayerInvitesToOthers(player.getName());
 
 			Settings.sendMessageInviteListToOthers(player, player.getName(), Util.compileInviteListForOthers(invites));
