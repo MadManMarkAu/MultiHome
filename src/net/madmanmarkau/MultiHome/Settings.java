@@ -33,10 +33,10 @@ public class Settings {
 				out.write("# settings:" + newline);
 				out.write("#   messages: Plugin messages are stored here. Customize messages using these entries. Missing entries will not be sent." + newline);
 				out.write("#     tooManyParameters: Message for when user specifies too many parameters. Variables: none" + newline);
-				out.write("#     defaultHomeSetMessage: Message for when deafult home is set. Variables: none" + newline);
+				out.write("#     defaultHomeSetMessage: Message for when default home is set. Variables: none" + newline);
 				out.write("#     cannotDeleteDefaultHomeMessage: Message for when player tries to delete deafult home. Variables: none" + newline);
 				out.write("#     homeSetMessage: Message for when home is set. Variables: {HOME}" + newline);
-				out.write("#     homeDeletedMessage: Message for when home deleted. Variables: {NAME}" + newline);
+				out.write("#     homeDeletedMessage: Message for when home deleted. Variables: {HOME}" + newline);
 				out.write("#     noHomeMessage: Message for when home not found. Variables: {HOME}" + newline);
 				out.write("#     noDefaultHomeMessage: Message for when default home not found." + newline);
 				out.write("#     noPlayerMessage: Message for when target player not found. Variables: {PLAYER}'" + newline);
@@ -69,7 +69,7 @@ public class Settings {
 				out.write("        defaultHomeSetMessage: 'Deafult home set.'" + newline);
 				out.write("        cannotDeleteDefaultHomeMessage: 'You cannot delete your default home location.'" + newline);
 				out.write("        homeSetMessage: 'Home {HOME} set.'" + newline);
-				out.write("        homeDeletedMessage: 'Home {NAME} deleted.'" + newline);
+				out.write("        homeDeletedMessage: 'Home {HOME} deleted.'" + newline);
 				out.write("        noHomeMessage: 'Home {HOME} not set.'" + newline);
 				out.write("        noDefaultHomeMessage: 'Home not set.'" + newline);
 				out.write("        noPlayerMessage: 'Player {PLAYER} not found.'" + newline);
@@ -193,6 +193,7 @@ public class Settings {
 		
 		if (message != null) {
 			Messaging.sendSuccess(sender, message
+					.replaceAll("\\{NAME\\}", home)
 					.replaceAll("\\{HOME\\}", home));
 		}
 	}

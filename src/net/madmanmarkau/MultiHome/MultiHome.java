@@ -42,6 +42,7 @@ public class MultiHome extends JavaPlugin {
 		
 		this.commandExecutor = new CommandExecutor(this);
 		
+		disableEssentials();
 		setupHelp();
 		Permissions.initialize(this);
 		Settings.initialize(this);
@@ -57,9 +58,26 @@ public class MultiHome extends JavaPlugin {
 		Messaging.logInfo("Version " + this.getDescription().getVersion() + " loaded.", this);
 	}
 	
+	private void disableEssentials() {
+		// Disable EssentialsHome
+		Plugin essentialsHome = getServer().getPluginManager().getPlugin("EssentialsHome");
+
+		if (essentialsHome != null && essentialsHome.isEnabled()) {
+			if (!essentialsHome.isEnabled()) {
+				// Load the plugin so we can disable it.
+				getServer().getPluginManager().enablePlugin(essentialsHome);
+			}
+			getServer().getPluginManager().disablePlugin(essentialsHome);
+		}
+
+		// Disable Essentials commands
+		essentialsHome.
+		this.g
+		getServer().getPluginManager().
+	}
+	
     private void setupHelp() {
         Plugin test = getServer().getPluginManager().getPlugin("Help");
-
         
         if (test != null) {
     		if (!test.isEnabled()) {
