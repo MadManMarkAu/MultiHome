@@ -44,7 +44,7 @@ public class MultiHome extends JavaPlugin {
 		
 		disableEssentials();
 		setupHelp();
-		Permissions.initialize(this);
+		HomePermissions.initialize(this);
 		Settings.initialize(this);
 		Settings.loadSettings(new File(pluginDataPath + "config.yml"));
 		

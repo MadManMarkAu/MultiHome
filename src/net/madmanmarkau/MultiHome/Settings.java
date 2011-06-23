@@ -111,7 +111,7 @@ public class Settings {
 
 	public static int getSettingInt(Player player, String setting, int defaultValue) {
 		// Get the player group
-		String playerGroup = Permissions.getGroup(player.getWorld().getName(), player.getName());
+		String playerGroup = HomePermissions.getGroup(player.getWorld().getName(), player.getName());
 		
 		if (playerGroup != null) {
 			// Player group found
@@ -129,7 +129,7 @@ public class Settings {
 
 	public static String getSettingString(Player player, String setting, String defaultValue) {
 		// Get the player group
-		String playerGroup = Permissions.getGroup(player.getWorld().getName(), player.getName());
+		String playerGroup = HomePermissions.getGroup(player.getWorld().getName(), player.getName());
 		
 		if (playerGroup != null) {
 			// Player group found
