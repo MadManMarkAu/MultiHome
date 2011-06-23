@@ -4,6 +4,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityListener;
 
+/**
+ * @author Sleaker
+ */
 public class MultiHomeEntityListener extends EntityListener {
 	MultiHome plugin;
 	

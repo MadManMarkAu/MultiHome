@@ -48,6 +48,7 @@ public class MultiHome extends JavaPlugin {
 		HomePermissions.initialize(this);
 		Settings.initialize(this);
 		Settings.loadSettings(new File(pluginDataPath + "config.yml"));
+		MultiHomeEconManager.initialize(this);
 		
 		this.homes.loadHomes();
 		this.invites.loadInvites();

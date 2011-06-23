@@ -93,12 +93,20 @@ public class Settings {
 				out.write("        cooldown: 0" + newline);
 				out.write("        maxhomes: -1" + newline);
 				out.write("        disruptwarmup: 1" + newline);
+				out.write("        sethomecost: 0" + newline);
+				out.write("        setnamedhomecast: 0" + newline);
+				out.write("        homecost: 0" + newline);
+				out.write("        namedhomecost: 0" + newline);
 				out.write("    groups:" + newline);
 				out.write("        default:" + newline);
 				out.write("            warmup: 0" + newline);
 				out.write("            cooldown: 0" + newline);
 				out.write("            maxhomes: -1" + newline);
 				out.write("            disruptwarmup: 1" + newline);
+				out.write("            sethomecost: 0" + newline);
+				out.write("            setnamedhomecast: 0" + newline);
+				out.write("            homecost: 0" + newline);
+				out.write("            namedhomecost: 0" + newline);
 
 				out.close();
 			} catch (Exception e) {
@@ -154,6 +162,22 @@ public class Settings {
 	
 	public static boolean isEconomyEnabled() {
 		return Config.getBoolean("MultiHome.enableEconomy", false);
+	}
+	
+	public static int getNamedSetCost(Player player) {
+		return getSettingInt(player, "setnamedhomecost", 0);
+	}
+	
+	public static int getSetCost(Player player) {
+		return getSettingInt(player, "sethomecost", 0);
+	}
+	
+	public static int getHomeCost (Player player) {
+		return getSettingInt(player, "homecost", 0);
+	}
+	
+	public static int getNamedHomeCost(Player player) {
+		return getSettingInt(player, "namedhomecost", 0);
 	}
 	
 	public static int getSettingWarmup(Player player) {

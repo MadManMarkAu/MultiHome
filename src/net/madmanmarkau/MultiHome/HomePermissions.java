@@ -9,6 +9,11 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import com.nijikokun.bukkit.Permissions.Permissions;
 
+/**
+ * 
+ * @author Sleaker
+ *
+ */
 public class HomePermissions {
 	private static PermissionsHandler handler;
 	private static Plugin permissionPlugin = null;
