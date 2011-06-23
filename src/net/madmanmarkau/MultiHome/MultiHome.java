@@ -59,6 +59,9 @@ public class MultiHome extends JavaPlugin {
 	}
 	
 	private void disableEssentials() {
+		/*
+		 * Broken Code from previous author.
+		 * 
 		// Disable EssentialsHome
 		Plugin essentialsHome = getServer().getPluginManager().getPlugin("EssentialsHome");
 
@@ -74,6 +77,7 @@ public class MultiHome extends JavaPlugin {
 		essentialsHome.
 		this.g
 		getServer().getPluginManager().
+		*/
 	}
 	
     private void setupHelp() {
