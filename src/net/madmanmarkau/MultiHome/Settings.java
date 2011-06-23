@@ -64,6 +64,7 @@ public class Settings {
 				out.write(newline);
 				out.write("MultiHome:" + newline);
 				out.write("    enableHomeOnDeath: false" + newline);
+				out.write("    enableEconomy: false" + newline);
 				out.write("    messages:" + newline);
 				out.write("        tooManyParameters: 'Too many parameters.'" + newline);
 				out.write("        defaultHomeSetMessage: 'Deafult home set.'" + newline);
@@ -91,11 +92,13 @@ public class Settings {
 				out.write("        warmup: 0" + newline);
 				out.write("        cooldown: 0" + newline);
 				out.write("        maxhomes: -1" + newline);
+				out.write("        disruptwarmup: 1" + newline);
 				out.write("    groups:" + newline);
 				out.write("        default:" + newline);
 				out.write("            warmup: 0" + newline);
 				out.write("            cooldown: 0" + newline);
 				out.write("            maxhomes: -1" + newline);
+				out.write("            disruptwarmup: 1" + newline);
 
 				out.close();
 			} catch (Exception e) {
@@ -149,6 +152,10 @@ public class Settings {
 		return Config.getBoolean("MultiHome.enableHomeOnDeath", false);
 	}
 	
+	public static boolean isEconomyEnabled() {
+		return Config.getBoolean("MultiHome.enableEconomy", false);
+	}
+	
 	public static int getSettingWarmup(Player player) {
 		return getSettingInt(player, "warmup", 0);
 	}
@@ -159,6 +166,10 @@ public class Settings {
 	
 	public static int getSettingMaxHomes(Player player) {
 		return getSettingInt(player, "maxhomes", -1);
+	}
+	
+	public static boolean getSettingDisrupt(Player player) {
+		return getSettingInt(player, "disruptwarmup", 1) == 1 ? true : false;
 	}
 
 	public static void sendMessageTooManyParameters(CommandSender sender) {
