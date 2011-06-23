@@ -54,10 +54,19 @@ public class Settings {
 				out.write("#     homeUninviteTargetMessage: Message to invite target for when invite is retracted. Variables: {OWNER} {HOME}" + newline);
 				out.write("#     homeListInvitesToMe: Message to use when listing invites open to this player. Variables: {TARGET} {LIST}" + newline);
 				out.write("#     homeListInvitesToOthers: Message to use when listing invites open to other players. Variables: {OWNER} {LIST}" + newline);
-				out.write("#   deafult: Default settings for all users are stored here." + newline);
+				out.write("#     econNotEnoughFunds: Message to use when a player does not have enough money for a command. Variables {AMOUNT}" + newline);
+				out.write("#     econDeductedForHome: Message to use when a player is charged for teleporting. Variables: {AMOUNT}" + newline);
+				out.write("#     econDeductForSet: Message to use when a player is charged for setting a home. Variables: {AMOUNT}" + newline);
+				out.write("#   default: Default settings for all users are stored here." + newline);
 				out.write("#     warmup: Amount of time to wait before a /home command executes." + newline);
 				out.write("#     cooldown: Amount of time to wait before /home can be used again." + newline);
+				out.write("#     disruptwarmup: Whether a players teleport will be cancelled if they are attacked. 0 for false, 1 for true" + newline);
 				out.write("#     maxhomes: Maximum number of homes this group may have. Use -1 to signify no limit." + newline);
+				out.write("#     sethomecost: Amount to charge a player when setting their default home" + newline);
+				out.write("#     setnamedhomecast: Amount to charge a player when setting a named home" + newline);
+				out.write("#     homecost: Amount to charge a player when they use /home " + newline);
+				out.write("#     namedhomecost: Amount to charge a player when using /home to a named home" + newline);
+				out.write("#     othershomecost: Amount to charge a player when they use /home to warp to another players home" + newline);
 				out.write("#" + newline);
 				out.write("# When editing this file for the first time, please duplicate the groups.default section" + newline);
 				out.write("#  for each of your defined Permissions groups." + newline);
@@ -88,6 +97,9 @@ public class Settings {
 				out.write("        homeUninviteTargetMessage: '{OWNER} has retracted their invite to to their home: [{HOME}]'" + newline);
 				out.write("        homeListInvitesToMe: 'Invites open to you: {LIST}'" + newline);
 				out.write("        homeListInvitesToOthers: 'Invites you have open: {LIST}'" + newline);
+				out.write("        econNotEnoughFunds: 'You did not have {AMOUNT} to do that.'" + newline);
+				out.write("        econDeductedForHome: '{AMOUNT} was removed from your account for going home.'" + newline);
+				out.write("        econDeductForSet: '{AMOUNT} was removed from your account for setting a home.'" + newline);
 				out.write("    default:" + newline);
 				out.write("        warmup: 0" + newline);
 				out.write("        cooldown: 0" + newline);
@@ -97,6 +109,7 @@ public class Settings {
 				out.write("        setnamedhomecast: 0" + newline);
 				out.write("        homecost: 0" + newline);
 				out.write("        namedhomecost: 0" + newline);
+				out.write("        othershomecost: 0" + newline);
 				out.write("    groups:" + newline);
 				out.write("        default:" + newline);
 				out.write("            warmup: 0" + newline);
@@ -107,6 +120,7 @@ public class Settings {
 				out.write("            setnamedhomecast: 0" + newline);
 				out.write("            homecost: 0" + newline);
 				out.write("            namedhomecost: 0" + newline);
+				out.write("            othershomecost: 0" + newline);
 
 				out.close();
 			} catch (Exception e) {
@@ -164,11 +178,11 @@ public class Settings {
 		return Config.getBoolean("MultiHome.enableEconomy", false);
 	}
 	
-	public static int getNamedSetCost(Player player) {
+	public static int getSetNamedHomeCost(Player player) {
 		return getSettingInt(player, "setnamedhomecost", 0);
 	}
 	
-	public static int getSetCost(Player player) {
+	public static int getSetHomeCost(Player player) {
 		return getSettingInt(player, "sethomecost", 0);
 	}
 	
@@ -178,6 +192,10 @@ public class Settings {
 	
 	public static int getNamedHomeCost(Player player) {
 		return getSettingInt(player, "namedhomecost", 0);
+	}
+	
+	public static int getOthersHomeCost(Player player) {
+		return getSettingInt(player, "othershomecost", 0);
 	}
 	
 	public static int getSettingWarmup(Player player) {
@@ -391,4 +409,26 @@ public class Settings {
 					.replaceAll("\\{LIST\\}", list));
 		}
 	}
+	
+	public static void sendMessageNotEnoughMoney(Player player, double amount) {
+		String message = Config.getString("MultiHome.messages.econNotEnoughFunds", null);
+		
+		if (message != null) {
+			Messaging.sendError(player, message.replaceAll("\\{AMOUNT}\\}", amount+""));
+		}
+	}
+	public static void sendMessageDeductForHome(Player player, double amount) {
+		String message = Config.getString("MultiHome.messages.econDeductedForHome", null);
+		if (message != null) {
+			Messaging.sendSuccess(player,message.replaceAll("\\{AMOUNT}\\}", amount+""));
+		}
+	}
+	
+	public static void sendMessageDeductForSet(Player player, double amount) {
+		String message = Config.getString("MultiHome.messages.econDeductedForSet", null);
+		if (message != null) {
+			Messaging.sendSuccess(player, message.replaceAll("\\{AMOUNT}\\}", amount+""));
+		}
+	}
+	
 }

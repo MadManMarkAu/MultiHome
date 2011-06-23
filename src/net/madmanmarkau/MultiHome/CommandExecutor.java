@@ -16,6 +16,13 @@ public class CommandExecutor {
 
 	public void goDefaultHome(Player player) {
 		if (HomePermissions.has(player, "multihome.home")) {
+			//Check for econ first - and make sure the player either has permission for free homes or has enough money
+			if (Settings.isEconomyEnabled()) 
+				if (!HomePermissions.has(player, "multihome.home.free") && !MultiHomeEconManager.hasEnough(player.getName(), Settings.getHomeCost(player))) {
+					Settings.sendMessageNotEnoughMoney(player, Settings.getHomeCost(player));
+					return;
+				}
+
 			// Get user cooldown timer.
 			Date cooldown = plugin.cooldowns.getCooldown(player.getName());
 
@@ -34,6 +41,13 @@ public class CommandExecutor {
 					plugin.warmups.addWarmup(player.getName(), warmup);
 					Settings.sendMessageWarmup(player, warmupTime);
 				} else {
+					//Double Check the charge before teleporting the player
+					if (!HomePermissions.has(player, "multihome.home.free"))
+						if (!MultiHomeEconManager.chargePlayer(player.getName(), Settings.getHomeCost(player)))
+							return;
+						else
+							Settings.sendMessageDeductForHome(player, Settings.getHomeCost(player));
+					
 					// Can transfer instantly
 					Util.teleportPlayer(player, teleport);
 
@@ -53,6 +67,13 @@ public class CommandExecutor {
 			// Get user cooldown timer.
 			Date cooldown = plugin.cooldowns.getCooldown(player.getName());
 
+			//Check for econ first - and make sure the player either has permission for free homes or has enough money
+			if (Settings.isEconomyEnabled()) 
+				if (!HomePermissions.has(player, "multihome.namedhome.free") && !MultiHomeEconManager.hasEnough(player.getName(), Settings.getNamedHomeCost(player))) {
+					Settings.sendMessageNotEnoughMoney(player, Settings.getNamedHomeCost(player));
+					return;
+				}
+
 			if (cooldown != null && !HomePermissions.has(player, "multihome.ignorecooldown")) {
 				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getTime() - new Date().getTime()), 1000) / 1000);
 				return;
@@ -68,6 +89,13 @@ public class CommandExecutor {
 					plugin.warmups.addWarmup(player.getName(), warmup);
 					Settings.sendMessageWarmup(player, warmupTime);
 				} else {
+					//Double Check the charge before teleporting the player
+					if (!HomePermissions.has(player, "multihome.namedhome.free"))
+						if (!MultiHomeEconManager.chargePlayer(player.getName(), Settings.getNamedHomeCost(player)))
+							return;
+						else
+							Settings.sendMessageDeductForHome(player, Settings.getNamedHomeCost(player));
+
 					// Can transfer instantly
 					Util.teleportPlayer(player, teleport);
 
@@ -87,6 +115,13 @@ public class CommandExecutor {
 			// Get user cooldown timer.
 			Date cooldown = plugin.cooldowns.getCooldown(player.getName());
 
+			//Check for econ first - and make sure the player either has permission for free homes or has enough money
+			if (Settings.isEconomyEnabled()) 
+				if (!HomePermissions.has(player, "multihome.othershome.free") && !MultiHomeEconManager.hasEnough(player.getName(), Settings.getOthersHomeCost(player))) {
+					Settings.sendMessageNotEnoughMoney(player, Settings.getOthersHomeCost(player));
+					return;
+				}
+
 			if (cooldown != null && !HomePermissions.has(player, "multihome.ignorecooldown")) {
 				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getTime() - new Date().getTime()), 1000) / 1000);
 				return;
@@ -105,6 +140,13 @@ public class CommandExecutor {
 						Settings.sendMessageWarmup(player, warmupTime);
 						Messaging.logInfo("Player " + player.getName() + " warped to player " + owner + "'s home location: " + home, plugin);
 					} else {
+						//Double Check the charge before teleporting the player
+						if (!HomePermissions.has(player, "multihome.othershome.free"))
+							if (!MultiHomeEconManager.chargePlayer(player.getName(), Settings.getOthersHomeCost(player)))
+								return;
+							else
+								Settings.sendMessageDeductForHome(player, Settings.getOthersHomeCost(player));
+
 						// Can transfer instantly
 						Util.teleportPlayer(player, teleport);
 
@@ -128,6 +170,14 @@ public class CommandExecutor {
 			int maxHomes = Settings.getSettingMaxHomes(player);
 
 			if (numHomes < maxHomes || maxHomes == -1 || plugin.homes.getHome(player, "") != null) {
+				//check Econ stuff
+				if (!HomePermissions.has(player, "multihome.sethome.free"))
+					if (!MultiHomeEconManager.chargePlayer(player.getName(), Settings.getSetHomeCost(player))) {
+						Settings.sendMessageNotEnoughMoney(player, Settings.getSetHomeCost(player));
+						return;
+					} else
+						Settings.sendMessageDeductForSet(player, Settings.getSetHomeCost(player));
+
 				plugin.homes.addHome(player, "", player.getLocation());
 				Settings.sendMessageDefaultHomeSet(player);
 				Messaging.logInfo("Player " + player.getName() + " set defult home location", plugin);
@@ -146,6 +196,14 @@ public class CommandExecutor {
 			int maxHomes = Settings.getSettingMaxHomes(player);
 
 			if (numHomes < maxHomes || maxHomes == -1 || plugin.homes.getHome(player, home) != null) {
+				//Check the econ stuff
+				if (!HomePermissions.has(player, "multihome.setnamehome.free"))
+					if (!MultiHomeEconManager.chargePlayer(player.getName(), Settings.getSetNamedHomeCost(player))) {
+						Settings.sendMessageNotEnoughMoney(player, Settings.getSetNamedHomeCost(player));
+						return;
+					} else
+						Settings.sendMessageDeductForSet(player, Settings.getSetNamedHomeCost(player));
+
 				plugin.homes.addHome(player, home, player.getLocation());
 				Settings.sendMessageHomeSet(player, home);
 				Messaging.logInfo("Player " + player.getName() + " set home location [" + home + "]", plugin);
