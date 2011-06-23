@@ -16,12 +16,14 @@ public class CommandExecutor {
 
 	public void goDefaultHome(Player player) {
 		if (HomePermissions.has(player, "multihome.home")) {
+			double amount = 0;
 			//Check for econ first - and make sure the player either has permission for free homes or has enough money
 			if (Settings.isEconomyEnabled()) 
 				if (!HomePermissions.has(player, "multihome.home.free") && !MultiHomeEconManager.hasEnough(player.getName(), Settings.getHomeCost(player))) {
 					Settings.sendMessageNotEnoughMoney(player, Settings.getHomeCost(player));
 					return;
-				}
+				} else if (!HomePermissions.has(player, "multihome.home.free"))
+					amount = Settings.getHomeCost(player);
 
 			// Get user cooldown timer.
 			Date cooldown = plugin.cooldowns.getCooldown(player.getName());
@@ -37,7 +39,7 @@ public class CommandExecutor {
 			if (teleport != null) {
 				if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignorewarmup")) {
 					// Warpup required.
-					HomeWarmUp warmup = new HomeWarmUp(this.plugin, player, Util.dateInFuture(warmupTime), teleport);
+					HomeWarmUp warmup = new HomeWarmUp(this.plugin, player, Util.dateInFuture(warmupTime), teleport, amount);
 					plugin.warmups.addWarmup(player.getName(), warmup);
 					Settings.sendMessageWarmup(player, warmupTime);
 				} else {
@@ -64,6 +66,7 @@ public class CommandExecutor {
 
 	public void goNamedHome(Player player, String home) {
 		if (HomePermissions.has(player, "multihome.namedhome")) {
+			double amount = 0;
 			// Get user cooldown timer.
 			Date cooldown = plugin.cooldowns.getCooldown(player.getName());
 
@@ -72,7 +75,8 @@ public class CommandExecutor {
 				if (!HomePermissions.has(player, "multihome.namedhome.free") && !MultiHomeEconManager.hasEnough(player.getName(), Settings.getNamedHomeCost(player))) {
 					Settings.sendMessageNotEnoughMoney(player, Settings.getNamedHomeCost(player));
 					return;
-				}
+				} else if (!HomePermissions.has(player, "multihome.namedhome.free"))
+					amount = Settings.getNamedHomeCost(player);
 
 			if (cooldown != null && !HomePermissions.has(player, "multihome.ignorecooldown")) {
 				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getTime() - new Date().getTime()), 1000) / 1000);
@@ -85,7 +89,7 @@ public class CommandExecutor {
 			if (teleport != null) {
 				if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignorewarmup")) {
 					// Warpup required.
-					HomeWarmUp warmup = new HomeWarmUp(this.plugin, player, Util.dateInFuture(warmupTime), teleport);
+					HomeWarmUp warmup = new HomeWarmUp(this.plugin, player, Util.dateInFuture(warmupTime), teleport, amount);
 					plugin.warmups.addWarmup(player.getName(), warmup);
 					Settings.sendMessageWarmup(player, warmupTime);
 				} else {
@@ -112,6 +116,7 @@ public class CommandExecutor {
 
 	public void goPlayerNamedHome(Player player, String owner, String home) {
 		if (HomePermissions.has(player, "multihome.othershome") || plugin.invites.getInvite(owner, home, player.getName()) != null) {
+			double amount = 0;
 			// Get user cooldown timer.
 			Date cooldown = plugin.cooldowns.getCooldown(player.getName());
 
@@ -120,7 +125,8 @@ public class CommandExecutor {
 				if (!HomePermissions.has(player, "multihome.othershome.free") && !MultiHomeEconManager.hasEnough(player.getName(), Settings.getOthersHomeCost(player))) {
 					Settings.sendMessageNotEnoughMoney(player, Settings.getOthersHomeCost(player));
 					return;
-				}
+				} else if (!HomePermissions.has(player, "multihome.othershome.free"))
+					amount = Settings.getOthersHomeCost(player);
 
 			if (cooldown != null && !HomePermissions.has(player, "multihome.ignorecooldown")) {
 				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getTime() - new Date().getTime()), 1000) / 1000);
@@ -135,7 +141,7 @@ public class CommandExecutor {
 				if (teleport != null) {
 					if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignorewarmup")) {
 						// Warpup required.
-						HomeWarmUp warmup = new HomeWarmUp(this.plugin, player, Util.dateInFuture(warmupTime), teleport);
+						HomeWarmUp warmup = new HomeWarmUp(this.plugin, player, Util.dateInFuture(warmupTime), teleport, amount);
 						plugin.warmups.addWarmup(player.getName(), warmup);
 						Settings.sendMessageWarmup(player, warmupTime);
 						Messaging.logInfo("Player " + player.getName() + " warped to player " + owner + "'s home location: " + home, plugin);

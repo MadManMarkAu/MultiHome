@@ -18,8 +18,9 @@ public class HomeWarmUp implements Runnable {
 	private String world;
 	private int taskID;
 	private boolean taskExecuted = false;
-	
-	public HomeWarmUp(MultiHome plugin, Player player, Date expiry, double x, double y, double z, float pitch, float yaw, String world) {
+	private double amount;
+
+	public HomeWarmUp(MultiHome plugin, Player player, Date expiry, double x, double y, double z, float pitch, float yaw, String world, double amount) {
 		this.plugin = plugin;
 		this.player = player;
 		this.expiry = expiry;
@@ -29,9 +30,10 @@ public class HomeWarmUp implements Runnable {
 		this.pitch = pitch;
 		this.yaw = yaw;
 		this.world = world;
+		this.amount = amount;
 	}
-	
-	public HomeWarmUp(MultiHome plugin, Player player, Date expiry, Location location) {
+
+	public HomeWarmUp(MultiHome plugin, Player player, Date expiry, Location location, double amount) {
 		this.plugin = plugin;
 		this.player = player;
 		this.expiry = expiry;
@@ -41,6 +43,7 @@ public class HomeWarmUp implements Runnable {
 		this.pitch = location.getPitch();
 		this.yaw = location.getYaw();
 		this.world = location.getWorld().getName();
+		this.amount = amount;
 	}
 
 	public void setPlayer(Player player) {
@@ -58,7 +61,7 @@ public class HomeWarmUp implements Runnable {
 	public Date getExpiry() {
 		return expiry;
 	}
-	
+
 	public void setX(double x) {
 		this.x = x;
 	}
@@ -106,7 +109,11 @@ public class HomeWarmUp implements Runnable {
 	public String getWorld() {
 		return world;
 	}
-
+	
+	public double getAmount() {
+		return amount;
+	}
+	
 	public void setTaskID(int taskID) {
 		this.taskID = taskID;
 	}
@@ -118,7 +125,7 @@ public class HomeWarmUp implements Runnable {
 	public boolean isTaskExecuted() {
 		return taskExecuted;
 	}
-	
+
 	public void setLocation(Location location) {
 		this.x = location.getX();
 		this.y = location.getY();
@@ -142,7 +149,19 @@ public class HomeWarmUp implements Runnable {
 		if (this.player.isOnline()) {
 			Location location = this.getLocation();
 			if (location != null) {
+				//Econ check before we warp the player home in case they've lost money since the warmup was created.
+				if (Settings.isEconomyEnabled()){
+					if (!MultiHomeEconManager.chargePlayer(player.getName(), amount)) {
+						Settings.sendMessageNotEnoughMoney(player, amount);
+						this.taskExecuted = true;
+						this.plugin.warmups.callbackTaskComplete(this);
+						return;
+					} else
+						Settings.sendMessageDeductForHome(player, amount);
+				}
+				
 				Settings.sendMessageWarmupComplete(this.player);
+
 				Util.teleportPlayer(this.player, location);
 
 				int cooldownTime = Settings.getSettingCooldown(player);
@@ -150,7 +169,7 @@ public class HomeWarmUp implements Runnable {
 			}
 		}
 		this.taskExecuted = true;
-		
+
 		this.plugin.warmups.callbackTaskComplete(this);
 	}
 }
