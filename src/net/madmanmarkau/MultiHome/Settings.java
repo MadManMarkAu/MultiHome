@@ -63,7 +63,7 @@ public class Settings {
 				out.write("#     disruptwarmup: Whether a players teleport will be cancelled if they are attacked. 0 for false, 1 for true" + newline);
 				out.write("#     maxhomes: Maximum number of homes this group may have. Use -1 to signify no limit." + newline);
 				out.write("#     sethomecost: Amount to charge a player when setting their default home" + newline);
-				out.write("#     setnamedhomecast: Amount to charge a player when setting a named home" + newline);
+				out.write("#     setnamedhomecost: Amount to charge a player when setting a named home" + newline);
 				out.write("#     homecost: Amount to charge a player when they use /home " + newline);
 				out.write("#     namedhomecost: Amount to charge a player when using /home to a named home" + newline);
 				out.write("#     othershomecost: Amount to charge a player when they use /home to warp to another players home" + newline);
@@ -106,7 +106,7 @@ public class Settings {
 				out.write("        maxhomes: -1" + newline);
 				out.write("        disruptwarmup: 1" + newline);
 				out.write("        sethomecost: 0" + newline);
-				out.write("        setnamedhomecast: 0" + newline);
+				out.write("        setnamedhomecost: 0" + newline);
 				out.write("        homecost: 0" + newline);
 				out.write("        namedhomecost: 0" + newline);
 				out.write("        othershomecost: 0" + newline);
@@ -117,7 +117,7 @@ public class Settings {
 				out.write("            maxhomes: -1" + newline);
 				out.write("            disruptwarmup: 1" + newline);
 				out.write("            sethomecost: 0" + newline);
-				out.write("            setnamedhomecast: 0" + newline);
+				out.write("            setnamedhomecost: 0" + newline);
 				out.write("            homecost: 0" + newline);
 				out.write("            namedhomecost: 0" + newline);
 				out.write("            othershomecost: 0" + newline);
