@@ -1,8 +1,9 @@
 name: MultiHome
-version: 0.9.5
+version: 0.9.6
 main: net.madmanmarkau.MultiHome.MultiHome
 authors:
  - MadManMarkAu
+ - Sleaker
 license: WTFPL
 description: >
              Multiple home locations.

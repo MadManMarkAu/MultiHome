@@ -16,7 +16,7 @@ public class MultiHomePlayerListener extends PlayerListener {
 	@Override
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
-		if (Permissions.has(player, "multihome.homeondeath") && Settings.isHomeOnDeathEnabled()) {
+		if (HomePermissions.has(player, "multihome.homeondeath") && Settings.isHomeOnDeathEnabled()) {
 			Location location = plugin.homes.getHome(player, "");
 			
 			if (location != null) {

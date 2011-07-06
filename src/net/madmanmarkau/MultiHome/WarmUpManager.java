@@ -177,7 +177,7 @@ public class WarmUpManager {
 				
 				writer.write(entry.getKey().toLowerCase() + ";" + home.getExpiry().getTime() + ";" +
 						home.getX() + ";" + home.getY() + ";" + home.getZ() + ";" +
-						home.getPitch() + ";" + home.getYaw() + ";" + home.getWorld() + Util.newLine());
+						home.getPitch() + ";" + home.getYaw() + ";" + home.getAmount() + ";" + home.getWorld() + Util.newLine());
 			}
 			writer.close();
 		} catch (Exception e) {
@@ -228,7 +228,7 @@ public class WarmUpManager {
 					String[] values = line.split(";");
 
 					try {
-						if (values.length == 8) {
+						if (values.length == 9) {
 							Player player = this.plugin.getServer().getPlayer(values[0]);
 							Date expiry = new Date(Long.parseLong(values[1]));
 							
@@ -238,8 +238,10 @@ public class WarmUpManager {
 								double z = Double.parseDouble(values[4]);
 								float pitch = Float.parseFloat(values[5]);
 								float yaw = Float.parseFloat(values[6]);
+								double amount = Double.parseDouble(values[7]);
+								String worldName = values[8];
 								
-								HomeWarmUp warmup = new HomeWarmUp(this.plugin, player, expiry, x, y, z, pitch, yaw, values[7]);
+								HomeWarmUp warmup = new HomeWarmUp(this.plugin, player, expiry, x, y, z, pitch, yaw, worldName, amount);
 								
 								addWarmup(values[0].toLowerCase(), warmup);
 							}

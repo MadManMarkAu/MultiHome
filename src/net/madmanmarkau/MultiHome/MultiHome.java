@@ -20,7 +20,8 @@ public class MultiHome extends JavaPlugin {
 	public CommandExecutor commandExecutor;
 
 	private MultiHomePlayerListener playerListener = new MultiHomePlayerListener(this);
-
+	private MultiHomeEntityListener entityListener = new MultiHomeEntityListener(this);
+	
 	@Override
 	public void onDisable() {
 		Messaging.logInfo("Version " + this.getDescription().getVersion() + " unloaded.", this);
@@ -42,11 +43,12 @@ public class MultiHome extends JavaPlugin {
 		
 		this.commandExecutor = new CommandExecutor(this);
 		
+		if (!HomePermissions.initialize(this)) return;
 		disableEssentials();
 		setupHelp();
-		Permissions.initialize(this);
 		Settings.initialize(this);
 		Settings.loadSettings(new File(pluginDataPath + "config.yml"));
+		MultiHomeEconManager.initialize(this);
 		
 		this.homes.loadHomes();
 		this.invites.loadInvites();
@@ -62,9 +64,9 @@ public class MultiHome extends JavaPlugin {
 		// Disable EssentialsHome
 		Plugin essentialsHome = getServer().getPluginManager().getPlugin("EssentialsHome");
 
-		if (essentialsHome != null && essentialsHome.isEnabled()) {
+		if (essentialsHome != null) {
 			if (!essentialsHome.isEnabled()) {
-				// Load the plugin so we can disable it.
+				// Load the plugin so we can disable it. Yeah, it's weird, but hopefully works.
 				getServer().getPluginManager().enablePlugin(essentialsHome);
 			}
 			getServer().getPluginManager().disablePlugin(essentialsHome);
@@ -104,6 +106,7 @@ public class MultiHome extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_RESPAWN, this.playerListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, this.playerListener, Event.Priority.Normal, this);
+		pm.registerEvent(Event.Type.ENTITY_DAMAGE, this.entityListener, Event.Priority.Monitor, this);
 	}
     
 	@Override

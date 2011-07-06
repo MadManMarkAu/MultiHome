@@ -42,6 +42,7 @@ public class Settings {
 				out.write("#     noPlayerMessage: Message for when target player not found. Variables: {PLAYER}'" + newline);
 				out.write("#     warmupMessage: Message for when home warmup initiated. Variables: {SECONDS}" + newline);
 				out.write("#     warmupCompleteMessage: Message for when home warmup completes. Variables: none" + newline);
+				out.write("#     warmupDisruptMessage: Message for when home warmup is disrupted. Variables: none" + newline);
 				out.write("#     cooldownMessage: Message for when cooldown hasn't expired yet. Variables: {SECONDS}" + newline);
 				out.write("#     tooManyHomesMessage: Message for when user tries to set too many homes. Variables: {CURRENT}, {MAX}" + newline);
 				out.write("#     homeListMessage: Message for when home locations listed. Variables: {LIST}" + newline);
@@ -54,16 +55,26 @@ public class Settings {
 				out.write("#     homeUninviteTargetMessage: Message to invite target for when invite is retracted. Variables: {OWNER} {HOME}" + newline);
 				out.write("#     homeListInvitesToMe: Message to use when listing invites open to this player. Variables: {TARGET} {LIST}" + newline);
 				out.write("#     homeListInvitesToOthers: Message to use when listing invites open to other players. Variables: {OWNER} {LIST}" + newline);
+				out.write("#     econNotEnoughFunds: Message to use when a player does not have enough money for a command. Variables {AMOUNT}" + newline);
+				out.write("#     econDeductedForHome: Message to use when a player is charged for teleporting. Variables: {AMOUNT}" + newline);
+				out.write("#     econDeductForSet: Message to use when a player is charged for setting a home. Variables: {AMOUNT}" + newline);
 				out.write("#   deafult: Default settings for all users are stored here." + newline);
 				out.write("#     warmup: Amount of time to wait before a /home command executes." + newline);
 				out.write("#     cooldown: Amount of time to wait before /home can be used again." + newline);
 				out.write("#     maxhomes: Maximum number of homes this group may have. Use -1 to signify no limit." + newline);
+				out.write("#     disruptWarmup: Whether a players teleport will be cancelled if they are attacked. 0 for false, 1 for true" + newline);
+				out.write("#     setHomeCost: Amount to charge a player when setting their default home" + newline);
+				out.write("#     setNamedHomeCost: Amount to charge a player when setting a named home" + newline);
+				out.write("#     homeCost: Amount to charge a player when they use /home " + newline);
+				out.write("#     namedHomeCost: Amount to charge a player when using /home to a named home" + newline);
+				out.write("#     othersHomeCost: Amount to charge a player when they use /home to warp to another players home" + newline);
 				out.write("#" + newline);
 				out.write("# When editing this file for the first time, please duplicate the groups.default section" + newline);
 				out.write("#  for each of your defined Permissions groups." + newline);
 				out.write(newline);
 				out.write("MultiHome:" + newline);
 				out.write("    enableHomeOnDeath: false" + newline);
+				out.write("    enableEconomy: false" + newline);
 				out.write("    messages:" + newline);
 				out.write("        tooManyParameters: 'Too many parameters.'" + newline);
 				out.write("        defaultHomeSetMessage: 'Deafult home set.'" + newline);
@@ -75,6 +86,7 @@ public class Settings {
 				out.write("        noPlayerMessage: 'Player {PLAYER} not found.'" + newline);
 				out.write("        warmupMessage: 'Home initiated. Transfer in {SECONDS} seconds.'" + newline);
 				out.write("        warmupCompleteMessage: 'Teleporting now!'" + newline);
+				out.write("        warmupDisruptMessage: 'Your teleport has been disrupted!'" + newline);
 				out.write("        cooldownMessage: 'You may not teleport yet. Please wait another {SECONDS} seconds.'" + newline);
 				out.write("        tooManyHomesMessage: 'Cannot set home location. You have already set {CURRENT} out of {MAX} homes.'" + newline);
 				out.write("        homeListMessage: 'Home locations: {LIST}'" + newline);
@@ -87,15 +99,32 @@ public class Settings {
 				out.write("        homeUninviteTargetMessage: '{OWNER} has retracted their invite to to their home: [{HOME}]'" + newline);
 				out.write("        homeListInvitesToMe: 'Invites open to you: {LIST}'" + newline);
 				out.write("        homeListInvitesToOthers: 'Invites you have open: {LIST}'" + newline);
+				out.write("        econNotEnoughFunds: 'You did not have {AMOUNT} to do that.'" + newline);
+				out.write("        econDeductedForHome: '{AMOUNT} was removed from your account for going home.'" + newline);
+				out.write("        econDeductForSet: '{AMOUNT} was removed from your account for setting a home.'" + newline);
+				out.write("        econNotEnoughFunds: 'You did not have {AMOUNT} to do that.'" + newline);
+				out.write("        econDeductedForHome: '{AMOUNT} was removed from your account for going home.'" + newline);
+				out.write("        econDeductForSet: '{AMOUNT} was removed from your account for setting a home.'" + newline);
 				out.write("    default:" + newline);
 				out.write("        warmup: 0" + newline);
 				out.write("        cooldown: 0" + newline);
 				out.write("        maxhomes: -1" + newline);
+				out.write("        disruptWarmup: true" + newline);
+				out.write("        setHomeCost: 0" + newline);
+				out.write("        setNamedHomeCost: 0" + newline);
+				out.write("        homeCost: 0" + newline);
+				out.write("        namedHomeCost: 0" + newline);
+				out.write("        othersHomeCost: 0" + newline);
 				out.write("    groups:" + newline);
 				out.write("        default:" + newline);
 				out.write("            warmup: 0" + newline);
 				out.write("            cooldown: 0" + newline);
 				out.write("            maxhomes: -1" + newline);
+				out.write("            disruptWarmup: true" + newline);
+				out.write("            setHomeCost: 0" + newline);
+				out.write("            setNamedHomeCost: 0" + newline);
+				out.write("            homeCost: 0" + newline);
+				out.write("            namedHomeCost: 0" + newline);
 
 				out.close();
 			} catch (Exception e) {
@@ -111,7 +140,7 @@ public class Settings {
 
 	public static int getSettingInt(Player player, String setting, int defaultValue) {
 		// Get the player group
-		String playerGroup = Permissions.getGroup(player.getWorld().getName(), player.getName());
+		String playerGroup = HomePermissions.getGroup(player.getWorld().getName(), player.getName());
 		
 		if (playerGroup != null) {
 			// Player group found
@@ -129,7 +158,7 @@ public class Settings {
 
 	public static String getSettingString(Player player, String setting, String defaultValue) {
 		// Get the player group
-		String playerGroup = Permissions.getGroup(player.getWorld().getName(), player.getName());
+		String playerGroup = HomePermissions.getGroup(player.getWorld().getName(), player.getName());
 		
 		if (playerGroup != null) {
 			// Player group found
@@ -148,7 +177,31 @@ public class Settings {
 	public static boolean isHomeOnDeathEnabled() {
 		return Config.getBoolean("MultiHome.enableHomeOnDeath", false);
 	}
+
+	public static boolean isEconomyEnabled() {
+		return Config.getBoolean("MultiHome.enableEconomy", false);
+	}
+
+	public static int getSetNamedHomeCost(Player player) {
+		return getSettingInt(player, "setNamedHomeCost", 0);
+	}
+
+	public static int getSetHomeCost(Player player) {
+		return getSettingInt(player, "setHomeCost", 0);
+	}
+
+	public static int getHomeCost (Player player) {
+		return getSettingInt(player, "homeCost", 0);
+	}
+
+	public static int getNamedHomeCost(Player player) {
+		return getSettingInt(player, "namedHomeCost", 0);
+	}
 	
+	public static int getOthersHomeCost(Player player) {
+		return getSettingInt(player, "othersHomeCost", 0);
+	}
+
 	public static int getSettingWarmup(Player player) {
 		return getSettingInt(player, "warmup", 0);
 	}
@@ -160,7 +213,11 @@ public class Settings {
 	public static int getSettingMaxHomes(Player player) {
 		return getSettingInt(player, "maxhomes", -1);
 	}
-
+	
+	public static boolean getSettingDisrupt(Player player) {
+		return getSettingInt(player, "disruptWarmup", 1) == 1 ? true : false;
+	}
+	
 	public static void sendMessageTooManyParameters(CommandSender sender) {
 		String message = Config.getString("MultiHome.messages.tooManyParameters", null);
 
@@ -211,6 +268,12 @@ public class Settings {
 		String message = Config.getString("MultiHome.messages.warmupCompleteMessage", null);
 
 		if (message != null) Messaging.sendSuccess(sender, message);
+	}
+
+	public static void sendMessageWarmupDisrupted(CommandSender sender) {
+		String message = Config.getString("MultiHome.messages.warmupDisruptedMessage", null);
+
+		if (message != null) Messaging.sendError(sender, message);
 	}
 
 	public static void sendMessageCooldown(CommandSender sender, int timeLeft) {
@@ -354,6 +417,28 @@ public class Settings {
 			Messaging.sendSuccess(sender, message
 					.replaceAll("\\{OWNER\\}", owner)
 					.replaceAll("\\{LIST\\}", list));
+		}
+	}
+
+	public static void sendMessageNotEnoughMoney(Player player, double amount) {
+		String message = Config.getString("MultiHome.messages.econNotEnoughFunds", null);
+
+		if (message != null) {
+			Messaging.sendError(player, message.replaceAll("\\{AMOUNT}\\}", amount+""));
+		}
+	}
+
+	public static void sendMessageDeductForHome(Player player, double amount) {
+		String message = Config.getString("MultiHome.messages.econDeductedForHome", null);
+		if (message != null) {
+			Messaging.sendSuccess(player,message.replaceAll("\\{AMOUNT}\\}", amount+""));
+		}
+	}
+
+	public static void sendMessageDeductForSet(Player player, double amount) {
+		String message = Config.getString("MultiHome.messages.econDeductedForSet", null);
+		if (message != null) {
+			Messaging.sendSuccess(player, message.replaceAll("\\{AMOUNT}\\}", amount+""));
 		}
 	}
 }
