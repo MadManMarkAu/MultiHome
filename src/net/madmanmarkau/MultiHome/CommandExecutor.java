@@ -19,16 +19,16 @@ public class CommandExecutor {
 			double amount = 0;
 			//Check for econ first - and make sure the player either has permission for free homes or has enough money
 			if (Settings.isEconomyEnabled()) 
-				if (!HomePermissions.has(player, "multihome.home.free") && !MultiHomeEconManager.hasEnough(player.getName(), Settings.getHomeCost(player))) {
+				if (!HomePermissions.has(player, "multihome.free.home") && !MultiHomeEconManager.hasEnough(player.getName(), Settings.getHomeCost(player))) {
 					Settings.sendMessageNotEnoughMoney(player, Settings.getHomeCost(player));
 					return;
-				} else if (!HomePermissions.has(player, "multihome.home.free"))
+				} else if (!HomePermissions.has(player, "multihome.free.home"))
 					amount = Settings.getHomeCost(player);
 
 			// Get user cooldown timer.
 			Date cooldown = plugin.cooldowns.getCooldown(player.getName());
 
-			if (cooldown != null && !HomePermissions.has(player, "multihome.ignorecooldown")) {
+			if (cooldown != null && !HomePermissions.has(player, "multihome.ignore.cooldown")) {
 				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getTime() - new Date().getTime()), 1000) / 1000);
 				return;
 			}
@@ -37,14 +37,14 @@ public class CommandExecutor {
 			Location teleport = plugin.homes.getHome(player, "");
 
 			if (teleport != null) {
-				if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignorewarmup")) {
+				if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignore.warmup")) {
 					// Warpup required.
 					HomeWarmUp warmup = new HomeWarmUp(this.plugin, player, Util.dateInFuture(warmupTime), teleport, amount);
 					plugin.warmups.addWarmup(player.getName(), warmup);
 					Settings.sendMessageWarmup(player, warmupTime);
 				} else {
 					//Double Check the charge before teleporting the player
-					if (!HomePermissions.has(player, "multihome.home.free"))
+					if (!HomePermissions.has(player, "multihome.free.home"))
 						if (!MultiHomeEconManager.chargePlayer(player.getName(), Settings.getHomeCost(player)))
 							return;
 						else
@@ -65,20 +65,20 @@ public class CommandExecutor {
 	}
 
 	public void goNamedHome(Player player, String home) {
-		if (HomePermissions.has(player, "multihome.namedhome")) {
+		if (HomePermissions.has(player, "multihome.named")) {
 			double amount = 0;
 			// Get user cooldown timer.
 			Date cooldown = plugin.cooldowns.getCooldown(player.getName());
 
 			//Check for econ first - and make sure the player either has permission for free homes or has enough money
 			if (Settings.isEconomyEnabled()) 
-				if (!HomePermissions.has(player, "multihome.namedhome.free") && !MultiHomeEconManager.hasEnough(player.getName(), Settings.getNamedHomeCost(player))) {
+				if (!HomePermissions.has(player, "multihome.free.named") && !MultiHomeEconManager.hasEnough(player.getName(), Settings.getNamedHomeCost(player))) {
 					Settings.sendMessageNotEnoughMoney(player, Settings.getNamedHomeCost(player));
 					return;
-				} else if (!HomePermissions.has(player, "multihome.namedhome.free"))
+				} else if (!HomePermissions.has(player, "multihome.free.named"))
 					amount = Settings.getNamedHomeCost(player);
 
-			if (cooldown != null && !HomePermissions.has(player, "multihome.ignorecooldown")) {
+			if (cooldown != null && !HomePermissions.has(player, "multihome.ignore.cooldown")) {
 				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getTime() - new Date().getTime()), 1000) / 1000);
 				return;
 			}
@@ -87,14 +87,14 @@ public class CommandExecutor {
 			Location teleport = plugin.homes.getHome(player, home);
 
 			if (teleport != null) {
-				if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignorewarmup")) {
+				if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignore.warmup")) {
 					// Warpup required.
 					HomeWarmUp warmup = new HomeWarmUp(this.plugin, player, Util.dateInFuture(warmupTime), teleport, amount);
 					plugin.warmups.addWarmup(player.getName(), warmup);
 					Settings.sendMessageWarmup(player, warmupTime);
 				} else {
 					//Double Check the charge before teleporting the player
-					if (!HomePermissions.has(player, "multihome.namedhome.free"))
+					if (!HomePermissions.has(player, "multihome.free.named"))
 						if (!MultiHomeEconManager.chargePlayer(player.getName(), Settings.getNamedHomeCost(player)))
 							return;
 						else
@@ -115,20 +115,20 @@ public class CommandExecutor {
 	}
 
 	public void goPlayerNamedHome(Player player, String owner, String home) {
-		if (HomePermissions.has(player, "multihome.othershome") || plugin.invites.getInvite(owner, home, player.getName()) != null) {
+		if (HomePermissions.has(player, "multihome.others.home") || plugin.invites.getInvite(owner, home, player.getName()) != null) {
 			double amount = 0;
 			// Get user cooldown timer.
 			Date cooldown = plugin.cooldowns.getCooldown(player.getName());
 
 			//Check for econ first - and make sure the player either has permission for free homes or has enough money
 			if (Settings.isEconomyEnabled()) 
-				if (!HomePermissions.has(player, "multihome.othershome.free") && !MultiHomeEconManager.hasEnough(player.getName(), Settings.getOthersHomeCost(player))) {
+				if (!HomePermissions.has(player, "multihome.free.others") && !MultiHomeEconManager.hasEnough(player.getName(), Settings.getOthersHomeCost(player))) {
 					Settings.sendMessageNotEnoughMoney(player, Settings.getOthersHomeCost(player));
 					return;
-				} else if (!HomePermissions.has(player, "multihome.othershome.free"))
+				} else if (!HomePermissions.has(player, "multihome.free.others"))
 					amount = Settings.getOthersHomeCost(player);
 
-			if (cooldown != null && !HomePermissions.has(player, "multihome.ignorecooldown")) {
+			if (cooldown != null && !HomePermissions.has(player, "multihome.ignore.cooldown")) {
 				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getTime() - new Date().getTime()), 1000) / 1000);
 				return;
 			}
@@ -139,7 +139,7 @@ public class CommandExecutor {
 				Location teleport = plugin.homes.getHome(owner, home);
 
 				if (teleport != null) {
-					if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignorewarmup")) {
+					if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignore.warmup")) {
 						// Warpup required.
 						HomeWarmUp warmup = new HomeWarmUp(this.plugin, player, Util.dateInFuture(warmupTime), teleport, amount);
 						plugin.warmups.addWarmup(player.getName(), warmup);
@@ -147,7 +147,7 @@ public class CommandExecutor {
 						Messaging.logInfo("Player " + player.getName() + " warped to player " + owner + "'s home location: " + home, plugin);
 					} else {
 						//Double Check the charge before teleporting the player
-						if (!HomePermissions.has(player, "multihome.othershome.free"))
+						if (!HomePermissions.has(player, "multihome.free.others"))
 							if (!MultiHomeEconManager.chargePlayer(player.getName(), Settings.getOthersHomeCost(player)))
 								return;
 							else
@@ -171,13 +171,13 @@ public class CommandExecutor {
 	}
 
 	public void setDefaultHome(Player player) {
-		if (HomePermissions.has(player, "multihome.sethome")) {
+		if (HomePermissions.has(player, "multihome.home.set")) {
 			int numHomes = plugin.homes.getUserHomeCount(player);
 			int maxHomes = Settings.getSettingMaxHomes(player);
 
 			if (numHomes < maxHomes || maxHomes == -1 || plugin.homes.getHome(player, "") != null) {
 				//check Econ stuff
-				if (!HomePermissions.has(player, "multihome.sethome.free"))
+				if (!HomePermissions.has(player, "multihome.free.set"))
 					if (!MultiHomeEconManager.chargePlayer(player.getName(), Settings.getSetHomeCost(player))) {
 						Settings.sendMessageNotEnoughMoney(player, Settings.getSetHomeCost(player));
 						return;
@@ -197,13 +197,13 @@ public class CommandExecutor {
 	}
 
 	public void setNamedHome(Player player, String home) {
-		if (HomePermissions.has(player, "multihome.setnamedhome")) {
+		if (HomePermissions.has(player, "multihome.named.set")) {
 			int numHomes = plugin.homes.getUserHomeCount(player);
 			int maxHomes = Settings.getSettingMaxHomes(player);
 
 			if (numHomes < maxHomes || maxHomes == -1 || plugin.homes.getHome(player, home) != null) {
 				//Check the econ stuff
-				if (!HomePermissions.has(player, "multihome.setnamehome.free"))
+				if (!HomePermissions.has(player, "multihome.free.setnamed"))
 					if (!MultiHomeEconManager.chargePlayer(player.getName(), Settings.getSetNamedHomeCost(player))) {
 						Settings.sendMessageNotEnoughMoney(player, Settings.getSetNamedHomeCost(player));
 						return;
@@ -223,7 +223,7 @@ public class CommandExecutor {
 	}
 
 	public void setPlayerNamedHome(Player player, String owner, String home) {
-		if (HomePermissions.has(player, "multihome.setothershome")) {
+		if (HomePermissions.has(player, "multihome.others.set")) {
 			plugin.homes.addHome(owner, home, player.getLocation());
 			Settings.sendMessageHomeSet(player, owner + ":" + home);
 			Messaging.logInfo("Player " + player.getName() + " set player " + owner + "'s home location [" + home + "]", plugin);
@@ -242,7 +242,7 @@ public class CommandExecutor {
 	}
 
 	public void deleteNamedHome(Player player, String home) {
-		if (HomePermissions.has(player, "multihome.deletehome")) {
+		if (HomePermissions.has(player, "multihome.named.delete")) {
 			if (plugin.homes.getHome(player, home) != null) {
 				plugin.homes.removeHome(player, home);
 				Settings.sendMessageHomeDeleted(player, home);
@@ -256,7 +256,7 @@ public class CommandExecutor {
 	}
 
 	public void deletePlayerNamedHome(Player player, String owner, String home) {
-		if (HomePermissions.has(player, "multihome.deleteothershome")) {
+		if (HomePermissions.has(player, "multihome.others.delete")) {
 			if (plugin.homes.getHome(player, home) != null) {
 				plugin.homes.removeHome(owner, home);
 				Settings.sendMessageHomeDeleted(player, owner + ":" + home);
@@ -270,7 +270,7 @@ public class CommandExecutor {
 	}
 
 	public void listHomes(Player player) {
-		if (HomePermissions.has(player, "multihome.listhomes.myself")) {
+		if (HomePermissions.has(player, "multihome.home.list")) {
 			ArrayList<HomeLocation> homes = plugin.homes.listUserHomes(player);
 
 			Settings.sendMessageHomeList(player, Util.compileHomeList(homes));
@@ -280,7 +280,7 @@ public class CommandExecutor {
 	}
 
 	public void listPlayerHomes(Player player, String owner) {
-		if (HomePermissions.has(player, "multihome.listhomes.others")) {
+		if (HomePermissions.has(player, "multihome.others.list")) {
 			ArrayList<HomeLocation> homes = plugin.homes.listUserHomes(owner);
 
 			Settings.sendMessageOthersHomeList(player, owner, Util.compileHomeList(homes));
@@ -296,7 +296,7 @@ public class CommandExecutor {
 	}
 
 	public void inviteDefaultHome(Player player, String target) {
-		if (HomePermissions.has(player, "multihome.invitehome")) {
+		if (HomePermissions.has(player, "multihome.invite")) {
 			if (plugin.homes.getHome(player, "") != null) {
 				plugin.invites.addInvite(player.getName(), "", target);
 				Settings.sendMessageInviteOwnerHome(player, target, "");
@@ -316,7 +316,7 @@ public class CommandExecutor {
 	}
 
 	public void inviteNamedHome(Player player, String target, String home) {
-		if (HomePermissions.has(player, "multihome.invitenamedhome")) {
+		if (HomePermissions.has(player, "multihome.invite.named")) {
 			if (plugin.homes.getHome(player, home) != null) {
 				plugin.invites.addInvite(player.getName(), home, target);
 				Settings.sendMessageInviteOwnerHome(player, target, home);
@@ -337,7 +337,7 @@ public class CommandExecutor {
 
 
 	public void inviteDefaultTimedHome(Player player, String target, int time) {
-		if (HomePermissions.has(player, "multihome.invitetimedhome")) {
+		if (HomePermissions.has(player, "multihome.invite.timed")) {
 			if (plugin.homes.getHome(player, "") != null) {
 				plugin.invites.addInvite(player.getName(), "", target, Util.dateInFuture(time));
 				Settings.sendMessageInviteTimedOwnerHome(player, target, "", time);
@@ -357,7 +357,7 @@ public class CommandExecutor {
 	}
 
 	public void inviteNamedTimedHome(Player player, String target, int time, String home) {
-		if (HomePermissions.has(player, "multihome.invitenamedtimedhome")) {
+		if (HomePermissions.has(player, "multihome.invite.namedtimed")) {
 			if (plugin.homes.getHome(player, home) != null) {
 				plugin.invites.addInvite(player.getName(), home, target, Util.dateInFuture(time));
 				Settings.sendMessageInviteOwnerHome(player, target, home);
@@ -377,7 +377,7 @@ public class CommandExecutor {
 	}
 
 	public void uninviteDefaultHome(Player player, String target) {
-		if (HomePermissions.has(player, "multihome.uninvitehome")) {
+		if (HomePermissions.has(player, "multihome.uninvite")) {
 			if (plugin.invites.getInvite(player.getName(), "", target) != null) {
 				plugin.invites.removeInvite(player.getName(), "", target);
 
@@ -398,7 +398,7 @@ public class CommandExecutor {
 	}
 
 	public void uninviteNamedHome(Player player, String target, String home) {
-		if (HomePermissions.has(player, "multihome.uninvitenamedhome")) {
+		if (HomePermissions.has(player, "multihome.uninvite.named")) {
 			if (plugin.invites.getInvite(player.getName(), home, target) != null) {
 				plugin.invites.removeInvite(player.getName(), home, target);
 				Settings.sendMessageUninviteOwnerHome(player, target, home);
@@ -418,7 +418,7 @@ public class CommandExecutor {
 	}
 
 	public void listInvitesToMe(Player player) {
-		if (HomePermissions.has(player, "multihome.listinvites.tome")) {
+		if (HomePermissions.has(player, "multihome.invite.list")) {
 			ArrayList<HomeInvite> invites = plugin.invites.getListPlayerInvitesToMe(player.getName());
 
 			Settings.sendMessageInviteListToMe(player, player.getName(), Util.compileInviteListForMe(player.getName(), invites));
@@ -428,7 +428,7 @@ public class CommandExecutor {
 	}
 
 	public void listInvitesToOthers(Player player) {
-		if (HomePermissions.has(player, "multihome.listinvites.toothers")) {
+		if (HomePermissions.has(player, "multihome.others.invite.list")) {
 			ArrayList<HomeInvite> invites = plugin.invites.getListPlayerInvitesToOthers(player.getName());
 
 			Settings.sendMessageInviteListToOthers(player, player.getName(), Util.compileInviteListForOthers(invites));
