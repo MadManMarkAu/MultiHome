@@ -16,18 +16,19 @@ public class MultiHomeEconManager {
 
 	protected static void initialize(MultiHome plugin) {
 		MultiHomeEconManager.plugin = plugin;
-		Plugin iConomy5 = null;
-		if (plugin.getServer().getPluginManager().getPlugin("iConomy").getDescription().getVersion().contains("5.")) {
-			iConomy5 = plugin.getServer().getPluginManager().getPlugin("iConomy");
-		}
+		
+		if (Settings.isEconomyEnabled()) {
+			Plugin iConomy5 = plugin.getServer().getPluginManager().getPlugin("iConomy");
 
-		if (iConomy5 != null && Settings.isEconomyEnabled()) {
-			handler = EconomyHandler.ICONOMY5;
-			String version = iConomy5.getDescription().getVersion();
-			Messaging.logInfo("Economy enabled using: iConomy v" + version, plugin);
+			if (iConomy5 != null && iConomy5.getDescription().getVersion().startsWith("5.")) {
+				handler = EconomyHandler.ICONOMY5;
+				Messaging.logInfo("Economy enabled using: iConomy v" + iConomy5.getDescription().getVersion(), plugin);
+			} else {
+				handler = EconomyHandler.NONE;
+				Messaging.logWarning("An economy plugin wasn't detected!", plugin);
+			}
 		} else {
 			handler = EconomyHandler.NONE;
-			Messaging.logInfo("An economy plugin wasn't detected or MultiHome is not set to use economy", plugin);
 		}
 	}
 
