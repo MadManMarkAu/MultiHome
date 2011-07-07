@@ -103,8 +103,6 @@ public class Settings {
 				out.write("        econDeductedForHome: '{AMOUNT} was removed from your account for going home.'" + newline);
 				out.write("        econDeductForSet: '{AMOUNT} was removed from your account for setting a home.'" + newline);
 				out.write("        econNotEnoughFunds: 'You did not have {AMOUNT} to do that.'" + newline);
-				out.write("        econDeductedForHome: '{AMOUNT} was removed from your account for going home.'" + newline);
-				out.write("        econDeductForSet: '{AMOUNT} was removed from your account for setting a home.'" + newline);
 				out.write("    default:" + newline);
 				out.write("        warmup: 0" + newline);
 				out.write("        cooldown: 0" + newline);
