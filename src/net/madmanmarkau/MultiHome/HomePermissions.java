@@ -19,14 +19,19 @@ public class HomePermissions {
 
 
 	private enum PermissionsHandler {
-		PERMISSIONSEX, PERMISSIONS, NONE
+		PERMISSIONSBUKKIT, PERMISSIONSEX, PERMISSIONS, NONE
 	}
 
 	public static boolean initialize(JavaPlugin plugin) {
 		Plugin perm = plugin.getServer().getPluginManager().getPlugin("Permissions");
 		Plugin permex = plugin.getServer().getPluginManager().getPlugin("PermissionsEX");
-
-		if (permex != null) {
+		Plugin permbukkit = plugin.getServer().getPluginManager().getPlugin("PermissionsBukkit");
+		
+		if (permbukkit != null) {
+			permissionPlugin = permbukkit;
+			handler = PermissionsHandler.PERMISSIONSBUKKIT;
+			return true;
+		} else if (permex != null) {
 			permissionPlugin = permex;
 			handler = PermissionsHandler.PERMISSIONSEX;
 			return true;
@@ -45,6 +50,8 @@ public class HomePermissions {
 
 	public static boolean has(Player player, String permission) {
 		switch (handler) {
+		case PERMISSIONSBUKKIT:
+			return player.hasPermission(permission);
 		case PERMISSIONSEX:
 			return PermissionsEx.getPermissionManager().has(player, permission);
 		case PERMISSIONS:
@@ -58,6 +65,8 @@ public class HomePermissions {
 		String[] groups = {};
 		
 		switch (handler) {
+			// case PERMISSIONSBUKKIT:
+			// Do stuff?  PermissionsBukkit doesn't have groups.  Test it and see if people die going home!
 			case PERMISSIONSEX:
 				groups = PermissionsEx.getPermissionManager().getUser(player).getGroupsNames();
 			case PERMISSIONS:
