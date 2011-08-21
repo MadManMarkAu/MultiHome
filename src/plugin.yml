@@ -47,7 +47,7 @@ commands:
 
 permissions:
     multihome.*:
-        description: Gives access to all things multihome.
+        description: Gives access to all things multihome, perhaps too much.
         default: false
         children:
             multihome.defaulthome.*: true
@@ -181,7 +181,8 @@ permissions:
         description: Allows the user to list invites they have open to others.
         default: false
     multihome.ignore.*:
-        description: Allows the user to ingore the cooldown and warmup timer.
+        description: Allows the user to ignore the cooldown and warmup timer.
+        default: false
         children:
             multihome.ignore.cooldown: true
             multihome.ignore.warmup: true
