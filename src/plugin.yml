@@ -44,3 +44,154 @@ commands:
     description: List which of your homes others may visit.
     aliases: listmyinvites
     usage: /<command>
+
+permissions:
+    multihome.*:
+        description: Gives access to all things multihome, perhaps too much.
+        default: false
+        children:
+            multihome.defaulthome.*: true
+            multihome.namedhome.*: true
+            multihome.othershome.*: true
+            multihome.free.*: true
+            multihome.listinvites.*: true
+            multihome.ignore.*: true
+            multihome.homeondeath: false
+    multihome.defaulthome.*:
+        description: Gives access to all things involving the default /home.
+        default: false
+        children:
+            multihome.defaulthome.go: true
+            multihome.defaulthome.set: true
+            multihome.defaulthome.delete: true
+            multihome.defaulthome.invite: true
+            multihome.defaulthome.invitetimed: true
+            multihome.defaulthome.uninvite: true
+    multihome.defaulthome.go:
+        description: Allows the user to go to their default home.
+        default: false
+    multihome.defaulthome.set:
+        description: Allows the user to set their default home.
+        default: false
+    multihome.defaulthome.delete:
+        description: Allows the user to delete their default home.
+        default: false
+    multihome.defaulthome.invite:
+        description: Allows the user to invite others to their default home.
+        default: false
+    multihome.defaulthome.invitetimed:
+        description: Allows the user to invite others to their default home with a timer on the invitation.
+        default: false
+    multihome.defaulthome.uninvite:
+        description: Allows the user to recind an invitation.
+        default: false
+    multihome.namedhome.*:
+        description: Allows the user full access to the use of named homes.
+        default: false
+        children:
+            multihome.namedhome.go: true
+            multihome.namedhome.set: true
+            multihome.namedhome.delete: true
+            multihome.namedhome.list: true
+            multihome.namedhome.invite: true
+            multihome.namedhome.invitetimed: true
+            multihome.namedhome.uninvite: true
+    multihome.namedhome.go:
+        description: Allows the user to go to their named home(s).
+        default: false
+    multihome.namedhome.set:
+        description: Allows the user to set their named home(s).
+        default: false
+    multihome.namedhome.delete:
+        description: Allows the user to delete their named home(s).
+        default: false
+    multihome.namedhome.invite:
+        description: Allows the user to invite others to their named home(s).
+        default: false
+    multihome.namedhome.invitetimed:
+        description: Allows the user to invite others to their named home(s) with a timer on the invitation.
+        default: false
+    multihome.namedhome.uninvite:
+        description: Allows the user to recind an invitation to their named home(s).
+        default: false
+    multihome.othershome.*:
+        description: Gives the user full access to other people's homes and home information.  Administrative.
+        default: false
+        children:
+            multihome.othershome.go: true
+            multihome.othershome.set: true
+            multihome.othershome.delete: true
+            multihome.othershome.list: true
+    multihome.othershome.go:
+        description: Allows the user to go to another person's home uninvited.
+        default: false
+    multihome.othershome.set:
+        description: Allows the user to create another person's home.
+        default: false
+    multihome.othershome.delete:
+        description: Allows the user to delete another person's home.
+        default: false
+    multihome.othershome.list:
+        description: Allows the user to list another person's home.
+        default: false
+    multihome.free.*:
+        description: Allows the user to set/teleport to all homes they have access to for free.
+        default: false
+        children:
+            multihome.free.defaulthome.*: true
+            multihome.free.namedhome.*: true
+            multihome.free.othershome.go: true
+    multihome.free.defaulthome.*:
+        description: Allows the user to set/teleport to their default home for free.
+        default: false
+        children:
+            multihome.free.defaulthome.go: true
+            multihome.free.defaulthome.set: true
+    multihome.free.defaulthome.go:
+        description: Allows the user to go to their default home for free.
+        default: false
+    multihome.free.defaulthome.set:
+        description: Allows the user to set their default home for free.
+        default: false
+    multihome.free.namedhome.*:
+        description: Allows the user to set/teleport to their default home for free.
+        default: false
+        children:
+            multihome.free.namedhome.go: true
+            multihome.free.namedhome.set: true
+    multihome.free.namedhome.go:
+        description: Allows the user to go to their named homes for free.
+        default: false
+    multihome.free.namedhome.set:
+        description: Allows the user to set their named homes for free.
+        default: false
+    multihome.free.othershome.go:
+        description: Allows the user to go to other's homes for free.
+        default: false
+    multihome.listinvites.*:
+        description: Allow the user to list invites open to themselves and by them to others.
+        default: false
+        children:
+            multihome.listinvites.tome: true
+            multihome.listinvites.toothers: true
+    multihome.listinvites.tome:
+        description: Allows the user to list invites open to them.
+        default: false
+    multihome.listinvites.toothers:
+        description: Allows the user to list invites they have open to others.
+        default: false
+    multihome.ignore.*:
+        description: Allows the user to ignore the cooldown and warmup timer.
+        default: false
+        children:
+            multihome.ignore.cooldown: true
+            multihome.ignore.warmup: true
+    multihome.ignore.cooldown:
+        description: Allows the user to ignore the cooldown timer.
+        default: false
+    multihome.ignore.warmup:
+        description: Allows the user to ignore the warmup timer.
+        default: false
+    multihome.homeondeath:
+        description: The user will be taken to their default home when respawning.
+        default: false
