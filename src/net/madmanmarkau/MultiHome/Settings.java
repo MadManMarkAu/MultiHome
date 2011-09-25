@@ -422,21 +422,21 @@ public class Settings {
 		String message = Config.getString("MultiHome.messages.econNotEnoughFunds", null);
 
 		if (message != null) {
-			Messaging.sendError(player, message.replaceAll("\\{AMOUNT}\\}", amount+""));
+			Messaging.sendError(player, message.replaceAll("\\{AMOUNT\\}", amount+""));
 		}
 	}
 
 	public static void sendMessageDeductForHome(Player player, double amount) {
 		String message = Config.getString("MultiHome.messages.econDeductedForHome", null);
 		if (message != null) {
-			Messaging.sendSuccess(player,message.replaceAll("\\{AMOUNT}\\}", amount+""));
+			Messaging.sendSuccess(player,message.replaceAll("\\{AMOUNT\\}", amount+""));
 		}
 	}
 
 	public static void sendMessageDeductForSet(Player player, double amount) {
 		String message = Config.getString("MultiHome.messages.econDeductedForSet", null);
 		if (message != null) {
-			Messaging.sendSuccess(player, message.replaceAll("\\{AMOUNT}\\}", amount+""));
+			Messaging.sendSuccess(player, message.replaceAll("\\{AMOUNT\\}", amount+""));
 		}
 	}
 }
