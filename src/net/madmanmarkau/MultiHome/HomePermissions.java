@@ -89,35 +89,37 @@ public class HomePermissions {
 	public static String getGroup(String world, String player) {
 		String[] groups = {};
 		
-		switch (handler) {
-			case PERMISSIONSEX:
-				groups = PermissionsEx.getPermissionManager().getUser(player).getGroupsNames();
-				
-				if (groups != null && groups.length > 0) {
-					return groups[0];
-				}
-				break;
-				
-			case PERMISSIONS:
-				groups = ((Permissions) permissionPlugin).getHandler().getGroups(world, player);
-				
-				if (groups != null && groups.length > 0) {
-					return groups[0];
-				}
-				break;
-				
-			case PERMISSIONSBUKKIT:
-				List<Group> playerGroups;
-				
-				playerGroups = ((PermissionsPlugin) permissionPlugin).getGroups(player);
-				
-				if (playerGroups != null && playerGroups.size() > 0) {
-					return playerGroups.get(0).getName();
-				}
-				break;
-
-			case SUPERPERMS:
-				break; // Groups not supported.
+		if (world != null && world.length() > 0 && player != null && player.length() > 0) {
+			switch (handler) {
+				case PERMISSIONSEX:
+					groups = PermissionsEx.getPermissionManager().getUser(player).getGroupsNames();
+					
+					if (groups != null && groups.length > 0) {
+						return groups[0];
+					}
+					break;
+					
+				case PERMISSIONS:
+					groups = ((Permissions) permissionPlugin).getHandler().getGroups(world, player);
+					
+					if (groups != null && groups.length > 0) {
+						return groups[0];
+					}
+					break;
+					
+				case PERMISSIONSBUKKIT:
+					List<Group> playerGroups;
+					
+					playerGroups = ((PermissionsPlugin) permissionPlugin).getGroups(player);
+					
+					if (playerGroups != null && playerGroups.size() > 0) {
+						return playerGroups.get(0).getName();
+					}
+					break;
+	
+				case SUPERPERMS:
+					break; // Groups not supported.
+			}
 		}
 
 		return "default";
