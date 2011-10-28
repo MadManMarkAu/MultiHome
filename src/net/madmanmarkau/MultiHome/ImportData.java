@@ -11,13 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ImportData {
+	@SuppressWarnings("unchecked")
 	public static void importHomesFromEssentials(BufferedWriter out, MultiHome plugin) {
 		File essentialsDir = new File("plugins" + File.separator + "Essentials" + File.separator + "userdata");
 		
@@ -27,55 +26,60 @@ public class ImportData {
 			List<Object> homeLocation;
 			
 			for (File userFile : userFiles) {
-				Messaging.logInfo("Importing from " + userFile.getName(), plugin);
-				String user = userFile.getName().replaceAll("\\.yml", "");
-				Configuration userConfig = new Configuration(userFile);
-				userConfig.load();
-
-				// Load old Essentials home format.
-				homeLocation = userConfig.getList("home");
-
-				if (homeLocation != null && !homeLocation.isEmpty()) {
-					try {
-						double X = (Double) homeLocation.get(0);
-						double Y = (Double)  homeLocation.get(1);
-						double Z = (Double) homeLocation.get(2);
-						double pitch = (Double) homeLocation.get(4);
-						double yaw = (Double) homeLocation.get(3);
-						String world = (String) homeLocation.get(5);
-						
-						out.write(user + ";" + X + ";" + Y + ";" + Z + ";" + pitch + ";" + yaw + ";" + world + ";" + Util.newLine());
-					} catch (Exception e) {
-						// This entry failed. Ignore and continue.
-						Messaging.logInfo("Failed to import home location!", plugin);
-						e.printStackTrace();	
+				try {
+					Messaging.logInfo("Importing from " + userFile.getName(), plugin);
+					String user = userFile.getName().replaceAll("\\.yml", "");
+					YamlConfiguration userConfig = new YamlConfiguration();
+					userConfig.load(userFile);
+	
+					// Load old Essentials home format.
+					homeLocation = userConfig.getList("home");
+	
+					if (homeLocation != null && !homeLocation.isEmpty()) {
+						try {
+							double X = (Double) homeLocation.get(0);
+							double Y = (Double)  homeLocation.get(1);
+							double Z = (Double) homeLocation.get(2);
+							double pitch = (Double) homeLocation.get(4);
+							double yaw = (Double) homeLocation.get(3);
+							String world = (String) homeLocation.get(5);
+							
+							out.write(user + ";" + X + ";" + Y + ";" + Z + ";" + pitch + ";" + yaw + ";" + world + ";" + Util.newLine());
+						} catch (Exception e) {
+							// This entry failed. Ignore and continue.
+							Messaging.logInfo("Failed to import home location!", plugin);
+							e.printStackTrace();	
+						}
 					}
-				}
-
-				// Load new Essentials home format.
-				Map<String, ConfigurationNode> homeWorlds = userConfig.getNodes("home.worlds");
-
-				if (homeWorlds != null && homeWorlds.size() > 0) {
-					for (Entry<String, ConfigurationNode> homeWorld : homeWorlds.entrySet()) {
-						if (homeWorld != null) {
-							ConfigurationNode homeData = homeWorld.getValue();
-				
-							try {
-								double X = homeData.getDouble("x", 0);
-								double Y = homeData.getDouble("y", 0);
-								double Z = homeData.getDouble("z", 0);
-								double pitch = homeData.getDouble("pitch", 0);
-								double yaw = homeData.getDouble("yaw", 0);
-								String world = homeData.getString("world");
-								
-								out.write(user + ";" + X + ";" + Y + ";" + Z + ";" + pitch + ";" + yaw + ";" + world + ";" + Util.newLine());
-							} catch (Exception e) {
-								// This entry failed. Ignore and continue.
-								Messaging.logInfo("Failed to import home location!", plugin);
-								e.printStackTrace();	
+	
+					// Load new Essentials home format.
+					ConfigurationSection homeWorlds = userConfig.getConfigurationSection("home.worlds");
+					//Map<String, ConfigurationNode> homeWorlds = userConfig.getNodes("home.worlds");
+	
+					if (homeWorlds != null) {
+						for (String homeWorld : homeWorlds.getKeys(false)) {
+							ConfigurationSection homeData = userConfig.getConfigurationSection("home.worlds." + homeWorld);
+							
+							if (homeData != null) {
+								try {
+									double X = homeData.getDouble("x", 0);
+									double Y = homeData.getDouble("y", 0);
+									double Z = homeData.getDouble("z", 0);
+									double pitch = homeData.getDouble("pitch", 0);
+									double yaw = homeData.getDouble("yaw", 0);
+									String world = homeData.getString("world");
+									
+									out.write(user + ";" + X + ";" + Y + ";" + Z + ";" + pitch + ";" + yaw + ";" + world + ";" + Util.newLine());
+								} catch (Exception e) {
+									// This entry failed. Ignore and continue.
+									Messaging.logInfo("Failed to import home location!", plugin);
+									e.printStackTrace();	
+								}
 							}
 						}
 					}
+				} catch (Exception e) {
+					Messaging.logWarning("Error importing from " + userFile.getName() + ": " + e.getMessage(), plugin);
 				}
 			}
 		}

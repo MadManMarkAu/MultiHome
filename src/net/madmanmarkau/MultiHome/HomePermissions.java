@@ -2,6 +2,7 @@ package net.madmanmarkau.MultiHome;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,10 +29,10 @@ public class HomePermissions {
 	}
 
 	public static boolean initialize(JavaPlugin plugin) {
-		Plugin perm = plugin.getServer().getPluginManager().getPlugin("Permissions");
-		Plugin permex = plugin.getServer().getPluginManager().getPlugin("PermissionsEX");
-		Plugin bukkitperms = plugin.getServer().getPluginManager().getPlugin("PermissionsBukkit");
-		Plugin bukkitperms1_1 = plugin.getServer().getPluginManager().getPlugin("PermissionsBukkit-1.1");
+		Plugin perm = Bukkit.getServer().getPluginManager().getPlugin("Permissions");
+		Plugin permex = Bukkit.getServer().getPluginManager().getPlugin("PermissionsEx");
+		Plugin bukkitperms = Bukkit.getServer().getPluginManager().getPlugin("PermissionsBukkit");
+		Plugin bukkitperms1_1 = Bukkit.getServer().getPluginManager().getPlugin("PermissionsBukkit-1.1");
 
 		if (permex != null) {
 			permissionPlugin = permex;

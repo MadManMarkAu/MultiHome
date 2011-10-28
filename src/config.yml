@@ -1,0 +1,95 @@
+# MultiHome config file.
+#
+# settings:
+#   messages: Plugin messages are stored here. Customize messages using these entries. Missing entries will not be sent.
+#     tooManyParameters: Message for when user specifies too many parameters. Variables: none
+#     defaultHomeSetMessage: Message for when default home is set. Variables: none
+#     cannotDeleteDefaultHomeMessage: Message for when player tries to delete deafult home. Variables: none
+#     homeSetMessage: Message for when home is set. Variables: {HOME}
+#     homeDeletedMessage: Message for when home deleted. Variables: {HOME}
+#     noHomeMessage: Message for when home not found. Variables: {HOME}
+#     noDefaultHomeMessage: Message for when default home not found.
+#     noPlayerMessage: Message for when target player not found. Variables: {PLAYER}'
+#     warmupMessage: Message for when home warmup initiated. Variables: {SECONDS}
+#     warmupCompleteMessage: Message for when home warmup completes. Variables: none
+#     warmupDisruptMessage: Message for when home warmup is disrupted. Variables: none
+#     cooldownMessage: Message for when cooldown hasn't expired yet. Variables: {SECONDS}
+#     tooManyHomesMessage: Message for when user tries to set too many homes. Variables: {CURRENT}, {MAX}
+#     homeListMessage: Message for when home locations listed. Variables: {LIST}
+#     homeListOthersMessage: Message for when home locations for another player are listed. Variables: {PLAYER}, {LIST}
+#     homeInviteOwnerMessage: Message to home owner for when invite is granted. Variables: {TARGET} {HOME}
+#     homeInviteTargetMessage: Message to invite target for when invite is granted. Variables: {OWNER} {HOME}
+#     homeInviteTimedOwnerMessage: Message to home owner for when timed invite is granted. Variables: {TARGET} {HOME} {TIME}
+#     homeInviteTimedTargetMessage: Message to invite target for when timed invite is granted. Variables: {OWNER} {HOME} {TIME}
+#     homeUninviteOwnerMessage: Message to home owner for when invite is retracted. Variables: {TARGET} {HOME}
+#     homeUninviteTargetMessage: Message to invite target for when invite is retracted. Variables: {OWNER} {HOME}
+#     homeListInvitesToMe: Message to use when listing invites open to this player. Variables: {TARGET} {LIST}
+#     homeListInvitesToOthers: Message to use when listing invites open to other players. Variables: {OWNER} {LIST}
+#     econNotEnoughFunds: Message to use when a player does not have enough money for a command. Variables {AMOUNT}
+#     econDeductedForHome: Message to use when a player is charged for teleporting. Variables: {AMOUNT}
+#     econDeductForSet: Message to use when a player is charged for setting a home. Variables: {AMOUNT}
+#   deafult: Default settings for all users are stored here.
+#     warmup: Amount of time to wait before a /home command executes.
+#     cooldown: Amount of time to wait before /home can be used again.
+#     maxhomes: Maximum number of homes this group may have. Use -1 to signify no limit.
+#     disruptWarmup: Whether a players teleport will be cancelled if they are attacked. 0 for false, 1 for true
+#     setHomeCost: Amount to charge a player when setting their default home
+#     setNamedHomeCost: Amount to charge a player when setting a named home
+#     homeCost: Amount to charge a player when they use /home 
+#     namedHomeCost: Amount to charge a player when using /home to a named home
+#     othersHomeCost: Amount to charge a player when they use /home to warp to another players home
+#
+# When editing this file for the first time, please duplicate the groups.default section
+#  for each of your defined Permissions groups.
+
+MultiHome:
+    enableHomeOnDeath: false
+    enableEconomy: false
+    messages:
+        tooManyParameters: 'Too many parameters.'
+        defaultHomeSetMessage: 'Deafult home set.'
+        cannotDeleteDefaultHomeMessage: 'You cannot delete your default home location.'
+        homeSetMessage: 'Home {HOME} set.'
+        homeDeletedMessage: 'Home {HOME} deleted.'
+        noHomeMessage: 'Home {HOME} not set.'
+        noDefaultHomeMessage: 'Home not set.'
+        noPlayerMessage: 'Player {PLAYER} not found.'
+        warmupMessage: 'Home initiated. Transfer in {SECONDS} seconds.'
+        warmupCompleteMessage: 'Teleporting now!'
+        warmupDisruptMessage: 'Your teleport has been disrupted!'
+        cooldownMessage: 'You may not teleport yet. Please wait another {SECONDS} seconds.'
+        tooManyHomesMessage: 'Cannot set home location. You have already set {CURRENT} out of {MAX} homes.'
+        homeListMessage: 'Home locations: {LIST}'
+        homeListOthersMessage: 'Home locations for {PLAYER}: {LIST}'
+        homeInviteOwnerMessage: 'Invite extended to {TARGET}.'
+        homeInviteTargetMessage: '{OWNER} invited you to their home. To accept, use this command: /home {OWNER}:{HOME}'
+        homeInviteTimedOwnerMessage: 'Invite extended to {TARGET} for {TIME} seconds.'
+        homeInviteTimedTargetMessage: '{OWNER} invited you to their home for {TIME} seconds. To accept, use this command: /home {OWNER}:{HOME}'
+        homeUninviteOwnerMessage: 'You have retracted your invite for {TARGET} to visit your home: [{HOME}]'
+        homeUninviteTargetMessage: '{OWNER} has retracted their invite to to their home: [{HOME}]'
+        homeListInvitesToMe: 'Invites open to you: {LIST}'
+        homeListInvitesToOthers: 'Invites you have open: {LIST}'
+        econNotEnoughFunds: 'You did not have {AMOUNT} to do that.'
+        econDeductedForHome: '{AMOUNT} was removed from your account for going home.'
+        econDeductForSet: '{AMOUNT} was removed from your account for setting a home.'
+        econNotEnoughFunds: 'You did not have {AMOUNT} to do that.'
+    default:
+        warmup: 0
+        cooldown: 0
+        maxhomes: -1
+        disruptWarmup: true
+        setHomeCost: 0
+        setNamedHomeCost: 0
+        homeCost: 0
+        namedHomeCost: 0
+        othersHomeCost: 0
+    groups:
+        default:
+            warmup: 0
+            cooldown: 0
+            maxhomes: -1
+            disruptWarmup: true
+            setHomeCost: 0
+            setNamedHomeCost: 0
+            homeCost: 0
+            namedHomeCost: 0
