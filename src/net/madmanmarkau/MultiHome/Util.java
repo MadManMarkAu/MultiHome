@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -97,13 +98,15 @@ public class Util {
 	public static void teleportPlayer(Player player, Location location) {
 		if (location.getWorld().getName().equals(player.getWorld().getName())) {
 			// Direct teleport inside the current world.
-			player.teleport(location);
-		} else {
-			// Indirect teleport between worlds.
-			Location playerLoc = player.getLocation();
+			Chunk chunk = location.getWorld().getChunkAt(location); // Getting a reference to the chunk seems to fix the missing chunk glitch
 			
-			player.teleport(new Location(location.getWorld(), playerLoc.getX(), playerLoc.getY(), playerLoc.getZ(), playerLoc.getYaw(), playerLoc.getPitch()));
 			player.teleport(location);
+			location.getWorld().refreshChunk(chunk.getX(), chunk.getZ()); // Doesn't seem to work, but better safe than sorry
+		} else {
+			Chunk chunk = location.getWorld().getChunkAt(location); // Getting a reference to the chunk seems to fix the missing chunk glitch
+
+			player.teleport(location);
+			location.getWorld().refreshChunk(chunk.getX(), chunk.getZ()); // Doesn't seem to work, but better safe than sorry
 		}
 	}
 	
