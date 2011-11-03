@@ -162,7 +162,7 @@ public class HomeWarmUp implements Runnable {
 
 				Settings.sendMessageWarmupComplete(this.player);
 				
-				Util.teleportPlayer(this.player, location);
+				Util.teleportPlayer(this.player, location, plugin);
 
 				int cooldownTime = Settings.getSettingCooldown(player);
 				if (cooldownTime > 0) plugin.cooldowns.addCooldown(player.getName(), Util.dateInFuture(cooldownTime));

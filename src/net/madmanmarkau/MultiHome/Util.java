@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -95,18 +94,16 @@ public class Util {
 	 * @param player Player to teleport.
 	 * @param location Location to teleport player to.
 	 */
-	public static void teleportPlayer(Player player, Location location) {
-		if (location.getWorld().getName().equals(player.getWorld().getName())) {
-			// Direct teleport inside the current world.
-			Chunk chunk = location.getWorld().getChunkAt(location); // Getting a reference to the chunk seems to fix the missing chunk glitch
-			
-			player.teleport(location);
-			location.getWorld().refreshChunk(chunk.getX(), chunk.getZ()); // Doesn't seem to work, but better safe than sorry
-		} else {
-			Chunk chunk = location.getWorld().getChunkAt(location); // Getting a reference to the chunk seems to fix the missing chunk glitch
+	public static void teleportPlayer(Player player, Location location, JavaPlugin plugin) {
+		int backupTask;
 
-			player.teleport(location);
-			location.getWorld().refreshChunk(chunk.getX(), chunk.getZ()); // Doesn't seem to work, but better safe than sorry
+		player.teleport(location);
+
+		// Schedule a task to re-send the chunk
+		backupTask = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new ChunkResendTask(location), 1 * 20); // 1 second delay
+		
+		if (backupTask == -1) {
+			Messaging.logSevere("Failed to create chunk resend schedule!", plugin);
 		}
 	}
 	

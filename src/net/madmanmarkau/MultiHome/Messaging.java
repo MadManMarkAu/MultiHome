@@ -48,4 +48,8 @@ public class Messaging {
 		
 		log.log(Level.FINE, "[" + plugin.getDescription().getName() + "] " + message);
 	}
+	
+	public static void broadcast(String message, JavaPlugin plugin) {
+		plugin.getServer().broadcastMessage(message);
+	}
 }

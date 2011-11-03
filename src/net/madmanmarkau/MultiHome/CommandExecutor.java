@@ -57,7 +57,7 @@ public class CommandExecutor {
 						}
 					}
 
-					Util.teleportPlayer(player, teleport);
+					Util.teleportPlayer(player, teleport, plugin);
 
 					int cooldownTime = Settings.getSettingCooldown(player);
 					if (cooldownTime > 0) plugin.cooldowns.addCooldown(player.getName(), Util.dateInFuture(cooldownTime));
@@ -113,7 +113,7 @@ public class CommandExecutor {
 						}
 					}
 					
-					Util.teleportPlayer(player, teleport);
+					Util.teleportPlayer(player, teleport, plugin);
 
 					int cooldownTime = Settings.getSettingCooldown(player);
 					if (cooldownTime > 0) plugin.cooldowns.addCooldown(player.getName(), Util.dateInFuture(cooldownTime));
@@ -172,7 +172,7 @@ public class CommandExecutor {
 							}
 						}
 
-						Util.teleportPlayer(player, teleport);
+						Util.teleportPlayer(player, teleport, plugin);
 
 						int cooldownTime = Settings.getSettingCooldown(player);
 						if (cooldownTime > 0) plugin.cooldowns.addCooldown(player.getName(), Util.dateInFuture(cooldownTime));
