@@ -14,7 +14,7 @@ commands:
     usage: /<command> [[<user>:]location_name]
   multihome_sethome:
     description: Sets your home location.
-    aliases: msethome
+    aliases: sethome
     usage: /<command> [[<user>:]location_name]
   multihome_deletehome:
     description: Deletes a named home location.
