@@ -123,7 +123,7 @@ public class MultiHome extends JavaPlugin {
 	}
 
 	private void onCommandFromPlayer(Player player, Command cmd, String commandLabel, String[] args) {
-		if (cmd.getName().compareToIgnoreCase("multihome_home") == 0) {
+		if (cmd.getName().compareToIgnoreCase("home") == 0 || cmd.getName().compareToIgnoreCase("mhome") == 0) {
 
 			if (args.length == 0) {
 				this.commandExecutor.goDefaultHome(player);
@@ -139,7 +139,7 @@ public class MultiHome extends JavaPlugin {
 				Settings.sendMessageTooManyParameters(player);
 			}
 
-		} else if (cmd.getName().compareToIgnoreCase("multihome_sethome") == 0) {
+		} else if (cmd.getName().compareToIgnoreCase("sethome") == 0 || cmd.getName().compareToIgnoreCase("msethome") == 0) {
 
 			if (args.length == 0) {
 				this.commandExecutor.setDefaultHome(player);
@@ -155,7 +155,7 @@ public class MultiHome extends JavaPlugin {
 				Settings.sendMessageTooManyParameters(player);
 			}
 
-		} else if (cmd.getName().compareToIgnoreCase("multihome_deletehome") == 0) {
+		} else if (cmd.getName().compareToIgnoreCase("deletehome") == 0 || cmd.getName().compareToIgnoreCase("mdeletehome") == 0) {
 
 			if (args.length == 0) {
 				this.commandExecutor.deleteDefaultHome(player);
@@ -171,7 +171,7 @@ public class MultiHome extends JavaPlugin {
 				Settings.sendMessageTooManyParameters(player);
 			}
 
-		} else if (cmd.getName().compareToIgnoreCase("multihome_listhomes") == 0) {
+		} else if (cmd.getName().compareToIgnoreCase("listhomes") == 0 || cmd.getName().compareToIgnoreCase("mlisthomes") == 0) {
 			
 			if (args.length == 0) {
 				this.commandExecutor.listHomes(player);
@@ -181,7 +181,7 @@ public class MultiHome extends JavaPlugin {
 				Settings.sendMessageTooManyParameters(player);
 			}
 
-		} else if (cmd.getName().compareToIgnoreCase("multihome_invitehome") == 0) {
+		} else if (cmd.getName().compareToIgnoreCase("invitehome") == 0 || cmd.getName().compareToIgnoreCase("minvitehome") == 0) {
 
 			if (args.length == 1) {
 				this.commandExecutor.inviteDefaultHome(player, args[0]);
@@ -189,7 +189,7 @@ public class MultiHome extends JavaPlugin {
 				this.commandExecutor.inviteNamedHome(player, args[0], args[1]);
 			}
 
-		} else if (cmd.getName().compareToIgnoreCase("multihome_invitehometimed") == 0) {
+		} else if (cmd.getName().compareToIgnoreCase("invitehometimed") == 0 || cmd.getName().compareToIgnoreCase("minvitehometimed") == 0) {
 
 			if (args.length == 2) {
 				this.commandExecutor.inviteDefaultTimedHome(player, args[0], Util.decodeTime(args[1]));
@@ -199,7 +199,7 @@ public class MultiHome extends JavaPlugin {
 				Settings.sendMessageTooManyParameters(player);
 			}
 
-		} else if (cmd.getName().compareToIgnoreCase("multihome_uninvitehome") == 0) {
+		} else if (cmd.getName().compareToIgnoreCase("uninvitehome") == 0 || cmd.getName().compareToIgnoreCase("muninvitehome") == 0) {
 
 			if (args.length == 1) {
 				this.commandExecutor.uninviteDefaultHome(player, args[0]);
@@ -209,7 +209,7 @@ public class MultiHome extends JavaPlugin {
 				Settings.sendMessageTooManyParameters(player);
 			}
 
-		} else if (cmd.getName().compareToIgnoreCase("multihome_listinvites") == 0) {
+		} else if (cmd.getName().compareToIgnoreCase("listinvites") == 0 || cmd.getName().compareToIgnoreCase("mlistinvites") == 0) {
 
 			if (args.length == 0) {
 				this.commandExecutor.listInvitesToMe(player);
@@ -217,7 +217,7 @@ public class MultiHome extends JavaPlugin {
 				Settings.sendMessageTooManyParameters(player);
 			}
 
-		} else if (cmd.getName().compareToIgnoreCase("multihome_listmyinvites") == 0) {
+		} else if (cmd.getName().compareToIgnoreCase("listmyinvites") == 0 || cmd.getName().compareToIgnoreCase("mlistmyinvites") == 0) {
 
 			if (args.length == 0) {
 				this.commandExecutor.listInvitesToOthers(player);

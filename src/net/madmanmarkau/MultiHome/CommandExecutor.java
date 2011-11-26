@@ -299,10 +299,10 @@ public class CommandExecutor {
 
 	public void deletePlayerNamedHome(Player player, String owner, String home) {
 		if (HomePermissions.has(player, "multihome.othershome.delete")) {
-			if (plugin.homes.getHome(player, home) != null) {
+			if (plugin.homes.getHome(owner, home) != null) {
 				plugin.homes.removeHome(owner, home);
 				Settings.sendMessageHomeDeleted(player, owner + ":" + home);
-				Messaging.logInfo("Player " + player.getName() + " deleted home location [" + home + "].", plugin);
+				Messaging.logInfo("Player " + player.getName() + " deleted " + owner + "'s home location [" + home + "].", plugin);
 			} else {
 				Settings.sendMessageNoHome(player, home);
 			}
