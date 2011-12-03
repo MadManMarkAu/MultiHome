@@ -1,10 +1,11 @@
 # MultiHome config file.
 #
 # settings:
+#   permissiveGroupHandling: If true and user has more than one group defined in this file, go with the most permissive setting.  If false, go with least permissive setting
 #   messages: Plugin messages are stored here. Customize messages using these entries. Missing entries will not be sent.
 #     tooManyParameters: Message for when user specifies too many parameters. Variables: none
 #     defaultHomeSetMessage: Message for when default home is set. Variables: none
-#     cannotDeleteDefaultHomeMessage: Message for when player tries to delete deafult home. Variables: none
+#     cannotDeleteDefaultHomeMessage: Message for when player tries to delete default home. Variables: none
 #     homeSetMessage: Message for when home is set. Variables: {HOME}
 #     homeDeletedMessage: Message for when home deleted. Variables: {HOME}
 #     noHomeMessage: Message for when home not found. Variables: {HOME}
@@ -28,7 +29,7 @@
 #     econNotEnoughFunds: Message to use when a player does not have enough money for a command. Variables {AMOUNT}
 #     econDeductedForHome: Message to use when a player is charged for teleporting. Variables: {AMOUNT}
 #     econDeductForSet: Message to use when a player is charged for setting a home. Variables: {AMOUNT}
-#   deafult: Default settings for all users are stored here.
+#   default: Default settings for all users are stored here.
 #     warmup: Amount of time to wait before a /home command executes.
 #     cooldown: Amount of time to wait before /home can be used again.
 #     maxhomes: Maximum number of homes this group may have. Use -1 to signify no limit.
@@ -45,9 +46,10 @@
 MultiHome:
     enableHomeOnDeath: false
     enableEconomy: false
+    permissiveGroupHandling: true
     messages:
         tooManyParameters: 'Too many parameters.'
-        defaultHomeSetMessage: 'Deafult home set.'
+        defaultHomeSetMessage: 'Default home set.'
         cannotDeleteDefaultHomeMessage: 'You cannot delete your default home location.'
         homeSetMessage: 'Home {HOME} set.'
         homeDeletedMessage: 'Home {HOME} deleted.'
