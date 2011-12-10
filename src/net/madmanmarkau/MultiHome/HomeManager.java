@@ -7,10 +7,36 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+/*
+ * JOREN
+ */
+
+import com.palmergames.bukkit.towny.NotRegisteredException;
+import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.object.Coord;
+import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.TownBlock;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
+import com.palmergames.bukkit.towny.object.WorldCoord;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import static com.sk89q.worldguard.bukkit.BukkitUtil.*;
+
+/*
+ * /JOREN
+ */
+
 
 /**
  * Manages a database of player home locations.
@@ -110,6 +136,96 @@ public class HomeManager {
 		return null;
 	}
 
+	/*
+	 * JOREN
+	 */
+	
+	/**
+	 * If the home is inside of a denied region, returns false
+	 */
+	
+	public boolean validHomeRegion(Player player, String name) {
+		Location home = getHome(player, name);
+		
+		if (home == null)
+			return false;
+		
+		WorldGuardPlugin wg = plugin.getWorldGuard();
+		if (wg != null)
+		{
+			Vector pt = toVector(home); // This also takes a location
+			LocalPlayer lp = wg.wrapPlayer(player);
+			 
+			RegionManager regionManager = wg.getRegionManager(home.getWorld());
+			ApplicableRegionSet set = regionManager.getApplicableRegions(pt);
+			if (set.isMemberOfAll(lp))
+				return true; //if they are members of a region, they can use a /home to go there and ignore this check.
+			for (Iterator<ProtectedRegion> i = set.iterator(); i.hasNext();)
+			{
+				ProtectedRegion pr = i.next();
+				if (Settings.isRegionBlocked(home.getWorld().getName(), pr.getId()))
+				{
+					System.out.println("Player's home " + name + " was rejected; it is inside of denied region " + pr.getId());
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public boolean validHomeTowny(Player player, String name) {
+		Location home = getHome(player, name);
+		
+		if (home == null)
+			return false;
+
+		Towny towny = plugin.getTowny();
+		
+		if (towny != null)
+		{
+			Coord c = Coord.parseCoord(home);
+			try{
+				towny.getTownyUniverse();
+				WorldCoord wc = new WorldCoord(TownyUniverse.getWorld(player.getWorld().getName()), c);
+				TownBlock tb = wc.getTownBlock();
+				Town t = tb.getTown();
+				if (t.hasResident(player.getName()))
+				{
+//					System.out.println("Player is a resident of this town; home is valid");
+					return true;
+				}
+				else
+				{
+					Resident owner;
+					try{
+						owner = tb.getResident();
+					} catch (NotRegisteredException e)
+					{
+						owner = t.getMayor();
+					}
+					Resident homer = towny.getTownyUniverse().getResident(player.getName());
+					if (owner.hasFriend(homer)||owner.equals(homer))
+					{
+//						System.out.println("Player is a friend of the destination's owner; home is valid");
+						return true;
+					}
+					System.out.println("Player's home " + name + " was rejected; they are not a resident of " + t.getName() + " nor are they friends with plot owner " + owner.getName());
+					return false;
+				}
+			}
+			catch (NotRegisteredException e)
+			{
+//				System.out.println("Destination plot is not registered; assuming it is wilderness and therefore a valid home");
+				return true;
+			}
+		}
+		return true;
+	}
+	
+	/*
+	 * /JOREN
+	 */
+	
 	/**
 	 * Adds the home location for the specified player. If home location already exists, updates the location.
 	 * @param player Owner of the home.

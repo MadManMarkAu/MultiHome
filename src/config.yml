@@ -75,6 +75,9 @@ MultiHome:
         econDeductedForHome: '{AMOUNT} was removed from your account for going home.'
         econDeductForSet: '{AMOUNT} was removed from your account for setting a home.'
         econNotEnoughFunds: 'You did not have {AMOUNT} to do that.'
+    denyregions:" + newline);
+        world:" + newline);
+            exampleregionname: false" + newline);
     default:
         warmup: 0
         cooldown: 0

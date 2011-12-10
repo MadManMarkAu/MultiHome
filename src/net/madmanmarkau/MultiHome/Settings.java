@@ -150,10 +150,25 @@ public class Settings {
 		return Config.getBoolean("MultiHome.enableEconomy", false);
 	}
 
+	/**
+	 * JOREN
+	 * 
+	 * Returns true if region is blocked
+	 */
+	
+	public static boolean isRegionBlocked(String world, String region)
+	{
+		return Config.getBoolean("MultiHome.denyregions." + world + "." + region, false);
+	}
+	
 	public static boolean isPermissiveGroupHandlingEnabled() {
 		return Config.getBoolean("MultiHome.permissiveGroupHandling", true);
 	}
 	
+	/*
+	 * /JOREN
+	 */
+
 	public static int getSetNamedHomeCost(Player player) {
 		return getSettingInt(player, "setNamedHomeCost", 0, !permissiveGroupHandling, false);
 	}
