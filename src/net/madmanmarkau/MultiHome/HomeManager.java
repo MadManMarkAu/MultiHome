@@ -133,7 +133,7 @@ public class HomeManager {
 					 */
 					if (plugin.getServer().getWorld(thisLocation.getWorld())==null)
 					{
-						System.out.println(player + "'s home \"" + thisLocation.getHomeName() + "\" is located in a world \"" + thisLocation.getWorld() + "\" which does not exist.");
+						Messaging.logWarning(player + "'s home \"" + thisLocation.getHomeName() + "\" is located in a world \"" + thisLocation.getWorld() + "\" which does not exist.", plugin);
 						return null;
 					}
 					/*
@@ -176,7 +176,7 @@ public class HomeManager {
 				ProtectedRegion pr = i.next();
 				if (Settings.isRegionBlocked(home.getWorld().getName(), pr.getId()))
 				{
-					System.out.println("Player's home " + name + " was rejected; it is inside of denied region " + pr.getId());
+					Messaging.logInfo("Player's home " + name + " was rejected; it is inside of denied region " + pr.getId(), plugin);
 					return false;
 				}
 			}
@@ -201,10 +201,7 @@ public class HomeManager {
 				TownBlock tb = wc.getTownBlock();
 				Town t = tb.getTown();
 				if (t.hasResident(player.getName()))
-				{
-//					System.out.println("Player is a resident of this town; home is valid");
-					return true;
-				}
+					return true; // Members of a town can home to any plot in the town
 				else
 				{
 					Resident owner;
@@ -212,22 +209,18 @@ public class HomeManager {
 						owner = tb.getResident();
 					} catch (NotRegisteredException e)
 					{
-						owner = t.getMayor();
+						owner = t.getMayor(); // If plot is not sold, treat the mayor as owner
 					}
 					Resident homer = towny.getTownyUniverse().getResident(player.getName());
 					if (owner.hasFriend(homer)||owner.equals(homer))
-					{
-//						System.out.println("Player is a friend of the destination's owner; home is valid");
-						return true;
-					}
-					System.out.println("Player's home " + name + " was rejected; they are not a resident of " + t.getName() + " nor are they friends with plot owner " + owner.getName());
+						return true; // Either the person is friends with or IS the owner.  Yes, an owner should always be a member of the town, but they may choose to change that someday?
+					Messaging.logInfo("Player's home " + name + " was rejected; they are not a resident of " + t.getName() + " nor are they friends with plot owner " + owner.getName(), plugin);
 					return false;
 				}
 			}
 			catch (NotRegisteredException e)
 			{
-//				System.out.println("Destination plot is not registered; assuming it is wilderness and therefore a valid home");
-				return true;
+				return true; // Assuming plot is not part of Towny
 			}
 		}
 		return true;
