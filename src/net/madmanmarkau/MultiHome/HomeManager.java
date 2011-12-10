@@ -133,7 +133,7 @@ public class HomeManager {
 					 */
 					if (plugin.getServer().getWorld(thisLocation.getWorld())==null)
 					{
-						System.out.println("Player attempted to use a home in world " + thisLocation.getWorld() + ", but that world is not currently loaded.");
+						System.out.println(player + "'s home \"" + thisLocation.getHomeName() + "\" is located in a world \"" + thisLocation.getWorld() + "\" which does not exist.");
 						return null;
 					}
 					/*
