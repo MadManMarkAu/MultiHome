@@ -128,13 +128,18 @@ public class HomeManager {
 	
 			for (HomeLocation thisLocation : homes) {
 				if (thisLocation.getHomeName().compareToIgnoreCase(name) == 0) {
+					/*
+					 * JOREN
+					 */
 					if (plugin.getServer().getWorld(thisLocation.getWorld())==null)
 					{
 						System.out.println("Player attempted to use a home in world " + thisLocation.getWorld() + ", but that world is not currently loaded.");
 						return null;
 					}
-					else
-						return thisLocation.getHomeLocation(plugin.getServer());
+					/*
+					 * /JOREN
+					 */
+					return thisLocation.getHomeLocation(plugin.getServer());
 				}
 			}
 		}
