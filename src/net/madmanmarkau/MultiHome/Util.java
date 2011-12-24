@@ -100,7 +100,7 @@ public class Util {
 		player.teleport(location);
 
 		// Schedule a task to re-send the chunk
-		backupTask = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new ChunkResendTask(location), 1 * 20); // 1 second delay
+		backupTask = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new ChunkResendTask(location), 1); // 1/20 second delay
 		
 		if (backupTask == -1) {
 			Messaging.logSevere("Failed to create chunk resend schedule!", plugin);
