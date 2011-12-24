@@ -12,6 +12,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
+/**
+ * JOREN
+ */
+import com.palmergames.bukkit.towny.Towny;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+/*
+ * /JOREN 
+ */
+
 public class MultiHome extends JavaPlugin {
 	public HomeManager homes;
 	public InviteManager invites;
@@ -253,4 +262,33 @@ public class MultiHome extends JavaPlugin {
 
 		}
     }
+    
+    /**
+     * JOREN
+     */
+    
+    protected Towny getTowny() {
+    	Plugin plugin = getServer().getPluginManager().getPlugin("Towny");
+    	
+        // Towny may not be loaded
+    	if (plugin == null || !(plugin instanceof Towny)) {
+            return null;
+        }
+    	return (Towny) plugin;
+    }
+    
+    protected WorldGuardPlugin getWorldGuard() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+     
+        // WorldGuard may not be loaded
+        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+            return null;
+        }
+     
+        return (WorldGuardPlugin) plugin;
+    }
+    
+    /*
+     * /JOREN
+     */
 }

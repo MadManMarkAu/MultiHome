@@ -86,7 +86,7 @@ public class HomePermissions {
 		return blnHasPermission;
 	}
 
-	public static String getGroup(String world, String player) {
+/*	public static String getGroup(String world, String player) {
 		String[] groups = {};
 		
 		if (world != null && world.length() > 0 && player != null && player.length() > 0) {
@@ -123,5 +123,46 @@ public class HomePermissions {
 		}
 
 		return "default";
+	}
+*/
+
+	public static String[] getGroups(String world, String player) {
+		String[] groups = {"default"};
+
+		if (world != null && world.length() > 0 && player != null && player.length() > 0) {
+			switch (handler) {
+				case PERMISSIONSEX:
+					groups = PermissionsEx.getPermissionManager().getUser(player).getGroupsNames();
+					
+					if (groups != null && groups.length > 0) {
+						return groups;
+					}
+					break;
+					
+				case PERMISSIONS:
+					groups = ((Permissions) permissionPlugin).getHandler().getGroups(world, player);
+					
+					if (groups != null && groups.length > 0) {
+						return groups;
+					}
+					break;
+					
+				case PERMISSIONSBUKKIT:
+					List<Group> playerGroups;
+					
+					playerGroups = ((PermissionsPlugin) permissionPlugin).getGroups(player);
+					
+					if (playerGroups != null && playerGroups.size() > 0) {
+						groups = new String[playerGroups.size()];
+						for (int i=0; i<playerGroups.size(); i++)
+							groups[i]=playerGroups.get(i).getName();
+						return groups;
+					}
+					break;
+				case SUPERPERMS:
+					break; // Groups not supported.
+			}
+		}
+		return groups;
 	}
 }

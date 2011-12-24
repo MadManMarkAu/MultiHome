@@ -5,6 +5,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -13,6 +15,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class Settings {
 	private static YamlConfiguration Config;
 	private static MultiHome plugin;
+	private static boolean permissiveGroupHandling = true;
 	
 	public static void initialize(MultiHome plugin) {
 		Settings.plugin = plugin;
@@ -47,8 +50,12 @@ public class Settings {
 		} catch (Exception e) {
 			Messaging.logSevere("Could not load the configuration file: " + e.getMessage(), plugin);
 		}
+		
+		permissiveGroupHandling = isPermissiveGroupHandlingEnabled();
+		
     }
 
+/*
 	public static int getSettingInt(Player player, String setting, int defaultValue) {
 		// Get the player group
 		String playerGroup = HomePermissions.getGroup(player.getWorld().getName(), player.getName());
@@ -64,8 +71,61 @@ public class Settings {
 		// Get from default
 		return Config.getInt("MultiHome.default." + setting, defaultValue);
 	}
+	*/
+	public static int getSettingInt(Player player, String setting, int defaultValue, boolean findMax, boolean negativeMax) {
+		// Get the player group
+		String[] playerGroups = HomePermissions.getGroups(player.getWorld().getName(), player.getName());
+		
+		List <Integer> settings = new ArrayList<Integer>();
+		
+		if (playerGroups != null)
+		{
+			for (int i=0; i<playerGroups.length; i++)
+				
+			// Player group found
+			if (Config.isSet("MultiHome.groups." + playerGroups[i] + "." + setting))
+				// Settings for player group exists.
+				settings.add(Config.getInt("MultiHome.groups." + playerGroups[i] + "." + setting, defaultValue));
+		}
+		if (settings.size() == 0)
+		// Get from default
+			settings.add(Config.getInt("MultiHome.default." + setting, defaultValue));
+		
+		int settingValue = settings.get(0);
+		for (int i=1; i<settings.size(); i++)
+		{
+			int test=settings.get(i);
+			if ((test == -1) && findMax && negativeMax)
+				return -1;
+			if ((settings.get(i) > settingValue)==(findMax))
+			{
+				settingValue = settings.get(i);
+			}
+		}
+		return settingValue;
+	}
 
-	public static String getSettingString(Player player, String setting, String defaultValue) {
+	public static boolean getSettingBoolean(Player player, String setting, boolean defaultValue, boolean findTrue) {
+		// Get the player group
+		String[] playerGroups = HomePermissions.getGroups(player.getWorld().getName(), player.getName());
+		
+		boolean settingValue = !findTrue; // If true trumps false, start with false and look for true.  If false trumps true, start with true and look for false.
+		
+		if (playerGroups != null)
+		{
+			for (int i=0; i<playerGroups.length; i++)
+				
+			// Player group found
+			if (Config.isSet("MultiHome.groups." + playerGroups[i] + "." + setting))
+				// Settings for player group exists.
+				if (Config.getBoolean("MultiHome.groups." + playerGroups[i] + "." + setting, defaultValue)!=settingValue)
+					return !settingValue; // If it's different from the starting point, then it trumps the starting point and should be returned
+			return settingValue; // Otherwise, nothing was found so return the starting value; 
+		}
+		return defaultValue; // None of the groups even had this setting; return default.
+	}
+
+/*	public static String getSettingString(Player player, String setting, String defaultValue) {
 		// Get the player group
 		String playerGroup = HomePermissions.getGroup(player.getWorld().getName(), player.getName());
 		
@@ -80,6 +140,7 @@ public class Settings {
 		// Get from default
 		return Config.getString("MultiHome.default." + setting, defaultValue);
 	}
+	*/
 	
 	public static boolean isHomeOnDeathEnabled() {
 		return Config.getBoolean("MultiHome.enableHomeOnDeath", false);
@@ -89,40 +150,60 @@ public class Settings {
 		return Config.getBoolean("MultiHome.enableEconomy", false);
 	}
 
+	/**
+	 * JOREN
+	 * 
+	 * Returns true if region is blocked
+	 */
+	
+	public static boolean isRegionBlocked(String world, String region)
+	{
+		return Config.getBoolean("MultiHome.denyregions." + world + "." + region, false);
+	}
+	
+	public static boolean isPermissiveGroupHandlingEnabled() {
+		return Config.getBoolean("MultiHome.permissiveGroupHandling", true);
+	}
+	
+	/*
+	 * /JOREN
+	 */
+
 	public static int getSetNamedHomeCost(Player player) {
-		return getSettingInt(player, "setNamedHomeCost", 0);
+		return getSettingInt(player, "setNamedHomeCost", 0, !permissiveGroupHandling, false);
 	}
 
 	public static int getSetHomeCost(Player player) {
-		return getSettingInt(player, "setHomeCost", 0);
+		return getSettingInt(player, "setHomeCost", 0, !permissiveGroupHandling, false);
 	}
 
 	public static int getHomeCost (Player player) {
-		return getSettingInt(player, "homeCost", 0);
+		return getSettingInt(player, "homeCost", 0, !permissiveGroupHandling, false);
 	}
 
 	public static int getNamedHomeCost(Player player) {
-		return getSettingInt(player, "namedHomeCost", 0);
+		return getSettingInt(player, "namedHomeCost", 0, !permissiveGroupHandling, false);
 	}
 	
 	public static int getOthersHomeCost(Player player) {
-		return getSettingInt(player, "othersHomeCost", 0);
+		return getSettingInt(player, "othersHomeCost", 0, !permissiveGroupHandling, false);
 	}
 
 	public static int getSettingWarmup(Player player) {
-		return getSettingInt(player, "warmup", 0);
+		return getSettingInt(player, "warmup", 0, !permissiveGroupHandling, false);
 	}
 	
 	public static int getSettingCooldown(Player player) {
-		return getSettingInt(player, "cooldown", 0);
+		return getSettingInt(player, "cooldown", 0, !permissiveGroupHandling, false);
 	}
 	
 	public static int getSettingMaxHomes(Player player) {
-		return getSettingInt(player, "maxhomes", -1);
+		return getSettingInt(player, "maxhomes", -1, !permissiveGroupHandling, true);
 	}
 	
 	public static boolean getSettingDisrupt(Player player) {
-		return getSettingInt(player, "disruptWarmup", 1) == 1 ? true : false;
+//		return getSettingInt(player, "disruptWarmup", 1) == 1 ? true : false;
+		return getSettingBoolean(player, "disruptWarmup", false, permissiveGroupHandling);
 	}
 	
 	public static void sendMessageTooManyParameters(CommandSender sender) {

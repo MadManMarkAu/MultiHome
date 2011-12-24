@@ -7,10 +7,36 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+/*
+ * JOREN
+ */
+
+import com.palmergames.bukkit.towny.NotRegisteredException;
+import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.object.Coord;
+import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.TownBlock;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
+import com.palmergames.bukkit.towny.object.WorldCoord;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import static com.sk89q.worldguard.bukkit.BukkitUtil.*;
+
+/*
+ * /JOREN
+ */
+
 
 /**
  * Manages a database of player home locations.
@@ -102,6 +128,17 @@ public class HomeManager {
 	
 			for (HomeLocation thisLocation : homes) {
 				if (thisLocation.getHomeName().compareToIgnoreCase(name) == 0) {
+					/*
+					 * JOREN
+					 */
+					if (plugin.getServer().getWorld(thisLocation.getWorld())==null)
+					{
+						Messaging.logWarning(player + "'s home \"" + thisLocation.getHomeName() + "\" is located in a world \"" + thisLocation.getWorld() + "\" which does not exist.", plugin);
+						return null;
+					}
+					/*
+					 * /JOREN
+					 */
 					return thisLocation.getHomeLocation(plugin.getServer());
 				}
 			}
@@ -110,6 +147,89 @@ public class HomeManager {
 		return null;
 	}
 
+	/*
+	 * JOREN
+	 */
+	
+	/**
+	 * If the home is inside of a denied region, returns false
+	 */
+	
+	public boolean validHomeRegion(Player player, String name) {
+		Location home = getHome(player, name);
+		
+		if (home == null)
+			return false;
+		
+		WorldGuardPlugin wg = plugin.getWorldGuard();
+		if (wg != null)
+		{
+			Vector pt = toVector(home); // This also takes a location
+			LocalPlayer lp = wg.wrapPlayer(player);
+			 
+			RegionManager regionManager = wg.getRegionManager(home.getWorld());
+			ApplicableRegionSet set = regionManager.getApplicableRegions(pt);
+			if (set.isMemberOfAll(lp))
+				return true; //if they are members of a region, they can use a /home to go there and ignore this check.
+			for (Iterator<ProtectedRegion> i = set.iterator(); i.hasNext();)
+			{
+				ProtectedRegion pr = i.next();
+				if (Settings.isRegionBlocked(home.getWorld().getName(), pr.getId()))
+				{
+					Messaging.logInfo("Player's home " + name + " was rejected; it is inside of denied region " + pr.getId(), plugin);
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public boolean validHomeTowny(Player player, String name) {
+		Location home = getHome(player, name);
+		
+		if (home == null)
+			return false;
+
+		Towny towny = plugin.getTowny();
+		
+		if (towny != null)
+		{
+			Coord c = Coord.parseCoord(home);
+			try{
+				towny.getTownyUniverse();
+				WorldCoord wc = new WorldCoord(TownyUniverse.getWorld(player.getWorld().getName()), c);
+				TownBlock tb = wc.getTownBlock();
+				Town t = tb.getTown();
+				if (t.hasResident(player.getName()))
+					return true; // Members of a town can home to any plot in the town
+				else
+				{
+					Resident owner;
+					try{
+						owner = tb.getResident();
+					} catch (NotRegisteredException e)
+					{
+						owner = t.getMayor(); // If plot is not sold, treat the mayor as owner
+					}
+					Resident homer = towny.getTownyUniverse().getResident(player.getName());
+					if (owner.hasFriend(homer)||owner.equals(homer))
+						return true; // Either the person is friends with or IS the owner.  Yes, an owner should always be a member of the town, but they may choose to change that someday?
+					Messaging.logInfo("Player's home " + name + " was rejected; they are not a resident of " + t.getName() + " nor are they friends with plot owner " + owner.getName(), plugin);
+					return false;
+				}
+			}
+			catch (NotRegisteredException e)
+			{
+				return true; // Assuming plot is not part of Towny
+			}
+		}
+		return true;
+	}
+	
+	/*
+	 * /JOREN
+	 */
+	
 	/**
 	 * Adds the home location for the specified player. If home location already exists, updates the location.
 	 * @param player Owner of the home.
