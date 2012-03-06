@@ -12,7 +12,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 import com.platymuus.bukkit.permissions.Group;
-import  com.platymuus.bukkit.permissions.PermissionsPlugin;
+import com.platymuus.bukkit.permissions.PermissionsPlugin;
 
 /**
 *
