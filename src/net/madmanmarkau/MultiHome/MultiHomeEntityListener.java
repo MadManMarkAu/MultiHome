@@ -1,19 +1,22 @@
 package net.madmanmarkau.MultiHome;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityListener;
 
 /**
 * @author Sleaker
 */
-public class MultiHomeEntityListener extends EntityListener {
+public class MultiHomeEntityListener implements Listener {
 	MultiHome plugin;
 
 	MultiHomeEntityListener(MultiHome plugin) {
 		this.plugin = plugin;
 	}
 
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.isCancelled())
 			return;
