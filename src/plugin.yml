@@ -4,6 +4,7 @@ main: net.madmanmarkau.MultiHome.MultiHome
 authors:
  - MadManMarkAu
  - Sleaker
+ - HereInPlainSight
 license: WTFPL
 description: >
              Multiple home locations.
