@@ -16,14 +16,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ImportData {
-	@SuppressWarnings("unchecked")
+	// @SuppressWarnings("unchecked") // Likely my javafu is weak here.
 	public static void importHomesFromEssentials(BufferedWriter out, MultiHome plugin) {
 		File essentialsDir = new File("plugins" + File.separator + "Essentials" + File.separator + "userdata");
 		
 		if (essentialsDir.exists()) {
 			Messaging.logInfo("Importing home locations from Essentials...", plugin);
 			File[] userFiles = essentialsDir.listFiles();
-			List<Object> homeLocation;
+			List<?> homeLocation; // <?> should be <Object>.  But I couldn't compile that way.  So, my javafu is weak.
 			
 			for (File userFile : userFiles) {
 				try {
