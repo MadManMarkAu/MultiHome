@@ -1,3 +1,7 @@
+MultiHome is a plugin to allow your users to set multiple home locations, giving each location a unique name. Supports economy, warmup and cooldown, home-on-death.
+
+This project was developed in response to other multiple-home plugins only using home numbers. By using home names, it makes it so much easier to keep track of what home goes to what location.
+
 Authors:
 	MadManMarkAu
 	HereInPlainSight
