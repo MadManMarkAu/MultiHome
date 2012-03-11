@@ -16,7 +16,7 @@ public class MultiHomeEntityListener implements Listener {
 		this.plugin = plugin;
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.isCancelled())
 			return;
