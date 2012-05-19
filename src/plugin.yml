@@ -1,5 +1,5 @@
 name: MultiHome
-version: 0.11.3
+version: 0.12
 main: net.madmanmarkau.MultiHome.MultiHome
 authors:
  - MadManMarkAu
