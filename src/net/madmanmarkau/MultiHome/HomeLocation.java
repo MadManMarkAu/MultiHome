@@ -2,6 +2,7 @@ package net.madmanmarkau.MultiHome;
 
 import org.bukkit.Location;
 import org.bukkit.Server;
+import org.bukkit.World;
 
 public class HomeLocation {
 	private String homeName = "";
@@ -67,7 +68,17 @@ public class HomeLocation {
 	}
 
 	public Location getHomeLocation(Server server) {
-		return new Location(server.getWorld(this.world), this.X, this.Y, this.Z, this.yaw, this.pitch);
+		World world;
+		
+		try {
+			world = server.getWorld(this.world);
+			
+			if (world != null) {
+				return new Location(server.getWorld(this.world), this.X, this.Y, this.Z, this.yaw, this.pitch);
+			}
+		} catch (Exception ex) {}
+		
+		return null;
 	}
 
 	public void setHomeLocation(Location location) {

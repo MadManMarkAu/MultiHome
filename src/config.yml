@@ -7,8 +7,8 @@
 #     cannotDeleteDefaultHomeMessage: Message for when player tries to delete deafult home. Variables: none
 #     homeSetMessage: Message for when home is set. Variables: {HOME}
 #     homeDeletedMessage: Message for when home deleted. Variables: {HOME}
-#     noHomeMessage: Message for when home not found. Variables: {HOME}
-#     noDefaultHomeMessage: Message for when default home not found.
+#     noHomeMessage: Message for when home not found or world not loaded. Variables: {HOME}
+#     noDefaultHomeMessage: Message for when default home not found or world not loaded.
 #     noPlayerMessage: Message for when target player not found. Variables: {PLAYER}'
 #     warmupMessage: Message for when home warmup initiated. Variables: {SECONDS}
 #     warmupCompleteMessage: Message for when home warmup completes. Variables: none
@@ -51,8 +51,8 @@ MultiHome:
         cannotDeleteDefaultHomeMessage: 'You cannot delete your default home location.'
         homeSetMessage: 'Home {HOME} set.'
         homeDeletedMessage: 'Home {HOME} deleted.'
-        noHomeMessage: 'Home {HOME} not set.'
-        noDefaultHomeMessage: 'Home not set.'
+        noHomeMessage: 'Home {HOME} not set or world not loaded.'
+        noDefaultHomeMessage: 'Home not set or world not loaded.'
         noPlayerMessage: 'Player {PLAYER} not found.'
         warmupMessage: 'Home initiated. Transfer in {SECONDS} seconds.'
         warmupCompleteMessage: 'Teleporting now!'
