@@ -61,6 +61,7 @@ public class MultiHomeEconManager {
 			if (vault != null) {
 				return vault.has(player, amount);
 			}
+			break;
 		}
 		
 		return true;
@@ -84,6 +85,7 @@ public class MultiHomeEconManager {
 			if (vault != null) {
 				return vault.bankWithdraw(player, amount).transactionSuccess();
 			}
+			break;
 		}
 
 		return true;
@@ -105,6 +107,7 @@ public class MultiHomeEconManager {
 			if (vault != null) {
 				return vault.format(amount);
 			}
+			break;
 		}
 
 		return amount+"";

@@ -77,6 +77,7 @@ public class HomePermissions {
 		switch (handler) {
 			case VAULT:
 				blnHasPermission = vault.has(player, permission);
+				break;
 			case PERMISSIONSEX:
 				blnHasPermission = PermissionsEx.getPermissionManager().has(player, permission);
 				break;
