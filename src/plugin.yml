@@ -1,10 +1,18 @@
 name: MultiHome
-version: 0.12
+version: 0.13
 main: net.madmanmarkau.MultiHome.MultiHome
 authors:
  - MadManMarkAu
  - Sleaker
  - HereInPlainSight
+website: http://dev.bukkit.org/server-mods/multihome/
+softdepend:
+ - Register
+ - Vault
+ - Permissions
+ - PermissionsEx
+ - PermissionsBukkit
+ - PermissionsBukkit1-1
 license: WTFPL
 description: >
              Multiple home locations.
