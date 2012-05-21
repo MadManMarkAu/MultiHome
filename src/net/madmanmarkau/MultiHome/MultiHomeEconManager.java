@@ -11,7 +11,7 @@ import com.nijikokun.register.payment.*;
 public class MultiHomeEconManager {
 
 	public static EconomyHandler handler;
-	public static Economy vault = null;
+	private static Economy vault = null;
 	public static MultiHome plugin;
 
 	public enum EconomyHandler {
@@ -30,10 +30,10 @@ public class MultiHomeEconManager {
 				return;
 			}
 
-	        RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-	        if (economyProvider != null) {
+	        RegisteredServiceProvider<Economy> vaultEconomyProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+	        if (vaultEconomyProvider != null) {
 				handler = EconomyHandler.VAULT;
-	        	vault = economyProvider.getProvider();
+	        	vault = vaultEconomyProvider.getProvider();
 				Messaging.logInfo("Economy enabled using: Vault", plugin);
 				return;
 	        }
