@@ -2,9 +2,12 @@ package net.madmanmarkau.MultiHome;
 
 import java.util.List;
 
+import net.milkbowl.vault.permission.Permission;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -22,10 +25,10 @@ import com.platymuus.bukkit.permissions.PermissionsPlugin;
 public class HomePermissions {
 	private static PermissionsHandler handler;
 	private static Plugin permissionPlugin = null;
-
+	private static Permission vault = null;
 
 	private enum PermissionsHandler {
-		PERMISSIONSEX, PERMISSIONS, PERMISSIONSBUKKIT, SUPERPERMS, NONE
+		VAULT, PERMISSIONSEX, PERMISSIONS, PERMISSIONSBUKKIT, SUPERPERMS, NONE
 	}
 
 	public static boolean initialize(JavaPlugin plugin) {
@@ -33,8 +36,14 @@ public class HomePermissions {
 		Plugin permex = Bukkit.getServer().getPluginManager().getPlugin("PermissionsEx");
 		Plugin bukkitperms = Bukkit.getServer().getPluginManager().getPlugin("PermissionsBukkit");
 		Plugin bukkitperms1_1 = Bukkit.getServer().getPluginManager().getPlugin("PermissionsBukkit-1.1");
+		RegisteredServiceProvider<Permission> vaultPermissionProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
 
-		if (permex != null) {
+        if (vaultPermissionProvider != null) {
+        	vault = vaultPermissionProvider.getProvider();
+			handler = PermissionsHandler.VAULT;
+			Messaging.logInfo("Using Vault for permissions system.", plugin);
+			return true;
+        } else if (permex != null) {
 			permissionPlugin = permex;
 			handler = PermissionsHandler.PERMISSIONSEX;
 			Messaging.logInfo("Using PermissionsEx for permissions system.", plugin);
@@ -66,6 +75,8 @@ public class HomePermissions {
 		boolean blnHasPermission;
 
 		switch (handler) {
+			case VAULT:
+				blnHasPermission = vault.has(player, permission);
 			case PERMISSIONSEX:
 				blnHasPermission = PermissionsEx.getPermissionManager().has(player, permission);
 				break;
@@ -86,11 +97,14 @@ public class HomePermissions {
 		return blnHasPermission;
 	}
 
-	public static String getGroup(String world, String player) {
+	public static String getGroup(Player player) {
 		String[] groups = {};
 		
-		if (world != null && world.length() > 0 && player != null && player.length() > 0) {
+		if (player != null) {
 			switch (handler) {
+				case VAULT:
+					return vault.getPrimaryGroup(player);
+					
 				case PERMISSIONSEX:
 					groups = PermissionsEx.getPermissionManager().getUser(player).getGroupsNames();
 					
@@ -100,7 +114,7 @@ public class HomePermissions {
 					break;
 					
 				case PERMISSIONS:
-					groups = ((Permissions) permissionPlugin).getHandler().getGroups(world, player);
+					groups = ((Permissions) permissionPlugin).getHandler().getGroups(player.getWorld().getName(), player.getName());
 					
 					if (groups != null && groups.length > 0) {
 						return groups[0];
@@ -110,7 +124,7 @@ public class HomePermissions {
 				case PERMISSIONSBUKKIT:
 					List<Group> playerGroups;
 					
-					playerGroups = ((PermissionsPlugin) permissionPlugin).getGroups(player);
+					playerGroups = ((PermissionsPlugin) permissionPlugin).getGroups(player.getName());
 					
 					if (playerGroups != null && playerGroups.size() > 0) {
 						return playerGroups.get(0).getName();
