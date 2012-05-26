@@ -43,7 +43,7 @@ public class MultiHome extends JavaPlugin {
 		if (!HomePermissions.initialize(this)) return;
 		disableEssentials();
 		Settings.initialize(this);
-		Settings.loadSettings(new File(pluginDataPath + "config.yml"));
+		Settings.loadSettings();
 		MultiHomeEconManager.initialize(this);
 		
 		this.homes.loadHomes();
