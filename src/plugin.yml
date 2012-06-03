@@ -13,6 +13,7 @@ softdepend:
  - PermissionsEx
  - PermissionsBukkit
  - PermissionsBukkit1-1
+ - EssentialsHome
 license: WTFPL
 description: >
              Multiple home locations.
