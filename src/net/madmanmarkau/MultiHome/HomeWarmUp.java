@@ -154,7 +154,7 @@ public class HomeWarmUp implements Runnable {
 					if (!MultiHomeEconManager.chargePlayer(player.getName(), amount)) {
 						Settings.sendMessageNotEnoughMoney(player, amount);
 						this.taskExecuted = true;
-						this.plugin.warmups.callbackTaskComplete(this);
+						this.plugin.getWarmUpManager().callbackTaskComplete(this);
 						return;
 					} else
 						Settings.sendMessageDeductForHome(player, amount);
@@ -165,11 +165,11 @@ public class HomeWarmUp implements Runnable {
 				Util.teleportPlayer(this.player, location, plugin);
 
 				int cooldownTime = Settings.getSettingCooldown(player);
-				if (cooldownTime > 0) plugin.cooldowns.addCooldown(player.getName(), Util.dateInFuture(cooldownTime));
+				if (cooldownTime > 0) plugin.getCoolDownManager().addCooldown(player.getName(), Util.dateInFuture(cooldownTime));
 			}
 		}
 		this.taskExecuted = true;
 		
-		this.plugin.warmups.callbackTaskComplete(this);
+		this.plugin.getWarmUpManager().callbackTaskComplete(this);
 	}
 }

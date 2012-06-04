@@ -7,12 +7,12 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MultiHome extends JavaPlugin {
-	public HomeManager homes;
-	public InviteManager invites;
-	public WarmUpManager warmups;
-	public CoolDownManager cooldowns;
-	public MultiHomeCommandExecutor commandExecutor;
+	private HomeManager homes;
+	private InviteManager invites;
+	private WarmUpManager warmups;
+	private CoolDownManager cooldowns;
 
+	private MultiHomeCommandExecutor commandExecutor;
 	private MultiHomePlayerListener playerListener = new MultiHomePlayerListener(this);
 	private MultiHomeEntityListener entityListener = new MultiHomeEntityListener(this);
 	
@@ -93,5 +93,21 @@ public class MultiHome extends JavaPlugin {
     	getCommand("mlistinvites").setExecutor(commandExecutor);
     	getCommand("listmyinvites").setExecutor(commandExecutor);
     	getCommand("mlistmyinvites").setExecutor(commandExecutor);
+    }
+    
+    public HomeManager getHomeManager() {
+    	return homes;
+    }
+    
+    public InviteManager getInviteManager() {
+    	return invites;
+    }
+    
+    public WarmUpManager getWarmUpManager() {
+    	return warmups;
+    }
+    
+    public CoolDownManager getCoolDownManager() {
+    	return cooldowns;
     }
 }

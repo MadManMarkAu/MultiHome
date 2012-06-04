@@ -25,8 +25,8 @@ public class MultiHomeEntityListener implements Listener {
 			return;
 		else {
 			Player player = (Player) event.getEntity();
-			if (plugin.warmups.getWarmup(player.getName().toLowerCase()) != null && Settings.getSettingDisrupt(player)) {
-				plugin.warmups.removeWarmup(player.getName().toLowerCase());
+			if (plugin.getWarmUpManager().getWarmup(player.getName().toLowerCase()) != null && Settings.getSettingDisrupt(player)) {
+				plugin.getWarmUpManager().removeWarmup(player.getName().toLowerCase());
 				Settings.sendMessageWarmupDisrupted(player);
 			}
 		}

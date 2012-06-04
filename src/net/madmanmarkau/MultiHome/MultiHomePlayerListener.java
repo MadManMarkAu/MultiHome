@@ -19,7 +19,7 @@ public class MultiHomePlayerListener implements Listener {
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
 		if (HomePermissions.has(player, "multihome.homeondeath") && Settings.isHomeOnDeathEnabled()) {
-			Location location = plugin.homes.getHome(player, "");
+			Location location = plugin.getHomeManager().getHome(player, "");
 			
 			if (location != null) {
 				event.setRespawnLocation(location);
@@ -31,6 +31,6 @@ public class MultiHomePlayerListener implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		String player = event.getPlayer().getName();
 		
-		plugin.warmups.removeWarmup(player);
+		plugin.getWarmUpManager().removeWarmup(player);
 	}
 }
