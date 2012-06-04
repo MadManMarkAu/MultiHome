@@ -12,6 +12,8 @@ public class MultiHome extends JavaPlugin {
 	private WarmUpManager warmups;
 	private CoolDownManager cooldowns;
 
+	private String pluginDataPath;
+	
 	private MultiHomeCommandExecutor commandExecutor;
 	private MultiHomePlayerListener playerListener = new MultiHomePlayerListener(this);
 	private MultiHomeEntityListener entityListener = new MultiHomeEntityListener(this);
@@ -25,31 +27,37 @@ public class MultiHome extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		String pluginDataPath = this.getDataFolder().getAbsolutePath() + File.separator;
+		pluginDataPath = this.getDataFolder().getAbsolutePath() + File.separator;
 		
 		File dataPath = new File(pluginDataPath);
 		if (!dataPath.exists()) {
 			dataPath.mkdirs();
 		}
 
-		this.homes = new HomeManager(new File(pluginDataPath + "homes.txt"), this);
-		this.invites = new InviteManager(new File(pluginDataPath + "invites.txt"), this);
-		this.warmups = new WarmUpManager(new File(pluginDataPath + "warmups.txt"), this);
-		this.cooldowns = new CoolDownManager(new File(pluginDataPath + "cooldowns.txt"), this);
-
-		setupCommands();
-		
 		if (!HomePermissions.initialize(this)) return;
 		disableEssentials();
 		Settings.initialize(this);
 		Settings.loadSettings();
 		MultiHomeEconManager.initialize(this);
+
+		this.homes = new HomeManagerFile(this);
+		this.invites = new InviteManager(new File(pluginDataPath + "invites.txt"), this);
+		this.warmups = new WarmUpManager(new File(pluginDataPath + "warmups.txt"), this);
+		this.cooldowns = new CoolDownManager(new File(pluginDataPath + "cooldowns.txt"), this);
 		
-		this.homes.loadHomes();
 		this.invites.loadInvites();
 		this.warmups.loadWarmups();
 		this.cooldowns.loadCooldowns();
+
 		
+
+		/*ImportData.importHomesFromEssentials(out, this.plugin);
+		ImportData.importHomesFromMultipleHomes(out, this.plugin);
+		ImportData.importHomesFromMyHome(out, this.plugin);*/
+
+		
+		
+		setupCommands();
 		registerEvents();
 		
 		Messaging.logInfo("Version " + this.getDescription().getVersion() + " loaded.", this);
@@ -98,18 +106,22 @@ public class MultiHome extends JavaPlugin {
     }
     
     public HomeManager getHomeManager() {
-    	return homes;
+    	return this.homes;
     }
     
     public InviteManager getInviteManager() {
-    	return invites;
+    	return this.invites;
     }
     
     public WarmUpManager getWarmUpManager() {
-    	return warmups;
+    	return this.warmups;
     }
     
     public CoolDownManager getCoolDownManager() {
-    	return cooldowns;
+    	return this.cooldowns;
+    }
+    
+    public String getPluginDataPath() {
+    	return this.pluginDataPath;
     }
 }

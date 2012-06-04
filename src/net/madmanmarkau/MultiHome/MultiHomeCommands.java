@@ -307,7 +307,7 @@ public class MultiHomeCommands {
 
 	public static void listHomes(MultiHome plugin, Player player) {
 		if (HomePermissions.has(player, "multihome.namedhome.list")) {
-			ArrayList<HomeLocation> homes = plugin.getHomeManager().listUserHomes(player);
+			ArrayList<HomeEntry> homes = plugin.getHomeManager().listUserHomes(player);
 
 			Settings.sendMessageHomeList(player, Util.compileHomeList(homes));
 		} else {
@@ -317,7 +317,7 @@ public class MultiHomeCommands {
 
 	public static void listPlayerHomes(MultiHome plugin, Player player, String owner) {
 		if (HomePermissions.has(player, "multihome.othershome.list")) {
-			ArrayList<HomeLocation> homes = plugin.getHomeManager().listUserHomes(owner);
+			ArrayList<HomeEntry> homes = plugin.getHomeManager().listUserHomes(owner);
 
 			Settings.sendMessageOthersHomeList(player, owner, Util.compileHomeList(homes));
 		} else {
@@ -326,7 +326,7 @@ public class MultiHomeCommands {
 	}
 
 	public static void listPlayerHomesConsole(MultiHome plugin, CommandSender sender, String owner) {
-		ArrayList<HomeLocation> homes = plugin.getHomeManager().listUserHomes(owner);
+		ArrayList<HomeEntry> homes = plugin.getHomeManager().listUserHomes(owner);
 
 		Settings.sendMessageOthersHomeList(sender, owner, Util.compileHomeList(homes));
 	}

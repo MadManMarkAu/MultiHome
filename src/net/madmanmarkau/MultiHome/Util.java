@@ -103,9 +103,9 @@ public class Util {
 		return new Date(now.getTime() + seconds * 1000);
 	}
 	
-	public static String compileHomeList(ArrayList<HomeLocation> homes) {
+	public static String compileHomeList(ArrayList<HomeEntry> homes) {
 		String userResponse = "";
-		for (HomeLocation thisLocation : homes) {
+		for (HomeEntry thisLocation : homes) {
 			if (thisLocation.getHomeName().length() == 0) {
 				userResponse = userResponse + ", [Default]";
 			} else {
