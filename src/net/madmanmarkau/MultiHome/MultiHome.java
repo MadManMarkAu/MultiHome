@@ -18,6 +18,8 @@ public class MultiHome extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
+		getServer().getScheduler().cancelTasks(this);
+		warmups.clearWarmups();
 		Messaging.logInfo("Version " + this.getDescription().getVersion() + " unloaded.", this);
 	}
 
