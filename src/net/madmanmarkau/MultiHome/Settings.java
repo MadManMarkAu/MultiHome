@@ -47,6 +47,18 @@ public class Settings {
 		return plugin.getConfig().getString("MultiHome.default." + setting, defaultValue);
 	}
 	
+	
+
+	public static String getDataStoreSettingString(String storeMethod, String setting) {
+		return plugin.getConfig().getString("MultiHome.dataStoreSettings." + storeMethod + "." + setting, "");
+	}
+
+	public static String getDataStoreMethod() {
+		return plugin.getConfig().getString("MultiHome.dataStoreMethod", "file");
+	}
+
+	
+	
 	public static boolean isHomeOnDeathEnabled() {
 		return plugin.getConfig().getBoolean("MultiHome.enableHomeOnDeath", false);
 	}

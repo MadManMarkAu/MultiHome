@@ -40,3 +40,18 @@ Permissions nodes:
 	
 	multihome.ignore.cooldown
 	multihome.ignore.warmup
+
+MySQL database table format:
+	CREATE TABLE `homes` (
+		`id` int(11) NOT NULL AUTO_INCREMENT,
+		`owner` varchar(50) NOT NULL,
+		`home` varchar(50) NOT NULL,
+		`world` varchar(50) NOT NULL,
+		`x` double NOT NULL,
+		`y` double NOT NULL,
+		`z` double NOT NULL,
+		`pitch` float NOT NULL,
+		`yaw` float NOT NULL,
+		PRIMARY KEY (`id`)
+	)
+	

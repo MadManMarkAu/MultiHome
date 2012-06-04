@@ -45,6 +45,7 @@
 MultiHome:
     enableHomeOnDeath: false
     enableEconomy: false
+    dataStoreMethod: file
     messages:
         tooManyParameters: 'Too many parameters.'
         defaultHomeSetMessage: 'Deafult home set.'
@@ -93,3 +94,10 @@ MultiHome:
             setNamedHomeCost: 0
             homeCost: 0
             namedHomeCost: 0
+    dataStoreSettings:
+        file:
+            filename: homes.txt
+        sql:
+            url: jdbc:mysql://localhost/MultiHome
+            user: MultiHome
+            pass: MultiHome

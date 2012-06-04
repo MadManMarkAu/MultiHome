@@ -27,6 +27,7 @@ public class MultiHome extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		String dataStoreMethod;
 		pluginDataPath = this.getDataFolder().getAbsolutePath() + File.separator;
 		
 		File dataPath = new File(pluginDataPath);
@@ -40,7 +41,6 @@ public class MultiHome extends JavaPlugin {
 		Settings.loadSettings();
 		MultiHomeEconManager.initialize(this);
 
-		this.homes = new HomeManagerFile(this);
 		this.invites = new InviteManager(new File(pluginDataPath + "invites.txt"), this);
 		this.warmups = new WarmUpManager(new File(pluginDataPath + "warmups.txt"), this);
 		this.cooldowns = new CoolDownManager(new File(pluginDataPath + "cooldowns.txt"), this);
@@ -48,6 +48,15 @@ public class MultiHome extends JavaPlugin {
 		this.invites.loadInvites();
 		this.warmups.loadWarmups();
 		this.cooldowns.loadCooldowns();
+
+		dataStoreMethod = Settings.getDataStoreMethod();
+		if (dataStoreMethod.compareToIgnoreCase("file") == 0) {
+			this.homes = new HomeManagerFile(this);
+		} else if (dataStoreMethod.compareToIgnoreCase("sql") == 0) {
+			this.homes = new HomeManagerMySQL(this);
+		} else {
+			this.homes = new HomeManagerFile(this);
+		}
 
 		
 
