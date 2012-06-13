@@ -135,6 +135,8 @@ public class HomeManagerMySQL extends HomeManager {
 	public void addHome(String player, String name, Location location) {
 		Connection connection = null;
 		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		boolean exists = false;
 
 		try {
 			connection = DriverManager.getConnection(url, user, password);
@@ -142,17 +144,39 @@ public class HomeManagerMySQL extends HomeManager {
 				throw new SQLException();
 			}
 
-			statement = connection.prepareStatement("INSERT INTO `homes`(`owner`, `home`, `world`, `x`, `y`, `z`, `pitch`, `yaw`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
-
+			statement = connection.prepareStatement("SELECT COUNT(*) FROM `homes` WHERE `owner` = ? AND `home` = ?;");
 			statement.setString(1, player.toLowerCase());
 			statement.setString(2, name.toLowerCase());
-			statement.setString(3, location.getWorld().getName());
-			statement.setDouble(4, location.getX());
-			statement.setDouble(5, location.getY());
-			statement.setDouble(6, location.getZ());
-			statement.setFloat(7, location.getPitch());
-			statement.setFloat(8, location.getYaw());
-			statement.execute();
+			resultSet = statement.executeQuery();
+			if (resultSet.first()) {
+				exists = resultSet.getInt(1) > 0;
+			}
+
+			if (exists) {
+				statement = connection.prepareStatement("UPDATE `homes` SET `world` = ?, `x` = ?, `y` = ?, `z` = ?, `pitch` = ?, `yaw` = ? WHERE `owner` = ? AND `home` = ?");
+
+				statement.setString(1, location.getWorld().getName());
+				statement.setDouble(2, location.getX());
+				statement.setDouble(3, location.getY());
+				statement.setDouble(4, location.getZ());
+				statement.setFloat(5, location.getPitch());
+				statement.setFloat(6, location.getYaw());
+				statement.setString(7, player.toLowerCase());
+				statement.setString(8, name.toLowerCase());
+				statement.execute();
+			} else {
+				statement = connection.prepareStatement("INSERT INTO `homes`(`owner`, `home`, `world`, `x`, `y`, `z`, `pitch`, `yaw`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
+
+				statement.setString(1, player.toLowerCase());
+				statement.setString(2, name.toLowerCase());
+				statement.setString(3, location.getWorld().getName());
+				statement.setDouble(4, location.getX());
+				statement.setDouble(5, location.getY());
+				statement.setDouble(6, location.getZ());
+				statement.setFloat(7, location.getPitch());
+				statement.setFloat(8, location.getYaw());
+				statement.execute();
+			}
 
 		} catch (SQLException e) {
 			Messaging.logSevere("Failed to add home location!", this.plugin);

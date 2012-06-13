@@ -66,6 +66,7 @@ public class HomeManagerFile extends HomeManager {
 				// An existing home was found. Overwrite it.
 				thisHome.setHomeLocation(location);
 				homes.set(index, thisHome);
+				homeSet = true;
 			}
 		}
 		
@@ -222,7 +223,7 @@ public class HomeManagerFile extends HomeManager {
 						HomeEntry thisHome;
 						
 						thisHome = parseHomeLine(line);
-
+						
 						if (thisHome != null) {
 							ArrayList<HomeEntry> homeList;
 	
