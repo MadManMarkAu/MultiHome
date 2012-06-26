@@ -136,31 +136,33 @@ public class HomeManagerMySQL extends HomeManager {
 				throw new SQLException();
 			}
 
-			statement = connection.prepareStatement("SELECT COUNT(*) FROM `homes` WHERE `owner` = ? AND `home` = ?;");
-			statement.setString(1, player.toLowerCase());
-			statement.setString(2, name.toLowerCase());
+			statement = connection.prepareStatement("SELECT COUNT(*) FROM `homes` WHERE LOWER(`owner`) = LOWER(?) AND LOWER(`home`) = LOWER(?);");
+			statement.setString(1, player);
+			statement.setString(2, name);
 			resultSet = statement.executeQuery();
 			if (resultSet.first()) {
 				exists = resultSet.getInt(1) > 0;
 			}
 
 			if (exists) {
-				statement = connection.prepareStatement("UPDATE `homes` SET `world` = ?, `x` = ?, `y` = ?, `z` = ?, `pitch` = ?, `yaw` = ? WHERE `owner` = ? AND `home` = ?");
+				statement = connection.prepareStatement("UPDATE `homes` SET `owner` = ?, `home` = ?, `world` = ?, `x` = ?, `y` = ?, `z` = ?, `pitch` = ?, `yaw` = ? WHERE LOWER(`owner`) = LOWER(?) AND LOWER(`home`) = LOWER(?)");
 
-				statement.setString(1, location.getWorld().getName());
-				statement.setDouble(2, location.getX());
-				statement.setDouble(3, location.getY());
-				statement.setDouble(4, location.getZ());
-				statement.setFloat(5, location.getPitch());
-				statement.setFloat(6, location.getYaw());
-				statement.setString(7, player.toLowerCase());
-				statement.setString(8, name.toLowerCase());
+				statement.setString(1, player);
+				statement.setString(2, name);
+				statement.setString(3, location.getWorld().getName());
+				statement.setDouble(4, location.getX());
+				statement.setDouble(5, location.getY());
+				statement.setDouble(6, location.getZ());
+				statement.setFloat(7, location.getPitch());
+				statement.setFloat(8, location.getYaw());
+				statement.setString(9, player);
+				statement.setString(10, name);
 				statement.execute();
 			} else {
 				statement = connection.prepareStatement("INSERT INTO `homes`(`owner`, `home`, `world`, `x`, `y`, `z`, `pitch`, `yaw`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
 
-				statement.setString(1, player.toLowerCase());
-				statement.setString(2, name.toLowerCase());
+				statement.setString(1, player);
+				statement.setString(2, name);
 				statement.setString(3, location.getWorld().getName());
 				statement.setDouble(4, location.getX());
 				statement.setDouble(5, location.getY());
@@ -199,9 +201,9 @@ public class HomeManagerMySQL extends HomeManager {
 				throw new SQLException();
 			}
 
-			statement = connection.prepareStatement("DELETE FROM `homes` WHERE `owner` = ? AND `home` = ?;");
-			statement.setString(1, player.toLowerCase());
-			statement.setString(2, name.toLowerCase());
+			statement = connection.prepareStatement("DELETE FROM `homes` WHERE LOWER(`owner`) = LOWER(?) AND LOWER(`home`) = LOWER(?);");
+			statement.setString(1, player);
+			statement.setString(2, name);
 			statement.execute();
 		} catch (SQLException e) {
 			Messaging.logSevere("Failed to remove home location!", this.plugin);
@@ -233,8 +235,8 @@ public class HomeManagerMySQL extends HomeManager {
 				throw new SQLException();
 			}
 
-			statement = connection.prepareStatement("SELECT COUNT(`id`) FROM `homes` WHERE `owner` = ?;");
-			statement.setString(1, player.toLowerCase());
+			statement = connection.prepareStatement("SELECT COUNT(`id`) FROM `homes` WHERE LOWER(`owner`) = LOWER(?);");
+			statement.setString(1, player);
 			resultSet = statement.executeQuery();
 			if (resultSet.first()) {
 				return resultSet.getInt(1) > 0;
@@ -277,8 +279,8 @@ public class HomeManagerMySQL extends HomeManager {
 				throw new SQLException();
 			}
 
-			statement = connection.prepareStatement("SELECT COUNT(`id`) FROM `homes` WHERE `owner` = ?;");
-			statement.setString(1, player.toLowerCase());
+			statement = connection.prepareStatement("SELECT COUNT(`id`) FROM `homes` WHERE LOWER(`owner`) = LOWER(?);");
+			statement.setString(1, player);
 			resultSet = statement.executeQuery();
 			if (resultSet.first()) {
 				return resultSet.getInt(1);
@@ -322,14 +324,14 @@ public class HomeManagerMySQL extends HomeManager {
 				throw new SQLException();
 			}
 
-			statement = connection.prepareStatement("SELECT * FROM `homes` WHERE `owner` = ?;");
-			statement.setString(1, player.toLowerCase());
+			statement = connection.prepareStatement("SELECT * FROM `homes` WHERE LOWER(`owner`) = LOWER(?);");
+			statement.setString(1, player);
 			resultSet = statement.executeQuery();
 			if (resultSet.first()) {
 				do {
-					output.add(new HomeEntry(resultSet.getString("owner").toLowerCase(), 
-							resultSet.getString("home").toLowerCase(), 
-							resultSet.getString("world").toLowerCase(), 
+					output.add(new HomeEntry(resultSet.getString("owner"), 
+							resultSet.getString("home"), 
+							resultSet.getString("world"), 
 							resultSet.getDouble("x"), 
 							resultSet.getDouble("y"), 
 							resultSet.getDouble("z"), 
@@ -379,15 +381,15 @@ public class HomeManagerMySQL extends HomeManager {
 				throw new SQLException();
 			}
 
-			statementExists = connection.prepareStatement("SELECT COUNT(`id`) FROM `homes` WHERE `owner` = ? AND `home` = ?;");
+			statementExists = connection.prepareStatement("SELECT COUNT(`id`) FROM `homes` WHERE LOWER(`owner`) = LOWER(?) AND LOWER(`home`) = LOWER(?);");
 			statementInsert = connection.prepareStatement("INSERT INTO `homes`(`owner`, `home`, `world`, `x`, `y`, `z`, `pitch`, `yaw`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
-			statementUpdate = connection.prepareStatement("UPDATE `homes` SET `owner` = ?, `home` = ?, `world` = ?, `x` = ?, `y` = ?, `z` = ?, `pitch` = ?, `yaw` = ? WHERE `owner` = ? AND `home` = ?;");
+			statementUpdate = connection.prepareStatement("UPDATE `homes` SET `owner` = ?, `home` = ?, `world` = ?, `x` = ?, `y` = ?, `z` = ?, `pitch` = ?, `yaw` = ? WHERE LOWER(`owner`) = LOWER(?) AND LOWER(`home`) = LOWER(?);");
 		
 			for (HomeEntry thisEntry : homes) {
 				// Determine if entry exists.
 				recordExists = false;
-				statementExists.setString(0,  thisEntry.getOwnerName().toLowerCase());
-				statementExists.setString(1,  thisEntry.getHomeName().toLowerCase());
+				statementExists.setString(1,  thisEntry.getOwnerName());
+				statementExists.setString(2,  thisEntry.getHomeName());
 				resultSet = statementExists.executeQuery();
 				if (resultSet.first()) {
 					recordExists = resultSet.getInt(1) > 0;
@@ -398,27 +400,27 @@ public class HomeManagerMySQL extends HomeManager {
 				// Save the entry, if required.
 				if (recordExists) {
 					if (overwrite) {
-						statementUpdate.setString(0, thisEntry.getOwnerName().toLowerCase());
-						statementUpdate.setString(1, thisEntry.getHomeName().toLowerCase());
-						statementUpdate.setString(2, thisEntry.getWorld());
-						statementUpdate.setDouble(3, thisEntry.getX());
-						statementUpdate.setDouble(4, thisEntry.getY());
-						statementUpdate.setDouble(5, thisEntry.getZ());
-						statementUpdate.setFloat(6, thisEntry.getPitch());
-						statementUpdate.setFloat(7, thisEntry.getYaw());
-						statementUpdate.setString(8, thisEntry.getOwnerName().toLowerCase());
-						statementUpdate.setString(9, thisEntry.getHomeName().toLowerCase());
+						statementUpdate.setString(1, thisEntry.getOwnerName());
+						statementUpdate.setString(2, thisEntry.getHomeName());
+						statementUpdate.setString(3, thisEntry.getWorld());
+						statementUpdate.setDouble(4, thisEntry.getX());
+						statementUpdate.setDouble(5, thisEntry.getY());
+						statementUpdate.setDouble(6, thisEntry.getZ());
+						statementUpdate.setFloat(7, thisEntry.getPitch());
+						statementUpdate.setFloat(8, thisEntry.getYaw());
+						statementUpdate.setString(9, thisEntry.getOwnerName());
+						statementUpdate.setString(10, thisEntry.getHomeName());
 						statementUpdate.execute();
 					}
 				} else {
-					statementInsert.setString(0, thisEntry.getOwnerName().toLowerCase());
-					statementInsert.setString(1, thisEntry.getHomeName().toLowerCase());
-					statementInsert.setString(2, thisEntry.getWorld());
-					statementInsert.setDouble(3, thisEntry.getX());
-					statementInsert.setDouble(4, thisEntry.getY());
-					statementInsert.setDouble(5, thisEntry.getZ());
-					statementInsert.setFloat(6, thisEntry.getPitch());
-					statementInsert.setFloat(7, thisEntry.getYaw());
+					statementInsert.setString(1, thisEntry.getOwnerName());
+					statementInsert.setString(2, thisEntry.getHomeName());
+					statementInsert.setString(3, thisEntry.getWorld());
+					statementInsert.setDouble(4, thisEntry.getX());
+					statementInsert.setDouble(5, thisEntry.getY());
+					statementInsert.setDouble(6, thisEntry.getZ());
+					statementInsert.setFloat(7, thisEntry.getPitch());
+					statementInsert.setFloat(8, thisEntry.getYaw());
 					statementInsert.execute();
 				}
 			}

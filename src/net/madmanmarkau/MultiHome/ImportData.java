@@ -315,9 +315,9 @@ public class ImportData {
 		return homes;
 	}
 	
-	public static ArrayList<HomeInvite> importInvitesFromMyHome(MultiHome plugin) {
+	public static ArrayList<InviteEntry> importInvitesFromMyHome(MultiHome plugin) {
 		File myHomeFile = new File("plugins" + File.separator + "MyHome" + File.separator + "homes.db");
-		ArrayList<HomeInvite> invites = new ArrayList<HomeInvite>();
+		ArrayList<InviteEntry> invites = new ArrayList<InviteEntry>();
 		
 		if (myHomeFile.exists()) {
 			// connect to the MyHomes database.
@@ -346,7 +346,7 @@ public class ImportData {
 	                String reason = set.getString("welcomeMessage");
 
 	                if (publicAll) {
-	                	invites.add(new HomeInvite(owner, "", "*", reason));
+	                	invites.add(new InviteEntry(owner, "", "*", reason));
 	                }
 	                
 	                String users[] = permissions.split(",");
@@ -354,7 +354,7 @@ public class ImportData {
 	                    if (thisUser.length() == 0) {
 	                        continue;
 	                    }
-	                	invites.add(new HomeInvite(owner, "", thisUser.trim().toLowerCase(), reason));
+	                	invites.add(new InviteEntry(owner, "", thisUser.trim().toLowerCase(), reason));
 	                }
 	            }
 	            

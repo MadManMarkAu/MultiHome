@@ -18,7 +18,7 @@ import org.bukkit.Location;
 
 public class HomeManagerFile extends HomeManager {
     private final File homesFile;
-	private HashMap<String, ArrayList<HomeEntry>> HomeEntrys = new HashMap<String, ArrayList<HomeEntry>>();
+	private HashMap<String, ArrayList<HomeEntry>> homeEntries = new HashMap<String, ArrayList<HomeEntry>>();
 	
 	public HomeManagerFile(MultiHome plugin) {
 		super(plugin);
@@ -29,13 +29,13 @@ public class HomeManagerFile extends HomeManager {
 
 	@Override
 	public void clearHomes() {
-		this.HomeEntrys.clear();
+		this.homeEntries.clear();
 	}
 
 	@Override
 	public HomeEntry getHome(String player, String name) {
-		if (this.HomeEntrys.containsKey(player.toLowerCase())) {
-			ArrayList<HomeEntry> homes = this.HomeEntrys.get(player.toLowerCase());
+		if (this.homeEntries.containsKey(player.toLowerCase())) {
+			ArrayList<HomeEntry> homes = this.homeEntries.get(player.toLowerCase());
 	
 			for (HomeEntry thisLocation : homes) {
 				if (thisLocation.getHomeName().compareToIgnoreCase(name) == 0) {
@@ -52,8 +52,8 @@ public class HomeManagerFile extends HomeManager {
 		ArrayList<HomeEntry> homes;
 		
 		// Get the ArrayList of homes for this player
-		if (this.HomeEntrys.containsKey(player.toLowerCase())) {
-			homes = this.HomeEntrys.get(player.toLowerCase());
+		if (this.homeEntries.containsKey(player.toLowerCase())) {
+			homes = this.homeEntries.get(player.toLowerCase());
 		} else {
 			homes = new ArrayList<HomeEntry>();
 		}
@@ -79,8 +79,8 @@ public class HomeManagerFile extends HomeManager {
 		}
 		
 		// Replace the ArrayList in the homes HashMap
-		this.HomeEntrys.remove(player.toLowerCase());
-		this.HomeEntrys.put(player.toLowerCase(), homes);
+		this.homeEntries.remove(player.toLowerCase());
+		this.homeEntries.put(player.toLowerCase(), homes);
 
 		// Save
 		this.saveHomes();
@@ -88,8 +88,8 @@ public class HomeManagerFile extends HomeManager {
 
 	@Override
 	public void removeHome(String player, String name) {
-		if (this.HomeEntrys.containsKey(player.toLowerCase())) {
-			ArrayList<HomeEntry> playerHomeList = this.HomeEntrys.get(player.toLowerCase());
+		if (this.homeEntries.containsKey(player.toLowerCase())) {
+			ArrayList<HomeEntry> playerHomeList = this.homeEntries.get(player.toLowerCase());
 			ArrayList<HomeEntry> removeList = new ArrayList<HomeEntry>();
 
 			// Find all homes matching "name"
@@ -104,9 +104,9 @@ public class HomeManagerFile extends HomeManager {
 			playerHomeList.removeAll(removeList);
 
 			// Replace the ArrayList in the homes HashMap
-			this.HomeEntrys.remove(player.toLowerCase());
+			this.homeEntries.remove(player.toLowerCase());
 			if (!playerHomeList.isEmpty()) {
-				this.HomeEntrys.put(player.toLowerCase(), playerHomeList);
+				this.homeEntries.put(player.toLowerCase(), playerHomeList);
 			}
 
 			// Save
@@ -116,13 +116,13 @@ public class HomeManagerFile extends HomeManager {
 
 	@Override
 	public boolean getUserExists(String player) {
-		return this.HomeEntrys.containsKey(player.toLowerCase());
+		return this.homeEntries.containsKey(player.toLowerCase());
 	}
 
 	@Override
 	public int getUserHomeCount(String player) {
-		if (this.HomeEntrys.containsKey(player.toLowerCase())) {
-			return this.HomeEntrys.get(player.toLowerCase()).size();
+		if (this.homeEntries.containsKey(player.toLowerCase())) {
+			return this.homeEntries.get(player.toLowerCase()).size();
 		} else {
 			return 0;
 		}
@@ -130,8 +130,8 @@ public class HomeManagerFile extends HomeManager {
 
 	@Override
 	public ArrayList<HomeEntry> listUserHomes(String player) {
-		if (this.HomeEntrys.containsKey(player.toLowerCase())) {
-			return this.HomeEntrys.get(player.toLowerCase());
+		if (this.homeEntries.containsKey(player.toLowerCase())) {
+			return this.homeEntries.get(player.toLowerCase());
 		} else {
 			return new ArrayList<HomeEntry>();
 		}
@@ -143,8 +143,8 @@ public class HomeManagerFile extends HomeManager {
 
 		for (HomeEntry thisEntry : homes) {
 			// Get the ArrayList of homes for this player
-			if (this.HomeEntrys.containsKey(thisEntry.getOwnerName().toLowerCase())) {
-				playerHomes = this.HomeEntrys.get(thisEntry.getOwnerName().toLowerCase());
+			if (this.homeEntries.containsKey(thisEntry.getOwnerName().toLowerCase())) {
+				playerHomes = this.homeEntries.get(thisEntry.getOwnerName().toLowerCase());
 			} else {
 				playerHomes = new ArrayList<HomeEntry>();
 			}
@@ -173,8 +173,8 @@ public class HomeManagerFile extends HomeManager {
 			}
 
 			// Replace the ArrayList in the homes HashMap
-			this.HomeEntrys.remove(thisEntry.getOwnerName().toLowerCase());
-			this.HomeEntrys.put(thisEntry.getOwnerName().toLowerCase(), playerHomes);
+			this.homeEntries.remove(thisEntry.getOwnerName().toLowerCase());
+			this.homeEntries.put(thisEntry.getOwnerName().toLowerCase(), playerHomes);
 		}
 
 		// Save
@@ -195,7 +195,7 @@ public class HomeManagerFile extends HomeManager {
 			writer.write("# <username>;<x>;<y>;<z>;<pitch>;<yaw>;<world>[;<name>]" + Util.newLine());
 			writer.write(Util.newLine());
 
-			for (Entry<String, ArrayList<HomeEntry>> entry : this.HomeEntrys.entrySet()) {
+			for (Entry<String, ArrayList<HomeEntry>> entry : this.homeEntries.entrySet()) {
 				for (HomeEntry thisHome : entry.getValue()) {
 					writer.write(thisHome.getOwnerName() + ";" + thisHome.getX() + ";" + thisHome.getY() + ";" + thisHome.getZ() + ";"
 							+ thisHome.getPitch() + ";" + thisHome.getYaw() + ";"
@@ -232,11 +232,11 @@ public class HomeManagerFile extends HomeManager {
 							ArrayList<HomeEntry> homeList;
 	
 							// Find HashMap entry for player
-							if (!this.HomeEntrys.containsKey(thisHome.getOwnerName().toLowerCase())) {
+							if (!this.homeEntries.containsKey(thisHome.getOwnerName().toLowerCase())) {
 								homeList = new ArrayList<HomeEntry>();
 							} else {
 								// Player not exist. Create dummy entry.
-								homeList = HomeEntrys.get(thisHome.getOwnerName().toLowerCase());
+								homeList = this.homeEntries.get(thisHome.getOwnerName().toLowerCase());
 							}
 							
 							// Don't save if this is a duplicate entry.
@@ -251,7 +251,7 @@ public class HomeManagerFile extends HomeManager {
 								homeList.add(thisHome);
 							}
 	
-							HomeEntrys.put(thisHome.getOwnerName().toLowerCase(), homeList);
+							this.homeEntries.put(thisHome.getOwnerName().toLowerCase(), homeList);
 						}
 					}
 	

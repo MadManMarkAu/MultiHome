@@ -2,14 +2,14 @@ package net.madmanmarkau.MultiHome;
 
 import java.util.Date;
 
-public class HomeInvite {
+public class InviteEntry {
 	private String inviteSource;
 	private String inviteHome;
 	private String inviteTarget;
 	private Date inviteExpires;
 	private String inviteReason;
 	
-	public HomeInvite(String inviteSource, String inviteHome, String inviteTarget) {
+	public InviteEntry(String inviteSource, String inviteHome, String inviteTarget) {
 		this.inviteSource = inviteSource;
 		this.inviteHome = inviteHome;
 		this.inviteTarget = inviteTarget;
@@ -17,7 +17,7 @@ public class HomeInvite {
 		this.inviteReason = "";
 	}
 	
-	public HomeInvite(String inviteSource, String inviteHome, String inviteTarget, Date inviteExpires) {
+	public InviteEntry(String inviteSource, String inviteHome, String inviteTarget, Date inviteExpires) {
 		this.inviteSource = inviteSource;
 		this.inviteHome = inviteHome;
 		this.inviteTarget = inviteTarget;
@@ -25,7 +25,7 @@ public class HomeInvite {
 		this.inviteReason = "";
 	}
 	
-	public HomeInvite(String inviteSource, String inviteHome, String inviteTarget, String inviteReason) {
+	public InviteEntry(String inviteSource, String inviteHome, String inviteTarget, String inviteReason) {
 		this.inviteSource = inviteSource;
 		this.inviteHome = inviteHome;
 		this.inviteTarget = inviteTarget;
@@ -33,7 +33,7 @@ public class HomeInvite {
 		this.inviteReason = inviteReason;
 	}
 	
-	public HomeInvite(String inviteSource, String inviteHome, String inviteTarget, Date inviteExpires, String inviteReason) {
+	public InviteEntry(String inviteSource, String inviteHome, String inviteTarget, Date inviteExpires, String inviteReason) {
 		this.inviteSource = inviteSource;
 		this.inviteHome = inviteHome;
 		this.inviteTarget = inviteTarget;

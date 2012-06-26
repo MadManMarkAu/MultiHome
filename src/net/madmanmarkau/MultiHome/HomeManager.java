@@ -25,7 +25,7 @@ public abstract class HomeManager {
 	abstract public void clearHomes();
 
 	/**
-	 * Returns a HomeLocation object for the specified home. If home is not found, returns null. 
+	 * Returns a HomeEntry object for the specified home. If home is not found, returns null. 
 	 * @param player Owner of the home.
 	 * @param name Name of the owner's home location.
 	 */
@@ -34,7 +34,7 @@ public abstract class HomeManager {
 	}
 
 	/**
-	 * Returns a HomeLocation object for the specified home. If home is not found, returns null. 
+	 * Returns a HomeEntry object for the specified home. If home is not found, returns null. 
 	 * @param player Owner of the home.
 	 * @param name Name of the owner's home location.
 	 */
@@ -125,6 +125,7 @@ public abstract class HomeManager {
 	/**
 	 * Imports the list of home locations passed. Does not overwrite existing home locations.
 	 * @param homes List of players and homes to import.
+	 * @param overwrite True to overwrite existing entries.
 	 */
 	abstract public void importHomes(ArrayList<HomeEntry> homes, boolean overwrite);
 }

@@ -118,9 +118,9 @@ public class Util {
 		return "";
 	}
 
-	public static String compileInviteListForMe(String requestingPlayer, ArrayList<HomeInvite> invites) {
+	public static String compileInviteListForMe(String requestingPlayer, ArrayList<InviteEntry> invites) {
 		String userResponse = "";
-		for (HomeInvite thisInvite : invites) {
+		for (InviteEntry thisInvite : invites) {
 			if (thisInvite.getInviteSource().compareToIgnoreCase(requestingPlayer) != 0) {
 				if (thisInvite.getInviteHome().length() == 0) {
 					userResponse = userResponse + ", " + thisInvite.getInviteSource() + ":[Default]";
@@ -151,9 +151,9 @@ public class Util {
 		return "";
 	}
 
-	public static String compileInviteListForOthers(ArrayList<HomeInvite> invites) {
+	public static String compileInviteListForOthers(ArrayList<InviteEntry> invites) {
 		String userResponse = "";
-		for (HomeInvite thisInvite : invites) {
+		for (InviteEntry thisInvite : invites) {
 			if (thisInvite.getInviteHome().length() == 0) {
 				userResponse += ", " + thisInvite.getInviteTarget() + "->[Default]";
 				if (thisInvite.getInviteExpires() != null) {

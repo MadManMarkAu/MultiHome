@@ -41,21 +41,23 @@ public class MultiHome extends JavaPlugin {
 		Settings.loadSettings();
 		MultiHomeEconManager.initialize(this);
 
-		this.invites = new InviteManager(new File(pluginDataPath + "invites.txt"), this);
 		this.warmups = new WarmUpManager(new File(pluginDataPath + "warmups.txt"), this);
 		this.cooldowns = new CoolDownManager(new File(pluginDataPath + "cooldowns.txt"), this);
 		
-		this.invites.loadInvites();
 		this.warmups.loadWarmups();
 		this.cooldowns.loadCooldowns();
 
 		dataStoreMethod = Settings.getDataStoreMethod();
+
 		if (dataStoreMethod.compareToIgnoreCase("file") == 0) {
 			this.homes = new HomeManagerFile(this);
+			this.invites = new InviteManagerFile(this);
 		} else if (dataStoreMethod.compareToIgnoreCase("sql") == 0) {
 			this.homes = new HomeManagerMySQL(this);
+			this.invites = new InviteManagerMySQL(this);
 		} else {
 			this.homes = new HomeManagerFile(this);
+			this.invites = new InviteManagerFile(this);
 		}
 
 		

@@ -454,7 +454,7 @@ public class MultiHomeCommands {
 
 	public static void listInvitesToMe(MultiHome plugin, Player player) {
 		if (HomePermissions.has(player, "multihome.listinvites.tome")) {
-			ArrayList<HomeInvite> invites = plugin.getInviteManager().getListPlayerInvitesToMe(player.getName());
+			ArrayList<InviteEntry> invites = plugin.getInviteManager().listPlayerInvitesToMe(player.getName());
 
 			Settings.sendMessageInviteListToMe(player, player.getName(), Util.compileInviteListForMe(player.getName(), invites));
 		} else {
@@ -464,7 +464,7 @@ public class MultiHomeCommands {
 
 	public static void listInvitesToOthers(MultiHome plugin, Player player) {
 		if (HomePermissions.has(player, "multihome.listinvites.toothers")) {
-			ArrayList<HomeInvite> invites = plugin.getInviteManager().getListPlayerInvitesToOthers(player.getName());
+			ArrayList<InviteEntry> invites = plugin.getInviteManager().listPlayerInvitesToOthers(player.getName());
 
 			Settings.sendMessageInviteListToOthers(player, player.getName(), Util.compileInviteListForOthers(invites));
 		} else {

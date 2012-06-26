@@ -1,110 +1,46 @@
 package net.madmanmarkau.MultiHome;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map.Entry;
+
+import org.bukkit.entity.Player;
 
 /**
+ * Base class for invite database objects.
  * @author MadManMarkAu
  */
-public class InviteManager {
-	MultiHome plugin;
-	
-    private File invitesFile;
-	private HashMap<String, ArrayList<HomeInvite>> homeInvites = new HashMap<String, ArrayList<HomeInvite>>();
-	private boolean enableAutoSave = true;
-	private boolean saveRequired = false;
-	
-	public InviteManager(File invitesFile, MultiHome plugin) {
-		this.invitesFile = invitesFile;
+public abstract class InviteManager {
+	protected final MultiHome plugin;
+
+	/**
+	 * @param plugin The plug-in.
+	 */
+	public InviteManager(MultiHome plugin) {
 		this.plugin = plugin;
 	}
 
 	/**
-	 * Save invites list to file. Clears the saveRequired flag.
+	 * Deletes all invites from the database.
 	 */
-	public void saveInvites() {
-		updateInviteExpiry();
-		saveInvitesLocal();
-	}
+	abstract public void clearInvites();
 
 	/**
-	 * Load the invites list from file.
-	 * @return True if load succeeds, otherwise false.
-	 */
-	public void loadInvites() {
-		loadInvitesLocal();
-		updateInviteExpiry();
-	}
-	
-	/**
-	 * Enable auto-saving when changes to the invites list are made.
-	 */
-	public void enableAutoSave() {
-		this.enableAutoSave = true;
-		
-		if (this.saveRequired) {
-			this.saveInvitesLocal();
-		}
-	}
-
-	/**
-	 * Disable auto-saving when changes to the invites list are made.
-	 */
-	public void disableAutoSave() {
-		this.enableAutoSave = false;
-	}
-
-	/**
-	 * Query the auto-save status.
-	 */
-	public boolean getAutoSave() {
-		return this.enableAutoSave;
-	}
-	
-	/**
-	 * Query whether or not data save is required.
-	 */
-	public boolean getSaveRequired(){
-		return this.saveRequired;
-	}
-	
-	/**
-	 * Clears all current invites.
-	 */
-	public void clearInvites() {
-		this.homeInvites.clear();
-	}
-	
-	/**
-	 * Returns a HomeInvite object for the specified invite. If invite is not found, returns null. 
+	 * Returns an InviteEntry object for the specified invite. If invite is not found, returns null. 
 	 * @param owner Owner of the invite.
 	 * @param home Name of the owner's home location.
 	 * @param target Player the owner is inviting.
-	 * @return HomeInvite object for this invite. Otherwise null.
 	 */
-	public HomeInvite getInvite(String owner, String home, String target) {
-		updateInviteExpiry();
-
-		if (this.homeInvites.containsKey(owner.toLowerCase())) {
-			ArrayList<HomeInvite> invites = this.homeInvites.get(owner.toLowerCase());
-			
-			for (HomeInvite thisInvite : invites) {
-				if (thisInvite.getInviteHome().compareToIgnoreCase(home) == 0 && (thisInvite.getInviteTarget().compareToIgnoreCase("*") == 0 || thisInvite.getInviteTarget().compareToIgnoreCase(target) == 0)) {
-					return thisInvite;
-				}
-			}
-		}
-		
-		return null;
+	public final InviteEntry getInvite(Player owner, String home, Player target) {
+		return this.getInvite(owner.getName(), home, target.getName());
 	}
-	
+
+	/**
+	 * Returns an InviteEntry object for the specified invite. If invite is not found, returns null. 
+	 * @param owner Owner of the invite.
+	 * @param home Name of the owner's home location.
+	 * @param target Player the owner is inviting.
+	 */
+	abstract public InviteEntry getInvite(String owner, String home, String target);
 	
 	/**
 	 * Adds a new invite or updates an existing one.
@@ -112,10 +48,20 @@ public class InviteManager {
 	 * @param home Name of the owner's home location.
 	 * @param target Player the owner is inviting.
 	 */
-	public void addInvite(String owner, String home, String target) {
-		this.addInvite(owner.toLowerCase(), home.toLowerCase(), target.toLowerCase(), null, null);
+	public final void addInvite(Player owner, String home, Player target) {
+		this.addInvite(owner.getName(), home, target.getName(), null, null);
 	}
-
+	
+	/**
+	 * Adds a new invite or updates an existing one.
+	 * @param owner Owner of the invite.
+	 * @param home Name of the owner's home location.
+	 * @param target Player the owner is inviting.
+	 */
+	public final void addInvite(String owner, String home, String target) {
+		this.addInvite(owner, home, target, null, null);
+	}
+	
 	/**
 	 * Adds a new invite or updates an existing one.
 	 * @param owner Owner of the invite.
@@ -123,8 +69,19 @@ public class InviteManager {
 	 * @param target Player the owner is inviting.
 	 * @param expiry Date object for when this invite expires. Use null to specify no expiry.
 	 */
-	public void addInvite(String owner, String home, String target, Date expiry) {
-		this.addInvite(owner.toLowerCase(), home.toLowerCase(), target.toLowerCase(), expiry, null);
+	public final void addInvite(Player owner, String home, Player target, Date expiry) {
+		this.addInvite(owner.getName(), home, target.getName(), expiry, null);
+	}
+	
+	/**
+	 * Adds a new invite or updates an existing one.
+	 * @param owner Owner of the invite.
+	 * @param home Name of the owner's home location.
+	 * @param target Player the owner is inviting.
+	 * @param expiry Date object for when this invite expires. Use null to specify no expiry.
+	 */
+	public final void addInvite(String owner, String home, String target, Date expiry) {
+		this.addInvite(owner, home, target, expiry, null);
 	}
 
 	/**
@@ -134,10 +91,21 @@ public class InviteManager {
 	 * @param target Player the owner is inviting.
 	 * @param reason String containing the invitation text/reason.
 	 */
-	public void addInvite(String owner, String home, String target, String reason) {
-		this.addInvite(owner.toLowerCase(), home.toLowerCase(), target.toLowerCase(), null, reason);
+	public final void addInvite(Player owner, String home, Player target, String reason) {
+		this.addInvite(owner.getName(), home, target.getName(), null, reason);
 	}
-	
+
+	/**
+	 * Adds a new invite or updates an existing one.
+	 * @param owner Owner of the invite.
+	 * @param home Name of the owner's home location.
+	 * @param target Player the owner is inviting.
+	 * @param reason String containing the invitation text/reason.
+	 */
+	public final void addInvite(String owner, String home, String target, String reason) {
+		this.addInvite(owner, home, target, null, reason);
+	}
+
 	/**
 	 * Adds a new invite or updates an existing one.
 	 * @param owner Owner of the invite.
@@ -146,40 +114,28 @@ public class InviteManager {
 	 * @param expiry Date object for when this invite expires. Use null to specify no expiry.
 	 * @param reason String containing the invitation text/reason.
 	 */
-	public void addInvite(String owner, String home, String target, Date expiry, String reason) {
-		ArrayList<HomeInvite> invites;
-		if (this.homeInvites.containsKey(owner.toLowerCase())) {
-			invites = this.homeInvites.get(owner.toLowerCase());
-		} else {
-			invites = new ArrayList<HomeInvite>();
-		}
+	public final void addInvite(Player owner, String home, Player target, Date expiry, String reason) {
+		this.addInvite(owner.getName(), home, target.getName(), expiry, reason);
+	}
 
-		boolean inviteSet = false;
-		
-		for (int index = 0; index < invites.size(); index++) {
-			HomeInvite thisInvite = invites.get(index);
-			if (thisInvite.getInviteTarget().compareToIgnoreCase(target) == 0 && thisInvite.getInviteHome().compareToIgnoreCase(home) == 0) {
-				thisInvite.setInviteExpires(expiry);;
-				thisInvite.setInviteReason(reason);
-				invites.set(index, thisInvite);
-				this.saveRequired = true;
-				inviteSet = true;
-			}
-		}
-		
-		if (!inviteSet) {
-			HomeInvite invite = new HomeInvite(owner.toLowerCase(), home.toLowerCase(), target.toLowerCase(), expiry, reason);
-			invites.add(invite);
-			this.saveRequired = true;
-		}
-		
-		this.homeInvites.put(owner.toLowerCase(), invites);
-		
-		updateInviteExpiry();
-		
-		if (this.enableAutoSave) {
-			this.saveInvitesLocal();
-		}
+	/**
+	 * Adds a new invite or updates an existing one.
+	 * @param owner Owner of the invite.
+	 * @param home Name of the owner's home location.
+	 * @param target Player the owner is inviting.
+	 * @param expiry Date object for when this invite expires. Use null to specify no expiry.
+	 * @param reason String containing the invitation text/reason.
+	 */
+	abstract public void addInvite(String owner, String home, String target, Date expiry, String reason);
+
+	/**
+	 * Remove an existing invite.
+	 * @param owner Owner of the invite.
+	 * @param home Name of the owner's home location.
+	 * @param target Player the owner is inviting.
+	 */
+	public final void removeInvite(Player owner, String home, Player target) {
+		this.removeInvite(owner.getName(), home, target.getName());
 	}
 
 	/**
@@ -188,26 +144,15 @@ public class InviteManager {
 	 * @param home Name of the owner's home location.
 	 * @param target Player the owner is inviting.
 	 */
-	public void removeInvite(String owner, String home, String target) {
-		if (this.homeInvites.containsKey(owner.toLowerCase())) {
-			ArrayList<HomeInvite> playerInviteList = this.homeInvites.get(owner.toLowerCase());
-			ArrayList<HomeInvite> removeList = new ArrayList<HomeInvite>();
-			
-			for (HomeInvite thisInvite : playerInviteList) {
-				if (thisInvite.getInviteHome().compareToIgnoreCase(home) == 0 && thisInvite.getInviteTarget().compareToIgnoreCase(target) == 0) {
-					removeList.add(thisInvite);
-					this.saveRequired = true;
-				}
-			}
-			
-			playerInviteList.removeAll(removeList);
-			
-			this.homeInvites.put(owner.toLowerCase(), playerInviteList);
-			
-			if (this.enableAutoSave && this.saveRequired) {
-				this.saveInvitesLocal();
-			}
-		}
+	abstract public void removeInvite(String owner, String home, String target);
+	
+	/**
+	 * Returns a list of home locations the specified player may visit.
+	 * @param target Player to list invites for.
+	 * @return ArrayList<HomeInvite> containing list of invites.
+	 */
+	public final ArrayList<InviteEntry> listPlayerInvitesToMe(Player target) {
+		return this.listPlayerInvitesToMe(target.getName());
 	}
 
 	/**
@@ -215,211 +160,28 @@ public class InviteManager {
 	 * @param target Player to list invites for.
 	 * @return ArrayList<HomeInvite> containing list of invites.
 	 */
-	public ArrayList<HomeInvite> getListPlayerInvitesToMe(String target) {
-		updateInviteExpiry();
-
-		ArrayList<HomeInvite> activeInvites = new ArrayList<HomeInvite>();
-		
-		for (Entry<String, ArrayList<HomeInvite>> thisEntry : this.homeInvites.entrySet()) {
-			for (HomeInvite thisInvite : thisEntry.getValue()) {
-				if (thisInvite.getInviteTarget().compareToIgnoreCase("*") == 0 || thisInvite.getInviteTarget().compareToIgnoreCase(target) == 0) {
-					activeInvites.add(thisInvite);
-				}
-			}
-		}
-		
-		return activeInvites;
-	}
-
+	abstract public ArrayList<InviteEntry> listPlayerInvitesToMe(String target);	
+	
 	/**
 	 * Returns a list of invites the owner has given to others.
 	 * @param owner Player to list invites for.
 	 * @return ArrayList<HomeInvite> containing list of invites.
 	 */
-	public ArrayList<HomeInvite> getListPlayerInvitesToOthers(String owner) {
-		updateInviteExpiry();
-
-		if (this.homeInvites.containsKey(owner.toLowerCase())) {
-			return this.homeInvites.get(owner.toLowerCase());
-		}
-
-		return new ArrayList<HomeInvite>();
+	public final ArrayList<InviteEntry> listPlayerInvitesToOthers(Player owner) {
+		return this.listPlayerInvitesToOthers(owner.getName());
 	}
 	
 	/**
-	 * Scans through the invites list, removing expired invites.
+	 * Returns a list of invites the owner has given to others.
+	 * @param owner Player to list invites for.
+	 * @return ArrayList<HomeInvite> containing list of invites.
 	 */
-	public void updateInviteExpiry() {
-		Date now = new Date();
-
-		// Remove expired invites.
-		for (Entry<String, ArrayList<HomeInvite>> entry : this.homeInvites.entrySet()) {
-			ArrayList<HomeInvite> invites = entry.getValue();
-			ArrayList<HomeInvite> removeList = new ArrayList<HomeInvite>();
-			
-			for (HomeInvite thisInvite : invites) {
-				if (thisInvite.getInviteExpires() != null) {
-					if (thisInvite.getInviteExpires().getTime() < now.getTime()) {
-						removeList.add(thisInvite);
-						this.saveRequired = true;
-					}
-				}
-			}
-			
-			invites.removeAll(removeList);
-
-			this.homeInvites.put(entry.getKey(), invites);
-		}
-		
-		// Remove empty users.
-		ArrayList<String> removeList = new ArrayList<String>();
-		for (Entry<String, ArrayList<HomeInvite>> entry : this.homeInvites.entrySet()) {
-			ArrayList<HomeInvite> invites = entry.getValue();
-			
-			if (invites.size() == 0) {
-				removeList.add(entry.getKey());
-			}
-		}
-		
-		for (String entry : removeList) {
-			this.homeInvites.remove(entry);
-			this.saveRequired = true;
-		}
-		
-		if (this.saveRequired && this.enableAutoSave) {
-			this.saveInvitesLocal();
-		}
-	}
+	abstract public ArrayList<InviteEntry> listPlayerInvitesToOthers(String owner);	
 	
 	/**
-	 * Save invites list to file. Clears the saveRequired flag.
+	 * Imports the list of invites passed.
+	 * @param invites List of InviteEntry objects to import.
+	 * @param overwrite True to overwrite existing entries.
 	 */
-	private void saveInvitesLocal() {
-		try {
-			FileWriter fstream = new FileWriter(this.invitesFile);
-			BufferedWriter writer = new BufferedWriter(fstream);
-
-			writer.write("# Stores user home invites." + Util.newLine());
-			writer.write("# <owner>;<home>;<target>;[<expiry>];[<reason>]" + Util.newLine());
-			writer.write(Util.newLine());
-
-			String owner;
-			String home;
-			String target;
-			String expiry;
-			String reason;
-
-			for (Entry<String, ArrayList<HomeInvite>> entry : this.homeInvites.entrySet()) {
-				owner = entry.getKey();
-				for (HomeInvite thisInvite : entry.getValue()) {
-					home = thisInvite.getInviteHome();
-					target = thisInvite.getInviteTarget();
-					expiry = "";
-					if (thisInvite.getInviteExpires() != null) expiry = Long.toString(thisInvite.getInviteExpires().getTime());
-					reason = "";
-					if (thisInvite.getInviteReason() != null && thisInvite.getInviteReason().length() > 0) reason = thisInvite.getInviteReason();
-
-					writer.write(owner.toLowerCase() + ";" + home.toLowerCase() + ";" + target.toLowerCase() + ";" + expiry + ";" + reason + Util.newLine());
-				}
-			}
-			writer.close();
-		} catch (Exception e) {
-			Messaging.logSevere("Could not write the invites file.", this.plugin);
-			e.printStackTrace();
-		}
-		
-		this.saveRequired = false;
-	}
-
-	/**
-	 * Load the invites list from file.
-	 * @return True if load succeeds, otherwise false.
-	 */
-	private void loadInvitesLocal() {
-		// Create homes file if not exist
-		if (!invitesFile.exists()) {
-			try {
-				FileWriter fstream = new FileWriter(this.invitesFile);
-				BufferedWriter out = new BufferedWriter(fstream);
-
-				out.write("# Stores user home invites." + Util.newLine());
-				out.write("# <owner>;<home>;<target>;[<expiry>];[<reason>]" + Util.newLine());
-				out.write(Util.newLine());
-
-				ImportData.importInvitesFromMyHome(out, this.plugin);
-				
-				out.close();
-			} catch (Exception e) {
-				Messaging.logSevere("Could not write the deafult invites file. Plugin disabled.", this.plugin);
-				e.printStackTrace();
-				plugin.getServer().getPluginManager().disablePlugin(plugin);
-				return;
-			}
-		}
-
-		boolean oldAutoSave = this.enableAutoSave;
-		this.enableAutoSave = false;
-		
-		try {
-			FileReader fstream = new FileReader(this.invitesFile);
-			BufferedReader reader = new BufferedReader(fstream);
-
-			String line = reader.readLine().trim();
-
-			this.clearInvites();
-			
-			while (line != null) {
-				if (!line.startsWith("#") && line.length() > 0) {
-					String[] values = line.split(";");
-					String owner;
-					String home;
-					String target;
-					Date expiry;
-					String reason;
-
-					try {
-						if (values.length == 3 || (values.length == 4 && values[3].length() == 0)) {
-							owner = values[0].toLowerCase();
-							home = values[1].toLowerCase();
-							target = values[2].toLowerCase();
-							
-							addInvite(owner, home, target);
-						} else if (values.length == 4 && values[3].length() > 0) {
-							owner = values[0].toLowerCase();
-							home = values[1].toLowerCase();
-							target = values[2].toLowerCase();
-							expiry = new Date(Long.parseLong(values[3]));
-
-							addInvite(owner, home, target, expiry);
-						} else if (values.length >= 5) {
-							owner = values[0].toLowerCase();
-							home = values[1].toLowerCase();
-							target = values[2].toLowerCase();
-							expiry = new Date(Long.parseLong(values[3]));
-							reason = Util.joinString(values, 4, ";");
-
-							addInvite(owner, home, target, expiry, reason);
-						}
-					} catch (Exception e) {
-						// This entry failed. Ignore and continue.
-						if (line!=null) {
-							Messaging.logWarning("Failed to load invite list! Line: " + line, this.plugin);
-						}
-					}
-				}
-
-				line = reader.readLine();
-			}
-
-			reader.close();
-		} catch (Exception e) {
-			Messaging.logSevere("Could not read the invite list. Plugin disabled.", this.plugin);
-			e.printStackTrace();
-			plugin.getServer().getPluginManager().disablePlugin(plugin);
-			return;
-		}
-		
-		this.enableAutoSave = oldAutoSave;
-		this.saveRequired = false;
-	}
+	abstract public void importInvites(ArrayList<InviteEntry> invites, boolean overwrite);
 }
