@@ -1,6 +1,5 @@
 package net.madmanmarkau.MultiHome;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,10 +18,10 @@ public class MultiHomePlayerListener implements Listener {
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
 		if (HomePermissions.has(player, "multihome.homeondeath") && Settings.isHomeOnDeathEnabled()) {
-			Location location = plugin.getHomeManager().getHome(player, "");
+			HomeEntry homeEntry = plugin.getHomeManager().getHome(player, "");
 			
-			if (location != null) {
-				event.setRespawnLocation(location);
+			if (homeEntry != null) {
+				event.setRespawnLocation(homeEntry.getHomeLocation(plugin.getServer()));
 			}
 		}
 	}

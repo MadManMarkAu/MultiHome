@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 
 
 public class HomeManagerMySQL extends HomeManager {
@@ -70,7 +69,7 @@ public class HomeManagerMySQL extends HomeManager {
 	}
 
 	@Override
-	public Location getHome(String player, String name) {
+	public HomeEntry getHome(String player, String name) {
 		Connection connection = null;
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
@@ -81,26 +80,19 @@ public class HomeManagerMySQL extends HomeManager {
 				throw new SQLException();
 			}
 
-			statement = connection.prepareStatement("SELECT * FROM `homes` WHERE `owner` = ? AND `home` = ?;");
-			statement.setString(1, player.toLowerCase());
-			statement.setString(2, name.toLowerCase());
+			statement = connection.prepareStatement("SELECT * FROM `homes` WHERE LOWER(`owner`) = LOWER(?) AND LOWER(`home`) = LOWER(?);");
+			statement.setString(1, player);
+			statement.setString(2, name);
 			resultSet = statement.executeQuery();
 			if (resultSet.first()) {
-				//String ownerName, String homeName, String world, double X, double Y, double Z, float pitch, float yaw
-				
-				World world;
-				
 				try {
-					world = plugin.getServer().getWorld(resultSet.getString("world"));
-					
-					if (world != null) {
-						return new Location(world, 
-											resultSet.getDouble("x"), 
-											resultSet.getDouble("y"), 
-											resultSet.getDouble("z"), 
-											resultSet.getFloat("yaw"), 
-											resultSet.getFloat("pitch"));
-					}
+					return new HomeEntry(player, name,
+										resultSet.getString("world"), 
+										resultSet.getDouble("x"), 
+										resultSet.getDouble("y"), 
+										resultSet.getDouble("z"), 
+										resultSet.getFloat("yaw"), 
+										resultSet.getFloat("pitch"));
 				} catch (Exception ex) {}
 
 			}

@@ -29,8 +29,8 @@ public abstract class HomeManager {
 	 * @param player Owner of the home.
 	 * @param name Name of the owner's home location.
 	 */
-	public final Location getHome(Player player, String name) {
-		return this.getHome(player.getName(), name.toLowerCase());
+	public final HomeEntry getHome(Player player, String name) {
+		return this.getHome(player.getName(), name);
 	}
 
 	/**
@@ -38,7 +38,7 @@ public abstract class HomeManager {
 	 * @param player Owner of the home.
 	 * @param name Name of the owner's home location.
 	 */
-	abstract public Location getHome(String player, String name);
+	abstract public HomeEntry getHome(String player, String name);
 
 	/**
 	 * Adds the home location for the specified player. If home location already exists, updates the location.
@@ -47,7 +47,7 @@ public abstract class HomeManager {
 	 * @param location Location the home.
 	 */
 	public final void addHome(Player player, String name, Location location) {
-		this.addHome(player.getName(), name.toLowerCase(), location);
+		this.addHome(player.getName(), name, location);
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public abstract class HomeManager {
 	 * @param name Name of the owner's home location.
 	 */
 	public final void removeHome(Player player, String name) {
-		this.removeHome(player.getName(), name.toLowerCase());
+		this.removeHome(player.getName(), name);
 	}
 	
 	/**
@@ -109,7 +109,7 @@ public abstract class HomeManager {
 	/**
 	 * Retrieve a list of player home locations from the database. If player not found, returns a blank list.
 	 * @param player Player to retrieve home list for.
-	 * @return ArrayList<HomeLocation> List of home locations.
+	 * @return ArrayList<HomeEntry> List of home locations.
 	 */
 	public final ArrayList<HomeEntry> listUserHomes(Player player) {
 		return this.listUserHomes(player.getName());
@@ -118,7 +118,7 @@ public abstract class HomeManager {
 	/**
 	 * Retrieve a list of player home locations from the database. If player not found, returns a blank list.
 	 * @param player Player to retrieve home list for.
-	 * @return ArrayList<HomeLocation> List of home locations.
+	 * @return ArrayList<HomeEntry> List of home locations.
 	 */
 	abstract public ArrayList<HomeEntry> listUserHomes(String player);
 	

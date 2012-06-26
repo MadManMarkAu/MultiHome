@@ -3,7 +3,6 @@ package net.madmanmarkau.MultiHome;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -31,12 +30,12 @@ public class MultiHomeCommands {
 			}
 
 			int warmupTime = Settings.getSettingWarmup(player);
-			Location teleport = plugin.getHomeManager().getHome(player, "");
+			HomeEntry homeEntry = plugin.getHomeManager().getHome(player, "");
 
-			if (teleport != null) {
+			if (homeEntry != null) {
 				if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignore.warmup")) {
 					// Warpup required.
-					HomeWarmUp warmup = new HomeWarmUp(plugin, player, Util.dateInFuture(warmupTime), teleport, amount);
+					HomeWarmUp warmup = new HomeWarmUp(plugin, player, Util.dateInFuture(warmupTime), homeEntry.getHomeLocation(plugin.getServer()), amount);
 					plugin.getWarmUpManager().addWarmup(player.getName(), warmup);
 					Settings.sendMessageWarmup(player, warmupTime);
 				} else {
@@ -51,7 +50,7 @@ public class MultiHomeCommands {
 						}
 					}
 
-					Util.teleportPlayer(player, teleport, plugin);
+					Util.teleportPlayer(player, homeEntry.getHomeLocation(plugin.getServer()), plugin);
 
 					int cooldownTime = Settings.getSettingCooldown(player);
 					if (cooldownTime > 0) plugin.getCoolDownManager().addCooldown(player.getName(), Util.dateInFuture(cooldownTime));
@@ -87,12 +86,12 @@ public class MultiHomeCommands {
 			}
 		
 			int warmupTime = Settings.getSettingWarmup(player);
-			Location teleport = plugin.getHomeManager().getHome(player, home);
+			HomeEntry homeEntry = plugin.getHomeManager().getHome(player, home);
 
-			if (teleport != null) {
+			if (homeEntry != null) {
 				if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignore.warmup")) {
 					// Warpup required.
-					HomeWarmUp warmup = new HomeWarmUp(plugin, player, Util.dateInFuture(warmupTime), teleport, amount);
+					HomeWarmUp warmup = new HomeWarmUp(plugin, player, Util.dateInFuture(warmupTime), homeEntry.getHomeLocation(plugin.getServer()), amount);
 					plugin.getWarmUpManager().addWarmup(player.getName(), warmup);
 					Settings.sendMessageWarmup(player, warmupTime);
 				} else {
@@ -107,7 +106,7 @@ public class MultiHomeCommands {
 						}
 					}
 					
-					Util.teleportPlayer(player, teleport, plugin);
+					Util.teleportPlayer(player, homeEntry.getHomeLocation(plugin.getServer()), plugin);
 
 					int cooldownTime = Settings.getSettingCooldown(player);
 					if (cooldownTime > 0) plugin.getCoolDownManager().addCooldown(player.getName(), Util.dateInFuture(cooldownTime));
@@ -145,12 +144,12 @@ public class MultiHomeCommands {
 			int warmupTime = Settings.getSettingWarmup(player);
 
 			if (plugin.getHomeManager().getUserExists(owner)) {
-				Location teleport = plugin.getHomeManager().getHome(owner, home);
+				HomeEntry homeEntry = plugin.getHomeManager().getHome(owner, home);
 
-				if (teleport != null) {
+				if (homeEntry != null) {
 					if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignore.warmup")) {
 						// Warpup required.
-						HomeWarmUp warmup = new HomeWarmUp(plugin, player, Util.dateInFuture(warmupTime), teleport, amount);
+						HomeWarmUp warmup = new HomeWarmUp(plugin, player, Util.dateInFuture(warmupTime), homeEntry.getHomeLocation(plugin.getServer()), amount);
 						plugin.getWarmUpManager().addWarmup(player.getName(), warmup);
 						Settings.sendMessageWarmup(player, warmupTime);
 						Messaging.logInfo("Player " + player.getName() + " warped to player " + owner + "'s home location: " + home, plugin);
@@ -166,7 +165,7 @@ public class MultiHomeCommands {
 							}
 						}
 
-						Util.teleportPlayer(player, teleport, plugin);
+						Util.teleportPlayer(player, homeEntry.getHomeLocation(plugin.getServer()), plugin);
 
 						int cooldownTime = Settings.getSettingCooldown(player);
 						if (cooldownTime > 0) plugin.getCoolDownManager().addCooldown(player.getName(), Util.dateInFuture(cooldownTime));
