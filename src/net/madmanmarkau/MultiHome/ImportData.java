@@ -1,95 +1,219 @@
 package net.madmanmarkau.MultiHome;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ImportData {
-	public static void importHomesFromEssentials(BufferedWriter out, MultiHome plugin) {
-		File essentialsDir = new File("plugins" + File.separator + "Essentials" + File.separator + "userdata");
+
+	public static ArrayList<HomeEntry> importHomesFromMultiHomeFile(MultiHome plugin) {
+		File homesFile = new File(plugin.getDataFolder(), "homes.txt");
+		ArrayList<HomeEntry> homes = new ArrayList<HomeEntry>();
 		
+		if (homesFile.exists()) {
+			try {
+				FileReader fstream = new FileReader(homesFile);
+				BufferedReader reader = new BufferedReader(fstream);
+	
+				String line = reader.readLine().trim();
+	
+				while (line != null) {
+					if (!line.startsWith("#") && line.length() > 0) {
+						HomeEntry thisHome;
+						
+						String[] values = line.split(";");
+						double X = 0, Y = 0, Z = 0;
+						float pitch = 0, yaw = 0;
+						String world = "";
+						String name = "";
+						String player = "";
+
+						try {
+							if (values.length == 7) {
+								player = values[0];
+								X = Double.parseDouble(values[1]);
+								Y = Double.parseDouble(values[2]);
+								Z = Double.parseDouble(values[3]);
+								pitch = Float.parseFloat(values[4]);
+								yaw = Float.parseFloat(values[5]);
+
+								world = values[6];
+								name = "";
+							} else if (values.length == 8) {
+								player = values[0];
+								X = Double.parseDouble(values[1]);
+								Y = Double.parseDouble(values[2]);
+								Z = Double.parseDouble(values[3]);
+								pitch = Float.parseFloat(values[4]);
+								yaw = Float.parseFloat(values[5]);
+
+								world = values[6];
+								name = values[7];
+							}
+						} catch (Exception e) {
+							// This entry failed. Ignore and continue.
+						}
+
+						if (values.length == 7 || values.length == 8) {
+							boolean save = true;
+
+							thisHome = new HomeEntry(player.toLowerCase(), name.toLowerCase(), world, X, Y, Z, pitch, yaw);
+
+							for (HomeEntry home : homes) {
+								if (home.getHomeName().compareToIgnoreCase(thisHome.getHomeName()) == 0 && home.getOwnerName().compareToIgnoreCase(thisHome.getOwnerName()) == 0) {
+									save = false;
+								}
+							}
+							
+							if (save) {
+								homes.add(thisHome);
+							}
+						}
+					}
+	
+					line = reader.readLine();
+				}
+	
+				reader.close();
+			} catch (Exception e) {
+				Messaging.logSevere("Could not read the homes file.", plugin);
+				e.printStackTrace();
+				return new ArrayList<HomeEntry>();
+			}
+		}
+		
+		return homes;
+	}
+
+	public static ArrayList<HomeEntry> importHomesFromMultiHomeMySQL(MultiHome plugin) {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		ArrayList<HomeEntry> homes = new ArrayList<HomeEntry> ();
+
+		try {
+			connection = DriverManager.getConnection(Settings.getDataStoreSettingString("sql", "url"), 
+					Settings.getDataStoreSettingString("sql", "user"),
+					Settings.getDataStoreSettingString("sql", "pass"));
+			if (!connection.isValid(100)) {
+				throw new SQLException();
+			}
+
+			statement = connection.prepareStatement("SELECT * FROM `homes`;");
+			resultSet = statement.executeQuery();
+			if (resultSet.first()) {
+				do {
+					homes.add(new HomeEntry(resultSet.getString("owner").toLowerCase(), 
+							resultSet.getString("home").toLowerCase(), 
+							resultSet.getString("world").toLowerCase(), 
+							resultSet.getDouble("x"), 
+							resultSet.getDouble("y"), 
+							resultSet.getDouble("z"), 
+							resultSet.getFloat("yaw"), 
+							resultSet.getFloat("pitch")));
+				} while (resultSet.next());
+			}
+			
+		} catch (SQLException e) {
+			// Ignore errors
+		} finally {
+			if (resultSet != null) {
+				try {
+					resultSet.close();
+				} catch (SQLException ex) {} // Eat errors
+			}
+
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException ex) {} // Eat errors
+			}
+
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException ex) {} // Eat errors
+			}
+		}
+
+		return homes;
+	}
+
+	public static ArrayList<HomeEntry> importHomesFromEssentials(MultiHome plugin) {
+		File essentialsDir = new File("plugins" + File.separator + "Essentials" + File.separator + "userdata");
+		ArrayList<HomeEntry> homes = new ArrayList<HomeEntry> ();
+
 		if (essentialsDir.exists()) {
-			Messaging.logInfo("Importing home locations from Essentials...", plugin);
 			File[] userFiles = essentialsDir.listFiles();
 			List<?> homeLocation;
 			
 			for (File userFile : userFiles) {
 				try {
-					Messaging.logInfo("Importing from " + userFile.getName(), plugin);
 					String user = userFile.getName().replaceAll("\\.yml", "");
 					YamlConfiguration userConfig = new YamlConfiguration();
 					userConfig.load(userFile);
 	
 					// Load old Essentials home format.
 					homeLocation = userConfig.getList("home");
-	
 					if (homeLocation != null && !homeLocation.isEmpty()) {
 						try {
-							double X = (Double) homeLocation.get(0);
-							double Y = (Double)  homeLocation.get(1);
-							double Z = (Double) homeLocation.get(2);
-							double pitch = (Double) homeLocation.get(4);
-							double yaw = (Double) homeLocation.get(3);
-							String world = (String) homeLocation.get(5);
-							
-							out.write(user + ";" + X + ";" + Y + ";" + Z + ";" + pitch + ";" + yaw + ";" + world + ";" + Util.newLine());
+							homes.add(new HomeEntry(user, 
+									"", 
+									((String) homeLocation.get(5)).toLowerCase(), 
+									(Double) homeLocation.get(0), 
+									(Double) homeLocation.get(1), 
+									(Double) homeLocation.get(2), 
+									(Float) homeLocation.get(4), 
+									(Float) homeLocation.get(3)));
 						} catch (Exception e) {
 							// This entry failed. Ignore and continue.
-							Messaging.logInfo("Failed to import home location!", plugin);
-							e.printStackTrace();	
 						}
 					}
 	
 					// Load new Essentials home format.
 					ConfigurationSection homeWorlds = userConfig.getConfigurationSection("home.worlds");
-					//Map<String, ConfigurationNode> homeWorlds = userConfig.getNodes("home.worlds");
-	
 					if (homeWorlds != null) {
 						for (String homeWorld : homeWorlds.getKeys(false)) {
 							ConfigurationSection homeData = userConfig.getConfigurationSection("home.worlds." + homeWorld);
 							
 							if (homeData != null) {
 								try {
-									double X = homeData.getDouble("x", 0);
-									double Y = homeData.getDouble("y", 0);
-									double Z = homeData.getDouble("z", 0);
-									double pitch = homeData.getDouble("pitch", 0);
-									double yaw = homeData.getDouble("yaw", 0);
-									String world = homeData.getString("world");
-									
-									out.write(user + ";" + X + ";" + Y + ";" + Z + ";" + pitch + ";" + yaw + ";" + world + ";" + Util.newLine());
+									homes.add(new HomeEntry(user, 
+											"", 
+											(homeData.getString("world")).toLowerCase(), 
+											homeData.getDouble("x", 0), homeData.getDouble("y", 0), homeData.getDouble("z", 0),
+											(float) homeData.getDouble("pitch", 0), (float) homeData.getDouble("yaw", 0)));
 								} catch (Exception e) {
 									// This entry failed. Ignore and continue.
-									Messaging.logInfo("Failed to import home location!", plugin);
-									e.printStackTrace();	
 								}
 							}
 						}
 					}
 				} catch (Exception e) {
-					Messaging.logWarning("Error importing from " + userFile.getName() + ": " + e.getMessage(), plugin);
 				}
 			}
 		}
+		
+		return homes;
 	}
 	
-	public static void importHomesFromMultipleHomes(BufferedWriter out, MultiHome plugin) {
-		File essentialsDir = new File("plugins" + File.separator + "MultipleHomes" + File.separator + "Homes");
-		
-		if (essentialsDir.exists()) {
-			Messaging.logInfo("Importing home locations from MultipleHomes...", plugin);
-			File[] userFiles = essentialsDir.listFiles();
+	public static ArrayList<HomeEntry> importHomesFromMultipleHomes(MultiHome plugin) {
+		File multipleHomesDir = new File("plugins" + File.separator + "MultipleHomes" + File.separator + "Homes");
+		ArrayList<HomeEntry> homes = new ArrayList<HomeEntry> ();
+
+		if (multipleHomesDir.exists()) {
+			File[] userFiles = multipleHomesDir.listFiles();
 			
 			for (File userFile : userFiles) {
 				String name = userFile.getName().replaceAll("home\\_", "").replaceAll("\\.txt", "");
@@ -109,8 +233,6 @@ public class ImportData {
 								String[] values = split[1].split("_");
 								double X = 0, Y = 0, Z = 0;
 								float pitch = 0, yaw = 0;
-								String world = "";
-								int homeNumber;
 	
 								try {
 									X = Double.parseDouble(values[0]);
@@ -118,19 +240,14 @@ public class ImportData {
 									Z = Double.parseDouble(values[2]);
 									pitch = Float.parseFloat(values[4]);
 									yaw = Float.parseFloat(values[3]);
-									world = values[5];
-									homeNumber = Integer.parseInt(name);
-									
-									if (homeNumber == 0) {
-										out.write(user + ";" + X + ";" + Y + ";" + Z + ";" + pitch + ";" + yaw + ";" + world + ";" + Util.newLine());
+
+									if (name == null || name.length() == 0 || name.compareTo("0") == 0) {
+										homes.add(new HomeEntry(user, "", values[5].toLowerCase(), X, Y, Z, pitch, yaw));
 									} else {
-										out.write(user + ";" + X + ";" + Y + ";" + Z + ";" + pitch + ";" + yaw + ";" + world + ";" + homeNumber + Util.newLine());
+										homes.add(new HomeEntry(user, name, values[5].toLowerCase(), X, Y, Z, pitch, yaw));
 									}
 								} catch (Exception e) {
 									// This entry failed. Ignore and continue.
-									if (line!=null) {
-										Messaging.logWarning("Failed to load home location! Line: " + line, plugin);
-									}
 								}
 							}
 						}
@@ -140,18 +257,19 @@ public class ImportData {
 
 					reader.close();
 				} catch (Exception e) {
-					Messaging.logSevere("Failed to import homes from MultipleHomes!", plugin);
+					// Eat errors
 				}
 			}
 		}
-	}
-
-	public static void importHomesFromMyHome(BufferedWriter out, MultiHome plugin) {
-		File myHomeFile = new File("plugins" + File.separator + "MyHome" + File.separator + "homes.db");
 		
-		if (myHomeFile.exists()) {
-			Messaging.logInfo("Importing home locations from MyHome...", plugin);
+		return homes;
+	}
+	
+	public static ArrayList<HomeEntry> importHomesFromMyHome(MultiHome plugin) {
+		File myHomeFile = new File("plugins" + File.separator + "MyHome" + File.separator + "homes.db");
+		ArrayList<HomeEntry> homes = new ArrayList<HomeEntry> ();
 
+		if (myHomeFile.exists()) {
 			// connect to the MyHomes database.
 			Connection conn;
 
@@ -160,14 +278,10 @@ public class ImportData {
 	            conn = DriverManager.getConnection("jdbc:sqlite:" + myHomeFile.getAbsolutePath());
 	            conn.setAutoCommit(false);
 	        } catch (SQLException ex) {
-				Messaging.logSevere("Cannot load SQLite! MyHome locations not imported!", plugin);
-				return;
+				return homes;
 	        } catch (ClassNotFoundException ex) {
-				Messaging.logSevere("Cannot find SQLite library! MyHome locations not imported!", plugin);
-				return;
+				return homes;
 	        }
-
-            int size = 0;
 
 	        try {
 	            Statement statement = null;
@@ -176,44 +290,36 @@ public class ImportData {
 	            statement = conn.createStatement();
 	            set = statement.executeQuery("SELECT * FROM homeTable");
 	            while (set.next()) {
-	                size++;
 	                String name = set.getString("name");
 	                String world = set.getString("world");
-	                double x = set.getDouble("x");
-	                int y = set.getInt("y");
-	                double z = set.getDouble("z");
+	                double X = set.getDouble("x");
+	                int Y = set.getInt("y");
+	                double Z = set.getDouble("z");
 	                int yaw = set.getInt("yaw");
 	                int pitch = set.getInt("pitch");
 
-					out.write(name + ";" + x + ";" + y + ";" + z + ";" + pitch + ";" + yaw + ";" + world + ";" + Util.newLine());
+					homes.add(new HomeEntry(name, "", world.toLowerCase(), X, Y, Z, pitch, yaw));
 	            }
 	            
 	            set.close();
 	            statement.close();
-	            
-				Messaging.logInfo("Imported " + size + " homes.", plugin);
 	        } catch (SQLException e) {
-				Messaging.logSevere("Failed to import homes! Imported " + size + " homes.", plugin);
-				e.printStackTrace();
-	        } catch (IOException e) {
-				Messaging.logSevere("Failed to import homes! Imported " + size + " homes.", plugin);
-				e.printStackTrace();
 	        }
 	        
             try {
                 conn.close();
             } catch (SQLException ex) {
-				Messaging.logWarning("Cannot close SQLite connections. Home import successful.", plugin);
             }
 		}
+		
+		return homes;
 	}
-
-	public static void importInvitesFromMyHome(BufferedWriter out, MultiHome plugin) {
+	
+	public static ArrayList<HomeInvite> importInvitesFromMyHome(MultiHome plugin) {
 		File myHomeFile = new File("plugins" + File.separator + "MyHome" + File.separator + "homes.db");
+		ArrayList<HomeInvite> invites = new ArrayList<HomeInvite>();
 		
 		if (myHomeFile.exists()) {
-			Messaging.logInfo("Importing home invitations from MyHome...", plugin);
-
 			// connect to the MyHomes database.
 			Connection conn;
 
@@ -222,14 +328,10 @@ public class ImportData {
 	            conn = DriverManager.getConnection("jdbc:sqlite:" + myHomeFile.getAbsolutePath());
 	            conn.setAutoCommit(false);
 	        } catch (SQLException ex) {
-				Messaging.logSevere("Cannot load SQLite! MyHome invitations not imported!", plugin);
-				return;
+				return invites;
 	        } catch (ClassNotFoundException ex) {
-				Messaging.logSevere("Cannot find SQLite library! MyHome invitations not imported!", plugin);
-				return;
+				return invites;
 	        }
-
-            int size = 0;
 
 	        try {
 	            Statement statement = null;
@@ -244,8 +346,7 @@ public class ImportData {
 	                String reason = set.getString("welcomeMessage");
 
 	                if (publicAll) {
-		                size++;
-						out.write(owner + ";;*;;" + reason + Util.newLine());
+	                	invites.add(new HomeInvite(owner, "", "*", reason));
 	                }
 	                
 	                String users[] = permissions.split(",");
@@ -253,28 +354,22 @@ public class ImportData {
 	                    if (thisUser.length() == 0) {
 	                        continue;
 	                    }
-		                size++;
-						out.write(owner + ";;" + thisUser.trim().toLowerCase() + ";;" + reason + Util.newLine());
+	                	invites.add(new HomeInvite(owner, "", thisUser.trim().toLowerCase(), reason));
 	                }
 	            }
 	            
 	            set.close();
 	            statement.close();
 	            
-				Messaging.logInfo("Imported " + size + " invites.", plugin);
 	        } catch (SQLException e) {
-				Messaging.logSevere("Failed to import invitations! Imported " + size + " invitations.", plugin);
-				e.printStackTrace();
-	        } catch (IOException e) {
-				Messaging.logSevere("Failed to import invitations! Imported " + size + " invitations.", plugin);
-				e.printStackTrace();
 	        }
 	        
             try {
                 conn.close();
             } catch (SQLException ex) {
-				Messaging.logWarning("Cannot close SQLite connections. Invitation import successful.", plugin);
             }
 		}
+		
+		return invites;
 	}
 }
