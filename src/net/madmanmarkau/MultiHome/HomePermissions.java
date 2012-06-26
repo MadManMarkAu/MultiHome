@@ -36,7 +36,14 @@ public class HomePermissions {
 		Plugin permex = Bukkit.getServer().getPluginManager().getPlugin("PermissionsEx");
 		Plugin bukkitperms = Bukkit.getServer().getPluginManager().getPlugin("PermissionsBukkit");
 		Plugin bukkitperms1_1 = Bukkit.getServer().getPluginManager().getPlugin("PermissionsBukkit-1.1");
-		RegisteredServiceProvider<Permission> vaultPermissionProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+		RegisteredServiceProvider<Permission> vaultPermissionProvider = null;
+		
+		try {
+			vaultPermissionProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+		} catch (NoClassDefFoundError e) {
+		} catch (Exception e) {
+			// Eat errors
+		}
 
         if (vaultPermissionProvider != null) {
         	vault = vaultPermissionProvider.getProvider();
