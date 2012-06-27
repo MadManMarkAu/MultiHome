@@ -1,4 +1,4 @@
-package net.madmanmarkau.MultiHome;
+package net.madmanmarkau.MultiHome.Data;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,6 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import net.madmanmarkau.MultiHome.Messaging;
+import net.madmanmarkau.MultiHome.MultiHome;
+import net.madmanmarkau.MultiHome.Settings;
 
 import org.bukkit.Location;
 
@@ -25,7 +29,7 @@ public class HomeManagerMySQL extends HomeManager {
 
 		// Test connection
 		try {
-			Connection connection = DriverManager.getConnection(url, user, password);
+			Connection connection = DriverManager.getConnection(this.url, this.user, this.password);
 			if (!connection.isValid(100)) {
 				throw new SQLException();
 			} else {
@@ -33,7 +37,6 @@ public class HomeManagerMySQL extends HomeManager {
 			}
 		} catch (SQLException e) {
 			Messaging.logSevere("Failed to contact MySQL server!", this.plugin);
-			e.printStackTrace();
 		}
 	}
 
@@ -43,7 +46,7 @@ public class HomeManagerMySQL extends HomeManager {
 		PreparedStatement statement = null;
 
 		try {
-			connection = DriverManager.getConnection(url, user, password);
+			connection = DriverManager.getConnection(this.url, this.user, this.password);
 			if (!connection.isValid(100)) {
 				throw new SQLException();
 			}
@@ -52,7 +55,6 @@ public class HomeManagerMySQL extends HomeManager {
 			statement.execute();
 		} catch (SQLException e) {
 			Messaging.logSevere("Failed to clear home locations!", this.plugin);
-			e.printStackTrace();
 		} finally {
 			if (statement != null) {
 				try {
@@ -75,7 +77,7 @@ public class HomeManagerMySQL extends HomeManager {
 		ResultSet resultSet = null;
 
 		try {
-			connection = DriverManager.getConnection(url, user, password);
+			connection = DriverManager.getConnection(this.url, this.user, this.password);
 			if (!connection.isValid(100)) {
 				throw new SQLException();
 			}
@@ -99,7 +101,6 @@ public class HomeManagerMySQL extends HomeManager {
 			
 		} catch (SQLException e) {
 			Messaging.logSevere("Failed to get home location!", this.plugin);
-			e.printStackTrace();
 		} finally {
 			if (resultSet != null) {
 				try {
@@ -131,7 +132,7 @@ public class HomeManagerMySQL extends HomeManager {
 		boolean exists = false;
 
 		try {
-			connection = DriverManager.getConnection(url, user, password);
+			connection = DriverManager.getConnection(this.url, this.user, this.password);
 			if (!connection.isValid(100)) {
 				throw new SQLException();
 			}
@@ -174,7 +175,6 @@ public class HomeManagerMySQL extends HomeManager {
 
 		} catch (SQLException e) {
 			Messaging.logSevere("Failed to add home location!", this.plugin);
-			e.printStackTrace();
 		} finally {
 			if (statement != null) {
 				try {
@@ -196,7 +196,7 @@ public class HomeManagerMySQL extends HomeManager {
 		PreparedStatement statement = null;
 
 		try {
-			connection = DriverManager.getConnection(url, user, password);
+			connection = DriverManager.getConnection(this.url, this.user, this.password);
 			if (!connection.isValid(100)) {
 				throw new SQLException();
 			}
@@ -207,7 +207,6 @@ public class HomeManagerMySQL extends HomeManager {
 			statement.execute();
 		} catch (SQLException e) {
 			Messaging.logSevere("Failed to remove home location!", this.plugin);
-			e.printStackTrace();
 		} finally {
 			if (statement != null) {
 				try {
@@ -230,7 +229,7 @@ public class HomeManagerMySQL extends HomeManager {
 		ResultSet resultSet = null;
 
 		try {
-			connection = DriverManager.getConnection(url, user, password);
+			connection = DriverManager.getConnection(this.url, this.user, this.password);
 			if (!connection.isValid(100)) {
 				throw new SQLException();
 			}
@@ -243,7 +242,6 @@ public class HomeManagerMySQL extends HomeManager {
 			}
 		} catch (SQLException e) {
 			Messaging.logSevere("Failed to determine if user exists!", this.plugin);
-			e.printStackTrace();
 		} finally {
 			if (resultSet != null) {
 				try {
@@ -274,7 +272,7 @@ public class HomeManagerMySQL extends HomeManager {
 		ResultSet resultSet = null;
 
 		try {
-			connection = DriverManager.getConnection(url, user, password);
+			connection = DriverManager.getConnection(this.url, this.user, this.password);
 			if (!connection.isValid(100)) {
 				throw new SQLException();
 			}
@@ -287,7 +285,6 @@ public class HomeManagerMySQL extends HomeManager {
 			}
 		} catch (SQLException e) {
 			Messaging.logSevere("Failed to determine if user exists!", this.plugin);
-			e.printStackTrace();
 		} finally {
 			if (resultSet != null) {
 				try {
@@ -319,7 +316,7 @@ public class HomeManagerMySQL extends HomeManager {
 		ArrayList<HomeEntry> output = new ArrayList<HomeEntry> ();
 
 		try {
-			connection = DriverManager.getConnection(url, user, password);
+			connection = DriverManager.getConnection(this.url, this.user, this.password);
 			if (!connection.isValid(100)) {
 				throw new SQLException();
 			}
@@ -342,7 +339,6 @@ public class HomeManagerMySQL extends HomeManager {
 			
 		} catch (SQLException e) {
 			Messaging.logSevere("Failed to get all home locations for player!", this.plugin);
-			e.printStackTrace();
 		} finally {
 			if (resultSet != null) {
 				try {
@@ -376,12 +372,12 @@ public class HomeManagerMySQL extends HomeManager {
 		boolean recordExists;
 
 		try {
-			connection = DriverManager.getConnection(url, user, password);
+			connection = DriverManager.getConnection(this.url, this.user, this.password);
 			if (!connection.isValid(100)) {
 				throw new SQLException();
 			}
 
-			statementExists = connection.prepareStatement("SELECT COUNT(`id`) FROM `homes` WHERE LOWER(`owner`) = LOWER(?) AND LOWER(`home`) = LOWER(?);");
+			statementExists = connection.prepareStatement("SELECT COUNT(*) FROM `homes` WHERE LOWER(`owner`) = LOWER(?) AND LOWER(`home`) = LOWER(?);");
 			statementInsert = connection.prepareStatement("INSERT INTO `homes`(`owner`, `home`, `world`, `x`, `y`, `z`, `pitch`, `yaw`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
 			statementUpdate = connection.prepareStatement("UPDATE `homes` SET `owner` = ?, `home` = ?, `world` = ?, `x` = ?, `y` = ?, `z` = ?, `pitch` = ?, `yaw` = ? WHERE LOWER(`owner`) = LOWER(?) AND LOWER(`home`) = LOWER(?);");
 		
@@ -427,7 +423,6 @@ public class HomeManagerMySQL extends HomeManager {
 
 		} catch (SQLException e) {
 			Messaging.logSevere("Failed to import home locations!", this.plugin);
-			e.printStackTrace();
 		} finally {
 			if (resultSet != null) {
 				try {

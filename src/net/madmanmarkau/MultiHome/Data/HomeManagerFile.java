@@ -1,4 +1,4 @@
-package net.madmanmarkau.MultiHome;
+package net.madmanmarkau.MultiHome.Data;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -8,6 +8,10 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import net.madmanmarkau.MultiHome.Messaging;
+import net.madmanmarkau.MultiHome.MultiHome;
+import net.madmanmarkau.MultiHome.Util;
 
 import org.bukkit.Location;
 
@@ -205,7 +209,6 @@ public class HomeManagerFile extends HomeManager {
 			writer.close();
 		} catch (Exception e) {
 			Messaging.logSevere("Could not write the homes file.", this.plugin);
-			e.printStackTrace();
 		}
 	}
 
@@ -261,7 +264,6 @@ public class HomeManagerFile extends HomeManager {
 				reader.close();
 			} catch (Exception e) {
 				Messaging.logSevere("Could not read the homes file.", this.plugin);
-				e.printStackTrace();
 				return;
 			}
 		}

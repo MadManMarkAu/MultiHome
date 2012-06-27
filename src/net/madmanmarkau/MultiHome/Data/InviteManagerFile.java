@@ -1,4 +1,4 @@
-package net.madmanmarkau.MultiHome;
+package net.madmanmarkau.MultiHome.Data;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import net.madmanmarkau.MultiHome.Messaging;
+import net.madmanmarkau.MultiHome.MultiHome;
+import net.madmanmarkau.MultiHome.Util;
 
 /**
  * @author MadManMarkAu
@@ -253,7 +257,6 @@ public class InviteManagerFile extends InviteManager {
 			writer.close();
 		} catch (Exception e) {
 			Messaging.logSevere("Could not write the invites file.", this.plugin);
-			e.printStackTrace();
 		}
 	}
 
@@ -274,9 +277,7 @@ public class InviteManagerFile extends InviteManager {
 				out.write(Util.newLine());
 				out.close();
 			} catch (Exception e) {
-				Messaging.logSevere("Could not write the deafult invites file. Plugin disabled.", this.plugin);
-				e.printStackTrace();
-				plugin.getServer().getPluginManager().disablePlugin(plugin);
+				Messaging.logSevere("Could not write the deafult invites file.", this.plugin);
 				return;
 			}
 		} else {
@@ -327,8 +328,6 @@ public class InviteManagerFile extends InviteManager {
 				reader.close();
 			} catch (Exception e) {
 				Messaging.logSevere("Could not read the invite list.", this.plugin);
-				e.printStackTrace();
-				return;
 			}
 		}
 	}

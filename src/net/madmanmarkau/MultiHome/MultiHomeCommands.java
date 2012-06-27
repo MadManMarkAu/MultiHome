@@ -3,6 +3,8 @@ package net.madmanmarkau.MultiHome;
 import java.util.ArrayList;
 import java.util.Date;
 
+import net.madmanmarkau.MultiHome.Data.*;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -35,8 +37,8 @@ public class MultiHomeCommands {
 			if (homeEntry != null) {
 				if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignore.warmup")) {
 					// Warpup required.
-					HomeWarmUp warmup = new HomeWarmUp(plugin, player, Util.dateInFuture(warmupTime), homeEntry.getHomeLocation(plugin.getServer()), amount);
-					plugin.getWarmUpManager().addWarmup(player.getName(), warmup);
+					WarmUpEntry warmup = new WarmUpEntry(player.getName(), Util.dateInFuture(warmupTime), homeEntry.getHomeLocation(plugin.getServer()), amount);
+					plugin.getWarmUpManager().addWarmup(warmup);
 					Settings.sendMessageWarmup(player, warmupTime);
 				} else {
 					// Can transfer instantly
@@ -91,8 +93,8 @@ public class MultiHomeCommands {
 			if (homeEntry != null) {
 				if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignore.warmup")) {
 					// Warpup required.
-					HomeWarmUp warmup = new HomeWarmUp(plugin, player, Util.dateInFuture(warmupTime), homeEntry.getHomeLocation(plugin.getServer()), amount);
-					plugin.getWarmUpManager().addWarmup(player.getName(), warmup);
+					WarmUpEntry warmup = new WarmUpEntry(player.getName(), Util.dateInFuture(warmupTime), homeEntry.getHomeLocation(plugin.getServer()), amount);
+					plugin.getWarmUpManager().addWarmup(warmup);
 					Settings.sendMessageWarmup(player, warmupTime);
 				} else {
 					// Can transfer instantly
@@ -149,8 +151,8 @@ public class MultiHomeCommands {
 				if (homeEntry != null) {
 					if (warmupTime > 0 && !HomePermissions.has(player, "multihome.ignore.warmup")) {
 						// Warpup required.
-						HomeWarmUp warmup = new HomeWarmUp(plugin, player, Util.dateInFuture(warmupTime), homeEntry.getHomeLocation(plugin.getServer()), amount);
-						plugin.getWarmUpManager().addWarmup(player.getName(), warmup);
+						WarmUpEntry warmup = new WarmUpEntry(player.getName(), Util.dateInFuture(warmupTime), homeEntry.getHomeLocation(plugin.getServer()), amount);
+						plugin.getWarmUpManager().addWarmup(warmup);
 						Settings.sendMessageWarmup(player, warmupTime);
 						Messaging.logInfo("Player " + player.getName() + " warped to player " + owner + "'s home location: " + home, plugin);
 					} else {

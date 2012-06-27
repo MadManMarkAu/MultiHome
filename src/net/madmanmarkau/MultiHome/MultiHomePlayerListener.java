@@ -1,5 +1,7 @@
 package net.madmanmarkau.MultiHome;
 
+import net.madmanmarkau.MultiHome.Data.HomeEntry;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

@@ -12,6 +12,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.madmanmarkau.MultiHome.Data.HomeEntry;
+import net.madmanmarkau.MultiHome.Data.InviteEntry;
+
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 

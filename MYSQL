@@ -1,0 +1,33 @@
+REATE TABLE `homes` (
+  `owner` varchar(50) NOT NULL,
+  `home` varchar(50) NOT NULL,
+  `world` varchar(50) NOT NULL,
+  `x` double NOT NULL,
+  `y` double NOT NULL,
+  `z` double NOT NULL,
+  `pitch` float NOT NULL,
+  `yaw` float NOT NULL,
+  PRIMARY KEY (`owner`,`home`)
+);
+
+CREATE TABLE `invites` (
+  `source` varchar(50) NOT NULL,
+  `home` varchar(50) NOT NULL,
+  `target` varchar(50) NOT NULL,
+  `expires` datetime DEFAULT NULL,
+  `reason` varchar(250) DEFAULT NULL,
+  PRIMARY KEY (`source`,`home`,`target`)
+);
+
+CREATE TABLE `warmups` (
+  `player` varchar(50) NOT NULL,
+  `expiry` datetime NOT NULL,
+  `world` varchar(50) NOT NULL,
+  `x` double NOT NULL,
+  `y` double NOT NULL,
+  `z` double NOT NULL,
+  `pitch` float NOT NULL,
+  `yaw` float NOT NULL,
+  `cost` double NOT NULL,
+  PRIMARY KEY (`player`)
+);
