@@ -34,6 +34,8 @@ public class HomeManagerFile extends HomeManager {
 	@Override
 	public void clearHomes() {
 		this.homeEntries.clear();
+
+		saveHomes();
 	}
 
 	@Override
@@ -223,7 +225,7 @@ public class HomeManagerFile extends HomeManager {
 	
 				String line = reader.readLine().trim();
 	
-				this.clearHomes();
+				this.homeEntries.clear();
 	
 				while (line != null) {
 					if (!line.startsWith("#") && line.length() > 0) {

@@ -125,7 +125,7 @@ public class WarmUpManagerMySQL extends WarmUpManager {
 			statement.setDouble(6, warmup.getZ());
 			statement.setFloat(7, warmup.getPitch());
 			statement.setFloat(8, warmup.getYaw());
-			statement.setDouble(8, warmup.getCost());
+			statement.setDouble(9, warmup.getCost());
 			statement.execute();
 			statement.close();
 			statement = null;

@@ -46,7 +46,7 @@ public class InviteEntry {
 	}
 
 	public String getInviteSource() {
-		return inviteSource;
+		return this.inviteSource;
 	}
 
 	public void setInviteHome(String inviteHome) {
@@ -54,7 +54,7 @@ public class InviteEntry {
 	}
 
 	public String getInviteHome() {
-		return inviteHome;
+		return this.inviteHome;
 	}
 
 	public void setInviteTarget(String inviteTarget) {
@@ -62,7 +62,7 @@ public class InviteEntry {
 	}
 	
 	public String getInviteTarget() {
-		return inviteTarget;
+		return this.inviteTarget;
 	}
 
 	public void setInviteExpires(Date inviteExpires) {
@@ -70,7 +70,7 @@ public class InviteEntry {
 	}
 
 	public Date getInviteExpires() {
-		return inviteExpires;
+		return this.inviteExpires;
 	}
 
 	public void setInviteReason(String inviteReason) {
@@ -78,7 +78,7 @@ public class InviteEntry {
 	}
 
 	public String getInviteReason() {
-		return inviteReason;
+		return this.inviteReason;
 	}
 	
 }

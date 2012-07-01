@@ -31,6 +31,8 @@ public class InviteManagerFile extends InviteManager {
 	@Override
 	public void clearInvites() {
 		this.inviteEntries.clear();
+
+		saveInvites();
 	}
 
 	@Override
@@ -287,7 +289,7 @@ public class InviteManagerFile extends InviteManager {
 	
 				String line = reader.readLine().trim();
 	
-				this.clearInvites();
+				this.inviteEntries.clear();
 				
 				while (line != null) {
 					if (!line.startsWith("#") && line.length() > 0) {

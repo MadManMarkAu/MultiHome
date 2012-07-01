@@ -24,10 +24,10 @@ public class MultiHomeCommands {
 			}
 			
 			// Get user cooldown timer.
-			Date cooldown = plugin.getCoolDownManager().getCooldown(player.getName());
+			CoolDownEntry cooldown = plugin.getCoolDownManager().getCooldown(player.getName());
 
 			if (cooldown != null && !HomePermissions.has(player, "multihome.ignore.cooldown")) {
-				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getTime() - new Date().getTime()), 1000) / 1000);
+				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getExpiry().getTime() - new Date().getTime()), 1000) / 1000);
 				return;
 			}
 
@@ -70,10 +70,10 @@ public class MultiHomeCommands {
 			double amount = 0;
 			
 			// Get user cooldown timer.
-			Date cooldown = plugin.getCoolDownManager().getCooldown(player.getName());
+			CoolDownEntry cooldown = plugin.getCoolDownManager().getCooldown(player.getName());
 
 			if (cooldown != null && !HomePermissions.has(player, "multihome.ignore.cooldown")) {
-				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getTime() - new Date().getTime()), 1000) / 1000);
+				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getExpiry().getTime() - new Date().getTime()), 1000) / 1000);
 				return;
 			}
 
@@ -126,10 +126,10 @@ public class MultiHomeCommands {
 			double amount = 0;
 			
 			// Get user cooldown timer.
-			Date cooldown = plugin.getCoolDownManager().getCooldown(player.getName());
+			CoolDownEntry cooldown = plugin.getCoolDownManager().getCooldown(player.getName());
 
 			if (cooldown != null && !HomePermissions.has(player, "multihome.ignore.cooldown")) {
-				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getTime() - new Date().getTime()), 1000) / 1000);
+				Settings.sendMessageCooldown(player, Math.max((int) (cooldown.getExpiry().getTime() - new Date().getTime()), 1000) / 1000);
 				return;
 			}
 

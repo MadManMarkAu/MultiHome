@@ -107,13 +107,16 @@ public class WarmUpManagerFile extends WarmUpManager {
 	 * @return True if load succeeds, otherwise false.
 	 */
 	private void loadWarmups() {
-		// Create warmup file if not exist
 		try {
 			if (this.warmupsFile.exists()) {
 				FileReader fstream = new FileReader(this.warmupsFile);
 				BufferedReader reader = new BufferedReader(fstream);
 				
-				this.clearWarmups();
+				for (Entry<String, WarmUpTask> entry : this.warmupEntries.entrySet()) {
+					entry.getValue().cancelWarmUp();
+				}
+
+				this.warmupEntries.clear();
 	
 				String line = reader.readLine().trim();
 	
@@ -132,8 +135,10 @@ public class WarmUpManagerFile extends WarmUpManager {
 								float yaw = Float.parseFloat(values[6]);
 								String worldName = values[7];
 								double amount = Double.parseDouble(values[8]);
-								
-								this.addWarmup(new WarmUpEntry(player, expiry, worldName, x, y, z, pitch, yaw, amount));
+
+								if (!this.warmupEntries.containsKey(player.toLowerCase())) {
+									this.warmupEntries.put(player.toLowerCase(), new WarmUpTask(plugin, new WarmUpEntry(player, expiry, worldName, x, y, z, pitch, yaw, amount)));
+								}
 							}
 						} catch (Exception e) {
 						}

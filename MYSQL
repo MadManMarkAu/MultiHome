@@ -31,3 +31,9 @@ CREATE TABLE `warmups` (
   `cost` double NOT NULL,
   PRIMARY KEY (`player`)
 );
+
+CREATE TABLE `cooldowns` (
+  `player` varchar(50) NOT NULL,
+  `expiry` datetime NOT NULL,
+  PRIMARY KEY (`player`)
+);
