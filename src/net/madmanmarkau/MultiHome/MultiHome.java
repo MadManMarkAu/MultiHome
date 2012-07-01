@@ -50,16 +50,22 @@ public class MultiHome extends JavaPlugin {
 			this.invites = new InviteManagerFile(this);
 			this.warmups = new WarmUpManagerFile(this);
 			this.cooldowns = new CoolDownManagerFile(this);
+
+			Messaging.logInfo("Using \"file\" storage method for database.", this);
 		} else if (dataStoreMethod.compareToIgnoreCase("sql") == 0) {
 			this.homes = new HomeManagerMySQL(this);
 			this.invites = new InviteManagerMySQL(this);
 			this.warmups = new WarmUpManagerMySQL(this);
 			this.cooldowns = new CoolDownManagerMySQL(this);
+
+			Messaging.logInfo("Using \"sql\" storage method for database.", this);
 		} else {
 			this.homes = new HomeManagerFile(this);
 			this.invites = new InviteManagerFile(this);
 			this.warmups = new WarmUpManagerFile(this);
 			this.cooldowns = new CoolDownManagerFile(this);
+
+			Messaging.logInfo("Unknown storage method. Defaulting to \"file\" storage method for database.", this);
 		}
 
 		

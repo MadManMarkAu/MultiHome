@@ -93,8 +93,8 @@ public class HomeManagerMySQL extends HomeManager {
 										resultSet.getDouble("x"), 
 										resultSet.getDouble("y"), 
 										resultSet.getDouble("z"), 
-										resultSet.getFloat("yaw"), 
-										resultSet.getFloat("pitch"));
+										resultSet.getFloat("pitch"), 
+										resultSet.getFloat("yaw"));
 				} catch (Exception ex) {}
 
 			}
@@ -234,7 +234,7 @@ public class HomeManagerMySQL extends HomeManager {
 				throw new SQLException();
 			}
 
-			statement = connection.prepareStatement("SELECT COUNT(`id`) FROM `homes` WHERE LOWER(`owner`) = LOWER(?);");
+			statement = connection.prepareStatement("SELECT COUNT(`*`) FROM `homes` WHERE LOWER(`owner`) = LOWER(?);");
 			statement.setString(1, player);
 			resultSet = statement.executeQuery();
 			if (resultSet.first()) {
@@ -277,7 +277,7 @@ public class HomeManagerMySQL extends HomeManager {
 				throw new SQLException();
 			}
 
-			statement = connection.prepareStatement("SELECT COUNT(`id`) FROM `homes` WHERE LOWER(`owner`) = LOWER(?);");
+			statement = connection.prepareStatement("SELECT COUNT(*) FROM `homes` WHERE LOWER(`owner`) = LOWER(?);");
 			statement.setString(1, player);
 			resultSet = statement.executeQuery();
 			if (resultSet.first()) {
