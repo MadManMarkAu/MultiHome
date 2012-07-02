@@ -1,4 +1,5 @@
-REATE TABLE `homes` (
+CREATE TABLE `homes` (
+  `id` int(99) NOT NULL AUTO_INCREMENT,
   `owner` varchar(50) NOT NULL,
   `home` varchar(50) NOT NULL,
   `world` varchar(50) NOT NULL,
@@ -7,7 +8,7 @@ REATE TABLE `homes` (
   `z` double NOT NULL,
   `pitch` float NOT NULL,
   `yaw` float NOT NULL,
-  PRIMARY KEY (`owner`,`home`)
+  PRIMARY KEY (`id`,`owner`,`home`)
 );
 
 CREATE TABLE `invites` (
