@@ -26,19 +26,27 @@ public class WarmUpManagerFile extends WarmUpManager {
 	
 	@Override
 	public void clearWarmups() {
-		for (Entry<String, WarmUpTask> entry : this.warmupEntries.entrySet()) {
-			entry.getValue().cancelWarmUp();
+		try {
+			for (Entry<String, WarmUpTask> entry : this.warmupEntries.entrySet()) {
+				entry.getValue().cancelWarmUp();
+			}
+	
+			this.warmupEntries.clear();
+	
+			saveWarmups();
+		} catch (Exception e) {
+			Messaging.logSevere("Failed to clear warmups: " + e.getMessage(), this.plugin);
 		}
-
-		this.warmupEntries.clear();
-
-		saveWarmups();
 	}
 
 	@Override
 	public WarmUpEntry getWarmup(String player) {
-		if (this.warmupEntries.containsKey(player.toLowerCase())) {
-			return this.warmupEntries.get(player.toLowerCase()).getWarmup();
+		try {
+			if (this.warmupEntries.containsKey(player.toLowerCase())) {
+				return this.warmupEntries.get(player.toLowerCase()).getWarmup();
+			}
+		} catch (Exception e) {
+			Messaging.logSevere("Failed to get warmup: " + e.getMessage(), this.plugin);
 		}
 		
 		return null;
@@ -46,35 +54,47 @@ public class WarmUpManagerFile extends WarmUpManager {
 
 	@Override
 	public void addWarmup(WarmUpEntry warmup) {
-		if (this.warmupEntries.containsKey(warmup.getPlayer().toLowerCase())) {
-			// Remove old warmup
-			WarmUpTask task = this.warmupEntries.get(warmup.getPlayer().toLowerCase());
-			task.cancelWarmUp();
-			this.warmupEntries.remove(warmup.getPlayer().toLowerCase());
+		try {
+			if (this.warmupEntries.containsKey(warmup.getPlayer().toLowerCase())) {
+				// Remove old warmup
+				WarmUpTask task = this.warmupEntries.get(warmup.getPlayer().toLowerCase());
+				task.cancelWarmUp();
+				this.warmupEntries.remove(warmup.getPlayer().toLowerCase());
+			}
+	
+			// Set new warmup
+			this.warmupEntries.put(warmup.getPlayer().toLowerCase(), new WarmUpTask(plugin, warmup));
+	
+			saveWarmups();
+		} catch (Exception e) {
+			Messaging.logSevere("Failed to add warmup: " + e.getMessage(), this.plugin);
 		}
-
-		// Set new warmup
-		this.warmupEntries.put(warmup.getPlayer().toLowerCase(), new WarmUpTask(plugin, warmup));
-
-		saveWarmups();
 	}
 
 	@Override
 	public void removeWarmup(String player) {
-		if (this.warmupEntries.containsKey(player.toLowerCase())) {
-			this.warmupEntries.get(player.toLowerCase()).cancelWarmUp();
-			
-			this.warmupEntries.remove(player.toLowerCase());
-
-			saveWarmups();
+		try {
+			if (this.warmupEntries.containsKey(player.toLowerCase())) {
+				this.warmupEntries.get(player.toLowerCase()).cancelWarmUp();
+				
+				this.warmupEntries.remove(player.toLowerCase());
+	
+				saveWarmups();
+			}
+		} catch (Exception e) {
+			Messaging.logSevere("Failed to remove warmup: " + e.getMessage(), this.plugin);
 		}
 	}
 	
 	@Override
 	public void taskComplete(WarmUpEntry warmup) {
-		this.warmupEntries.remove(warmup.getPlayer().toLowerCase());
-
-		saveWarmups();
+		try {
+			this.warmupEntries.remove(warmup.getPlayer().toLowerCase());
+	
+			saveWarmups();
+		} catch (Exception e) {
+			Messaging.logSevere("Failed to complete warmup: " + e.getMessage(), this.plugin);
+		}
 	}
 	
 	/**
@@ -150,7 +170,7 @@ public class WarmUpManagerFile extends WarmUpManager {
 				reader.close();
 			}
 		} catch (Exception e) {
-			Messaging.logSevere("Could not read the warmups file.", plugin);
+			Messaging.logSevere("Could not read the warmups file: " + e.getMessage(), plugin);
 		}
 	}
 }

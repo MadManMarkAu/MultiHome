@@ -422,7 +422,7 @@ public class MultiHomeCommands {
 
 				Player targetPlayer = Util.getExactPlayer(target, plugin);
 				if (targetPlayer != null) {
-					Settings.sendMessageUninviteTargetHome(targetPlayer, player.getName(), "");
+					Settings.sendMessageUninviteTargetHome(targetPlayer, player.getName(), "[Default]");
 				}
 
 				Messaging.logInfo("Player " + player.getName() + " removed invite for " + target + " to their default home.", plugin);

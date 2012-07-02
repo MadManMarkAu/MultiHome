@@ -1,4 +1,4 @@
-REATE TABLE `homes` (
+CREATE TABLE `homes` (
   `owner` varchar(50) NOT NULL,
   `home` varchar(50) NOT NULL,
   `world` varchar(50) NOT NULL,

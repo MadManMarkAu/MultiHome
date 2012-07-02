@@ -36,7 +36,7 @@ public class HomeManagerMySQL extends HomeManager {
 				connection.close();
 			}
 		} catch (SQLException e) {
-			Messaging.logSevere("Failed to contact MySQL server!", this.plugin);
+			Messaging.logSevere("Failed to contact MySQL server: " + e.getMessage(), this.plugin);
 		}
 	}
 
@@ -54,7 +54,7 @@ public class HomeManagerMySQL extends HomeManager {
 			statement = connection.prepareStatement("DELETE FROM `homes`;");
 			statement.execute();
 		} catch (SQLException e) {
-			Messaging.logSevere("Failed to clear home locations!", this.plugin);
+			Messaging.logSevere("Failed to clear home locations: " + e.getMessage(), this.plugin);
 		} finally {
 			if (statement != null) {
 				try {
@@ -100,7 +100,7 @@ public class HomeManagerMySQL extends HomeManager {
 			}
 			
 		} catch (SQLException e) {
-			Messaging.logSevere("Failed to get home location!", this.plugin);
+			Messaging.logSevere("Failed to get home location: " + e.getMessage(), this.plugin);
 		} finally {
 			if (resultSet != null) {
 				try {
@@ -174,7 +174,7 @@ public class HomeManagerMySQL extends HomeManager {
 			}
 
 		} catch (SQLException e) {
-			Messaging.logSevere("Failed to add home location!", this.plugin);
+			Messaging.logSevere("Failed to add home location: " + e.getMessage(), this.plugin);
 		} finally {
 			if (statement != null) {
 				try {
@@ -206,7 +206,7 @@ public class HomeManagerMySQL extends HomeManager {
 			statement.setString(2, name);
 			statement.execute();
 		} catch (SQLException e) {
-			Messaging.logSevere("Failed to remove home location!", this.plugin);
+			Messaging.logSevere("Failed to remove home location: " + e.getMessage(), this.plugin);
 		} finally {
 			if (statement != null) {
 				try {
@@ -234,14 +234,14 @@ public class HomeManagerMySQL extends HomeManager {
 				throw new SQLException();
 			}
 
-			statement = connection.prepareStatement("SELECT COUNT(`*`) FROM `homes` WHERE LOWER(`owner`) = LOWER(?);");
+			statement = connection.prepareStatement("SELECT COUNT(*) FROM `homes` WHERE LOWER(`owner`) = LOWER(?);");
 			statement.setString(1, player);
 			resultSet = statement.executeQuery();
 			if (resultSet.first()) {
 				return resultSet.getInt(1) > 0;
 			}
 		} catch (SQLException e) {
-			Messaging.logSevere("Failed to determine if user exists!", this.plugin);
+			Messaging.logSevere("Failed to determine if user exists: " + e.getMessage(), this.plugin);
 		} finally {
 			if (resultSet != null) {
 				try {
@@ -284,7 +284,7 @@ public class HomeManagerMySQL extends HomeManager {
 				return resultSet.getInt(1);
 			}
 		} catch (SQLException e) {
-			Messaging.logSevere("Failed to determine if user exists!", this.plugin);
+			Messaging.logSevere("Failed to get user home count: " + e.getMessage(), this.plugin);
 		} finally {
 			if (resultSet != null) {
 				try {
@@ -338,7 +338,7 @@ public class HomeManagerMySQL extends HomeManager {
 			}
 			
 		} catch (SQLException e) {
-			Messaging.logSevere("Failed to get all home locations for player!", this.plugin);
+			Messaging.logSevere("Failed to get all home locations for player: " + e.getMessage(), this.plugin);
 		} finally {
 			if (resultSet != null) {
 				try {
@@ -422,7 +422,7 @@ public class HomeManagerMySQL extends HomeManager {
 			}
 
 		} catch (SQLException e) {
-			Messaging.logSevere("Failed to import home locations!", this.plugin);
+			Messaging.logSevere("Failed to import home locations: " + e.getMessage(), this.plugin);
 		} finally {
 			if (resultSet != null) {
 				try {

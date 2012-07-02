@@ -44,10 +44,10 @@ commands:
     usage: /<command> [<user>]
   invitehome:
     description: Invites another player to your home. Make your home location public.
-    usage: /<command> {<user>|*} [<time>] [<home>]
+    usage: /<command> {<user>|*} [<home>]
   minvitehome:
     description: Invites another player to your home. Make your home location public.
-    usage: /<command> {<user>|*} [<time>] [<home>]
+    usage: /<command> {<user>|*} [<home>]
   invitehometimed:
     description: Invites another player to your home for a time. Make your home location public.
     usage: /<command> {<user>|*} <time> [<home>]

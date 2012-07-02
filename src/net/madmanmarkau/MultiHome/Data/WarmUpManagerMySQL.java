@@ -37,7 +37,7 @@ public class WarmUpManagerMySQL extends WarmUpManager {
 				connection.close();
 			}
 		} catch (SQLException e) {
-			Messaging.logSevere("Failed to contact MySQL server!", this.plugin);
+			Messaging.logSevere("Failed to contact MySQL server: " + e.getMessage(), this.plugin);
 			return;
 		}
 		
@@ -65,7 +65,7 @@ public class WarmUpManagerMySQL extends WarmUpManager {
 			}
 			this.warmupEntries.clear();
 		} catch (Exception e) {
-			Messaging.logSevere("Failed to clear warmups!", this.plugin);
+			Messaging.logSevere("Failed to clear warmups: " + e.getMessage(), this.plugin);
 		} finally {
 			if (statement != null) {
 				try {
@@ -83,8 +83,12 @@ public class WarmUpManagerMySQL extends WarmUpManager {
 
 	@Override
 	public WarmUpEntry getWarmup(String player) {
-		if (this.warmupEntries.containsKey(player.toLowerCase())) {
-			return this.warmupEntries.get(player.toLowerCase()).getWarmup();
+		try {
+			if (this.warmupEntries.containsKey(player.toLowerCase())) {
+				return this.warmupEntries.get(player.toLowerCase()).getWarmup();
+			}
+		} catch (Exception e) {
+			Messaging.logSevere("Failed to get warmup: " + e.getMessage(), this.plugin);
 		}
 		
 		return null;
@@ -116,7 +120,7 @@ public class WarmUpManagerMySQL extends WarmUpManager {
 			}
 
 			// Insert warmup into database
-			statement = connection.prepareStatement("INSERT INTO `warmups` (`player`, `expiry`, `world`, `x`, `y`, `z`, `pitch`, `yaw`, `cost') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+			statement = connection.prepareStatement("INSERT INTO `warmups` (`player`, `expiry`, `world`, `x`, `y`, `z`, `pitch`, `yaw`, `cost`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
 			statement.setString(1, warmup.getPlayer());
 			statement.setTimestamp(2, new Timestamp(warmup.getExpiry().getTime()));
 			statement.setString(3, warmup.getWorld());
@@ -133,7 +137,7 @@ public class WarmUpManagerMySQL extends WarmUpManager {
 			// Create warmup task
 			this.warmupEntries.put(warmup.getPlayer().toLowerCase(), new WarmUpTask(plugin, warmup));
 		} catch (Exception e) {
-			Messaging.logSevere("Failed to set warmup!", this.plugin);
+			Messaging.logSevere("Failed to set warmup: " + e.getMessage(), this.plugin);
 		} finally {
 			if (statement != null) {
 				try {
@@ -173,7 +177,7 @@ public class WarmUpManagerMySQL extends WarmUpManager {
 				this.warmupEntries.remove(player.toLowerCase());
 			}
 		} catch (Exception e) {
-			Messaging.logSevere("Failed to remove warmup!", this.plugin);
+			Messaging.logSevere("Failed to remove warmup: " + e.getMessage(), this.plugin);
 		} finally {
 			if (statement != null) {
 				try {
@@ -212,7 +216,7 @@ public class WarmUpManagerMySQL extends WarmUpManager {
 				this.warmupEntries.remove(warmup.getPlayer().toLowerCase());
 			}
 		} catch (Exception e) {
-			Messaging.logSevere("Failed to remove warmup!", this.plugin);
+			Messaging.logSevere("Failed to complete warmup: " + e.getMessage(), this.plugin);
 		} finally {
 			if (statement != null) {
 				try {
@@ -262,7 +266,7 @@ public class WarmUpManagerMySQL extends WarmUpManager {
 			}
 			
 		} catch (Exception e) {
-			Messaging.logSevere("Failed to load warmups from database!", this.plugin);
+			Messaging.logSevere("Failed to load warmups from database: " + e.getMessage(), this.plugin);
 		} finally {
 			if (resultSet != null) {
 				try {

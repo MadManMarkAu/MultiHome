@@ -143,7 +143,7 @@ public class InviteManagerMySQL extends InviteManager {
 			statement = connection.prepareStatement("SELECT COUNT(*) FROM `invites` WHERE LOWER(`source`) = LOWER(?) AND LOWER(`home`) = LOWER(?) AND LOWER(`target`) = LOWER(?);");
 			statement.setString(1, owner);
 			statement.setString(2, home);
-			statement.setString(2, target);
+			statement.setString(3, target);
 			resultSet = statement.executeQuery();
 			if (resultSet.first()) {
 				exists = resultSet.getInt(1) > 0;
@@ -362,7 +362,7 @@ public class InviteManagerMySQL extends InviteManager {
 
 			updateInviteExpiry(connection);
 
-			statementExists = connection.prepareStatement("SELECT COUNT(`*`) FROM `invites` WHERE LOWER(`source`) = LOWER(?) AND LOWER(`home`) = LOWER(?) AND LOWER(`target`) = LOWER(?);");
+			statementExists = connection.prepareStatement("SELECT COUNT(*) FROM `invites` WHERE LOWER(`source`) = LOWER(?) AND LOWER(`home`) = LOWER(?) AND LOWER(`target`) = LOWER(?);");
 			statementInsert = connection.prepareStatement("INSERT INTO `invites` (`source`, `home`, `target`, `expires`, `reason`) VALUES (?, ?, ?, ?, ?)");
 			statementUpdate = connection.prepareStatement("UPDATE `invites` SET `source` = ?, `home` = ?, `target` = ?, `expires` = ?, `reason` = ? WHERE LOWER(`source`) = LOWER(?) AND LOWER(`home`) = LOWER(?) AND LOWER(`target`) = LOWER(?);");
 		

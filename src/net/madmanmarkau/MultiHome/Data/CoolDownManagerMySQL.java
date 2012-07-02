@@ -205,7 +205,7 @@ public class CoolDownManagerMySQL extends CoolDownManager {
 		PreparedStatement statement = null;
 
 		try {
-			statement = connection.prepareStatement("DELETE FROM `cooldowns` WHERE `expires` < ?;");
+			statement = connection.prepareStatement("DELETE FROM `cooldowns` WHERE `expiry` < ?;");
 			statement.setTimestamp(1, new Timestamp(now.getTime()));
 			statement.execute();
 		} catch (SQLException e) {
